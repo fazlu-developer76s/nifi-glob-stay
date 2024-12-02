@@ -15,6 +15,8 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\GallaryController;
+use App\Http\Controllers\PagesController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
 
@@ -99,7 +101,14 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/blog/update', [BlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/delete/{id}', [BlogController::class, 'destroy'])->name('blog.destroy');
 
-    // Blog Route
+    // Gallary Route
+    Route::get('/gallary', [GallaryController::class, 'index'])->name('gallary');
+    Route::match(['get', 'post'], '/gallary/create', [GallaryController::class, 'create'])->name('gallary.create');
+    Route::get('/gallary/{id}', [GallaryController::class, 'edit'])->name('gallary.edit');
+    Route::post('/gallary/update', [GallaryController::class, 'update'])->name('gallary.update');
+    Route::delete('/gallary/delete/{id}', [GallaryController::class, 'destroy'])->name('gallary.destroy');
+
+    // Seo Route
     Route::get('/seo', [SeoController::class, 'index'])->name('seo');
     Route::match(['get', 'post'], '/seo/create', [SeoController::class, 'create'])->name('seo.create');
     Route::get('/seo/{id}', [SeoController::class, 'edit'])->name('seo.edit');
@@ -143,5 +152,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     // cms route
     Route::get('company/{id}/edit', [CompanyController::class, 'edit'])->name('company.edit');
     Route::post('company/{id}', [CompanyController::class, 'update'])->name('company.update');
+    Route::get('pages/{id}/edit', [PagesController::class, 'edit'])->name('pages.edit');
+    Route::post('pages/{id}', [PagesController::class, 'update'])->name('pages.update');
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
 });

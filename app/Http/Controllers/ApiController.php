@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\Enquirys;
 use App\Models\Enquiry;
+use App\Models\Gallary;
+use App\Models\Page;
 use App\Models\Property;
 use App\Models\Seo;
 use Illuminate\Support\Facades\Mail;
@@ -524,6 +526,25 @@ class ApiController extends Controller
             return response()->json(['status' => 'OK', 'message' => 'SEO fetched successfully', 'data' => $get_seo], 200);
         } else {
             return response()->json(['status' => 'Error', 'message' => 'SEO not found']);
+        }
+    }
+
+    public function fetch_gallary(Request $request){
+        $get_gallary = Gallary::where('status', 1)->get();
+        if ($get_gallary) {
+            return response()->json(['status' => 'OK', 'message' => 'Gallery fetched successfully', 'data' => $get_gallary], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Gallery not found']);
+        }
+    }
+
+    public function fetch_pages(Request $request){
+
+        $get_page = Page::where('page_name', $request->page_name)->first();
+        if ($get_page) {
+            return response()->json(['status' => 'OK', 'message' => 'Page fetched successfully', 'data' => $get_page], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Page not found']);
         }
     }
 

@@ -46,8 +46,8 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Role Status</label>
                                                     <select class="form-control custom-select-icon" name="status">
-                                                        <option value="1" {{ ( isset($find_role) && $find_role->status == 1)?'selected':''; }}>Active Role</option>
-                                                        <option value="2" {{ ( isset($find_role) && $find_role->status == 2)?'selected':''; }}>Inactive Role</option>
+                                                        <option value="1" {{ ( isset($find_role) && $find_role->status == 1)?'selected':''; }}>Active</option>
+                                                        <option value="2" {{ ( isset($find_role) && $find_role->status == 2)?'selected':''; }}>Inactive</option>
                                                     </select>
                                                 </div>
                                             </div>

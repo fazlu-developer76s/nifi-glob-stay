@@ -102,8 +102,8 @@
                                         <div class="mb-3">
                                             <label class="form-label">Member Status</label>
                                             <select class="form-control custom-select-icon @error('status') is-invalid @enderror" name="status">
-                                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }} {{ (isset($get_member) && $get_member->status == 1) ? 'selected' : '' ; }}>Active Member</option>
-                                                <option value="2" {{ old('status') == 2 ? 'selected' : '' }} {{ (isset($get_member) && $get_member->status == 2) ? 'selected' : '' ; }}>Inactive Member</option>
+                                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }} {{ (isset($get_member) && $get_member->status == 1) ? 'selected' : '' ; }}>Active</option>
+                                                <option value="2" {{ old('status') == 2 ? 'selected' : '' }} {{ (isset($get_member) && $get_member->status == 2) ? 'selected' : '' ; }}>Inactive</option>
                                             </select>
                                             @error('status')
                                             <div class="invalid-feedback">{{ $message }}</div>

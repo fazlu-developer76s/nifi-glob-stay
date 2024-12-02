@@ -19,7 +19,7 @@
     </div>
     <div class="row">
         <div class="col-lg-3">
-            <a href="hello">
+            <a href="#">
                 <div class="card">
                     <div class="card-body no-padding" style="height:208px">
                         <div class="alert alert-callout alert-info no-margin">
@@ -36,7 +36,7 @@
         <div class="col-lg-9">
             <div class="row">
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-danger no-margin">
@@ -49,7 +49,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-warning no-margin">
@@ -62,7 +62,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-success no-margin">
@@ -75,7 +75,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-danger no-margin">
@@ -88,7 +88,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-warning no-margin">
@@ -101,7 +101,7 @@
                     </a>
                 </div>
                 <div class="col-lg-4">
-                    <a href="hello">
+                    <a href="#">
                         <div class="card">
                             <div class="card-body no-padding">
                                 <div class="alert alert-callout alert-success no-margin">

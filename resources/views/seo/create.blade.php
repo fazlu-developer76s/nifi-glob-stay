@@ -26,6 +26,9 @@
                                 <i class="fa fa-user-shield fa-lg fa-fw text-dark text-opacity-50 me-1"></i>
                                 Add  Seo
                             </div>
+                            <a href="{{ route('seo') }}">
+                                <button class="btn btn-primary">List Seo</button>
+                            </a>
                         </div>
                         <form action="{{ route($form_action) }}" method="POST" enctype="multipart/form-data">
                             @csrf

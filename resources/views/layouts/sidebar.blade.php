@@ -104,6 +104,37 @@
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Our Gallary</div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('gallary') }}" class="menu-link ">
+                            <div class="menu-text"> Gallary List</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+              <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Manage Pages</div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('pages.edit', 1) }}" class="menu-link ">
+                            <div class="menu-text">About Us</div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('pages.edit', 2) }}" class="menu-link ">
+                            <div class="menu-text">Our Vision</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Site Setting</div>
                     <div class="menu-caret"></div>
                 </a>
