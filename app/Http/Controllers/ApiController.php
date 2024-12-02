@@ -2,14 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
+use App\Models\Blog;
+use App\Models\CategoriesModal;
+use App\Models\CmsModal;
 use App\Models\Kycprocess;
 use App\Models\Package;
 use App\Models\PetCategory;
 use App\Models\Service;
+use App\Models\Testimonal;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\Enquirys;
+use App\Models\Enquiry;
+use App\Models\Property;
+use Illuminate\Support\Facades\Mail;
 
 class ApiController extends Controller
 {
@@ -251,15 +260,15 @@ class ApiController extends Controller
             return $validate;
         }
         $check_data = $this->check_exist_data($request, null);
-            if ($check_data) {
-                $message = '';
-                if ($check_data->title == $request->pet_name) {
-                    $message .= "Pet Category ";
-                }
-                if ($message) {
-                   return response()->json(['status' => 'Error', 'message' => $message.'already exists.']);
-                }
+        if ($check_data) {
+            $message = '';
+            if ($check_data->title == $request->pet_name) {
+                $message .= "Pet Category ";
             }
+            if ($message) {
+                return response()->json(['status' => 'Error', 'message' => $message . 'already exists.']);
+            }
+        }
         $pet = new PetCategory();
         if ($request->pet_name) {
             $pet->title = $request->pet_name;
@@ -317,7 +326,7 @@ class ApiController extends Controller
                     $message .= "Pet Category ";
                 }
                 if ($message) {
-                 return response()->json(['status' => 'ERR', 'message' => "Pet Category Already Exists"]);
+                    return response()->json(['status' => 'ERR', 'message' => "Pet Category Already Exists"]);
                 }
             }
             $pet = PetCategory::findOrfail($id);
@@ -404,7 +413,7 @@ class ApiController extends Controller
         $booking_status_update = DB::table('tbl_pet_bookings')
             ->where('id', $request->id)
             ->update(['booking_status' => $request->booking_status]);
-            return response()->json(['status' => 'OK', 'message' => 'Booking status updated successfully']);
+        return response()->json(['status' => 'OK', 'message' => 'Booking status updated successfully']);
     }
 
     public function check_exist_data($request, $id)
@@ -420,11 +429,116 @@ class ApiController extends Controller
         return $check_pet_category;
     }
 
-    public function delete_pet(Request $request){
-        $update_pet_status = PetCategory::where('id',$request->id)->update(['status'=>3]);
-        if($update_pet_status){
+    public function delete_pet(Request $request)
+    {
+        $update_pet_status = PetCategory::where('id', $request->id)->update(['status' => 3]);
+        if ($update_pet_status) {
             return response()->json(['message' => 'Pet deleted successfully.'], 200);
         }
     }
 
+    public function fetch_company_info()
+    {
+        $company_info = CmsModal::where('status', 1)->first();
+        if ($company_info) {
+            return response()->json(['status' => 'OK', 'message' => 'Company Info fetched successfully', 'data' => $company_info], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Company Info not found']);
+        }
+    }
+
+    public function fetch_category()
+    {
+        $get_category = CategoriesModal::where('status', 1)->get();
+        if ($get_category) {
+            return response()->json(['status' => 'OK', 'message' => 'Category fetched successfully', 'data' => $get_category], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Company Info not found']);
+        }
+    }
+
+    public function fetch_property(Request $request)
+    {
+        if (!isset($request->type)) {
+            return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
+        }
+        $type = $request->type;
+        $get_category = CategoriesModal::where('status',1)
+            ->when($type != "all", function ($query) use ($type) {
+                $query->where('id', $type);
+            });
+        $get_cate = $get_category->get();
+        $new_property_get = array();
+        foreach($get_cate as $row){
+            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->get();
+            $get_fac = array();
+            foreach($get_property as $property){
+                $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+                $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+                $property->facilities = $get_faciflties;
+                $property->sub_img =  $get_sub_img;
+                $get_fac[] = $property;
+            }
+            $row->property = $get_property;
+            $new_property_get[] = $row;
+        }
+        return response()->json(['status' => 'Success', 'data' => $new_property_get], 200);
+    }
+
+
+    public function fetch_testimonial()
+    {
+        $get_testimonial = Testimonal::where('status', 1)->get();
+        if ($get_testimonial) {
+            return response()->json(['status' => 'OK', 'message' => 'Testimonial fetched successfully', 'data' => $get_testimonial], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Testimonial not found']);
+        }
+    }
+
+    public function fetch_blog()
+    {
+        $get_blog = Blog::where('status', 1)->get();
+        if ($get_blog) {
+            return response()->json(['status' => 'OK', 'message' => 'Blog fetched successfully', 'data' => $get_blog], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Blog not found']);
+        }
+    }
+
+    public function fetch_banner(Request $request)
+    {
+
+        $get_banner = Banner::where('status', 1)->where('type', $request->type)->get();
+        if ($get_banner) {
+            return response()->json(['status' => 'OK', 'message' => 'Banner fetched successfully', 'data' => $get_banner], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Banner not found']);
+        }
+    }
+
+    public function send_enquiry(Request $request)
+    {
+        $company_info = CmsModal::where('status', 1)->first();
+        if ($request->name == '') {
+            return response()->json(['status' => 'Error', 'message' => 'Name is required'], 400);
+        }
+
+        if ($request->email == '' || !filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['status' => 'Error', 'message' => 'A valid email is required'], 400);
+        }
+
+        if ($request->mobile_no == '' || !preg_match('/^\d{10}$/', $request->mobile_no)) {
+            return response()->json(['status' => 'Error', 'message' => 'Mobile number must be a 10-digit integer'], 400);
+        }
+
+        Mail::to($company_info->email)->send(new Enquirys($request));
+        $enc = new Enquiry();
+        $enc->name = $request->name;
+        $enc->email = $request->email;
+        $enc->mobile_no = $request->mobile_no;
+        $enc->message = $request->message;
+        $enc->save();
+        return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
+    }
 }

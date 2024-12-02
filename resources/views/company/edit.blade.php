@@ -127,6 +127,15 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Map Link</label>
+                                            <textarea type="url" name="map_link" class="form-control">{{ old('map_link', $company->map_link) }}</textarea>
+                                            @error('map_link')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     {{-- <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Member Status</label>

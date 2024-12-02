@@ -32,7 +32,13 @@ Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
-
+Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
+Route::get('fetch-category',[ApiController::class, 'fetch_category']);
+Route::get('fetch-property',[ApiController::class, 'fetch_property']);
+Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
+Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
+Route::get('fetch-banner',[ApiController::class, 'fetch_banner']);
+Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
 Route::middleware(['jwt'])->group(function () {
     Route::post('user/get-aadhar-otp',[ApiController::class, 'get_aadhar_otp']);
     Route::post('user/check-aadhar-otp',[ApiController::class, 'checkaadharotp']);

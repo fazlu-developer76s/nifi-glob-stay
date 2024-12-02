@@ -428,35 +428,7 @@
         }
     }
 </script>
-<script>
-    $(document).on('click', 'input[name="add_permission"]', function() {
-        let isChecked = $(this).prop("checked");
-        let packageId = $(this).data('package');
-        let serviceId = $(this).data('service');
-        if (isChecked) {
-            status = 1;
-        } else {
-            status = 2;
-        }
-        let csrfToken = $('meta[name="csrf-token"]').attr('content');
-        $.ajax({
-            url: "{{ route('addservice.package') }}",
-            type: 'PUT',
-            data: {
-                _token: csrfToken,
-                package_id: packageId,
-                service_id: serviceId,
-                status: status
-            },
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(xhr) {
-                console.error("An error occurred:", xhr.responseText);
-            }
-        });
-    });
-</script>
+
 </body>
 
 </html>

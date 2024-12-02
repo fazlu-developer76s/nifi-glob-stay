@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -29,6 +30,7 @@ class CompanyController extends Controller
             'twitter' => 'nullable|url',
             'instagram' => 'nullable|url',
             'linkedin' => 'nullable|url',
+            'map_link' => 'nullable|string',
         ]);
 
         // Find the company
@@ -52,6 +54,7 @@ class CompanyController extends Controller
         $company->twitter = $request->twitter;
         $company->instagram = $request->instagram;
         $company->linkedin = $request->linkedin;
+        $company->map_link = $request->map_link;
 
         // Save the updated company
         $company->save();
@@ -59,5 +62,11 @@ class CompanyController extends Controller
         // Redirect with success message
         return redirect()->route('company.edit', $company->id)
                          ->with('success', 'Company information updated successfully.');
+    }
+
+    public function enquiry(){
+        $title = 'Enquiry List'   ;
+        $alllead = DB::table('enquiries as a')->where('a.status',1)->orderBy('a.id','desc')->get();
+        return view('company.enquiry', compact('alllead','title'));
     }
 }

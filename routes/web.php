@@ -6,14 +6,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LeadController;
-use App\Http\Controllers\PetCategoryController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NotesController;
-use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\FacilitiesController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentModeController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\ReferController;
+use App\Http\Controllers\TestimonialController;
 
 Route::get('/', function () {
     return view('home');
@@ -68,12 +70,33 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/kyclead/view/{id}', [LeadController::class, 'kyclead_view'])->name('kyclead.view');
     Route::post('/kyc-process', [LeadController::class, 'kyc_process'])->name('kyc.process');
 
-    // Route
-    Route::get('/pet-category', [PetCategoryController::class, 'index'])->name('pet.category');
-    Route::match(['get', 'post'], '/route/create', [PetCategoryController::class, 'create'])->name('category.create');
-    Route::get('/pet-category/{id}', [PetCategoryController::class, 'edit'])->name('category.edit');
-    Route::post('/pet-category/update', [PetCategoryController::class, 'update'])->name('category.update');
-    Route::delete('/category/delete/{id}', [PetCategoryController::class, 'destroy'])->name('category.destroy');
+    // Category Route
+    Route::get('/category', [CategoryController::class, 'index'])->name('category');
+    Route::match(['get', 'post'], '/category/create', [CategoryController::class, 'create'])->name('category.create');
+    Route::get('/category/{id}', [CategoryController::class, 'edit'])->name('category.edit');
+    Route::post('/category/update', [CategoryController::class, 'update'])->name('category.update');
+    Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
+    // Testimonals Route
+    Route::get('/testimonial', [TestimonialController::class, 'index'])->name('testimonial');
+    Route::match(['get', 'post'], '/testimonial/create', [TestimonialController::class, 'create'])->name('testimonial.create');
+    Route::get('/testimonial/{id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
+    Route::post('/testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
+    Route::delete('/testimonial/delete/{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
+
+    // Banners Route
+    Route::get('/banner', [BannerController::class, 'index'])->name('banner');
+    Route::match(['get', 'post'], '/banner/create', [BannerController::class, 'create'])->name('banner.create');
+    Route::get('/banner/{id}', [BannerController::class, 'edit'])->name('banner.edit');
+    Route::post('/banner/update', [BannerController::class, 'update'])->name('banner.update');
+    Route::delete('/banner/delete/{id}', [BannerController::class, 'destroy'])->name('banner.destroy');
+
+    // Blog Route
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+    Route::match(['get', 'post'], '/blog/create', [BlogController::class, 'create'])->name('blog.create');
+    Route::get('/blog/{id}', [BlogController::class, 'edit'])->name('blog.edit');
+    Route::post('/blog/update', [BlogController::class, 'update'])->name('blog.update');
+    Route::delete('/blog/delete/{id}', [BlogController::class, 'destroy'])->name('blog.destroy');
 
 
 
@@ -84,12 +107,12 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/note/notes-disscuss', [NotesController::class, 'notes_disscuss'])->name('notes.disscuss');
 
     // Providers
-    Route::get('/service', [ServiceController::class, 'index'])->name('service');
-    Route::match(['get', 'post'], '/service/create', [ServiceController::class, 'create'])->name('service.create');
-    Route::get('/service/{id}', [ServiceController::class, 'edit'])->name('service.edit');
-    Route::post('/service/update', [ServiceController::class, 'update'])->name('service.update');
-    Route::delete('/service/delete/{id}', [ServiceController::class, 'destroy'])->name('service.destroy');
-    Route::put('/addservice-package', [ServiceController::class, 'addservice_package'])->name('addservice.package');
+    Route::get('/facilities', [FacilitiesController::class, 'index'])->name('facilities');
+    Route::match(['get', 'post'], '/facilities/create', [FacilitiesController::class, 'create'])->name('facilities.create');
+    Route::get('/facilities/{id}', [FacilitiesController::class, 'edit'])->name('facilities.edit');
+    Route::post('/facilities/update', [FacilitiesController::class, 'update'])->name('facilities.update');
+    Route::delete('/facilities/delete/{id}', [FacilitiesController::class, 'destroy'])->name('facilities.destroy');
+    Route::put('/addfacilities-package', [FacilitiesController::class, 'addfacilities_package'])->name('addfacilities.package');
 
     // Providers
     Route::get('/package', [PackageController::class, 'index'])->name('package');
@@ -98,10 +121,6 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/package/update', [PackageController::class, 'update'])->name('package.update');
     Route::delete('/package/delete/{id}', [PackageController::class, 'destroy'])->name('package.destroy');
 
-    // Refer And Earn Setup Route
-    Route::get('/refer', [ReferController::class, 'index'])->name('refer');
-    Route::match(['get', 'post'], '/refer/create', [ReferController::class, 'create'])->name('refer.create');
-    Route::match(['get', 'post'], '/earn-setup', [ReferController::class, 'refer_earn'])->name('refer.earn');
 
     // Payment Mode
     Route::get('/payment-mode', [PaymentModeController::class, 'index'])->name('payment_mode');
@@ -118,4 +137,5 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     // cms route
     Route::get('company/{id}/edit', [CompanyController::class, 'edit'])->name('company.edit');
     Route::post('company/{id}', [CompanyController::class, 'update'])->name('company.update');
+    Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
 });

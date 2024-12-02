@@ -25,145 +25,79 @@
                             <div class="menu-text">Members</div>
                         </a>
                     </div>
-                    <div class="menu-item">
+                    {{-- <div class="menu-item">
                         <a href="{{ route('member.kyc') }}" class="menu-link">
                             <div class="menu-text">KYC Member</div>
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Pet Management</div>
+                    <div class="menu-text">Category Management</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
                     <div class="menu-item">
-                        <a href="{{ route('pet.category') }}" class="menu-link ">
-                            <div class="menu-text">Pet Category</div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
-                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Package Management</div>
-                    <div class="menu-caret"></div>
-                </a>
-                <div class="menu-submenu">
-                    <div class="menu-item">
-                        <a href="{{ route('service') }}" class="menu-link ">
-                            <div class="menu-text">Manage Service </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('package') }}" class="menu-link ">
-                            <div class="menu-text">Manage Package </div>
+                        <a href="{{ route('category') }}" class="menu-link ">
+                            <div class="menu-text"> Category List</div>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Refer & Earn Setup</div>
+                    <div class="menu-text">Property Management</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
                     <div class="menu-item">
-                        <a href="{{ route('refer') }}" class="menu-link ">
-                            <div class="menu-text">Manage Coupon </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('refer.earn') }}" class="menu-link ">
-                            <div class="menu-text">Refer And Earn </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link d-none">
-                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Lead Management</div>
-                    <div class="menu-caret"></div>
-                </a>
-                <div class="menu-submenu">
-                    <div class="menu-item">
-                        <a href="{{ route('lead.create') }}" class="menu-link ">
-                            <div class="menu-text">Create Lead</div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('lead') }}" class="menu-link ">
-                            <div class="menu-text">Lead Manager</div>
+                        <a href="{{ route('facilities') }}" class="menu-link ">
+                            <div class="menu-text">Manage Facilities </div>
                         </a>
                     </div>
                     {{-- <div class="menu-item">
-                        <a href="{{ route('lead.admin') }}" class="menu-link ">
-                            <div class="menu-text">Lead Manager Admin</div>
+                        <a href="{{ route('package') }}" class="menu-link ">
+                            <div class="menu-text">Manage Package </div>
                         </a>
                     </div> --}}
-                    <div class="menu-item">
-                        <a href="{{ route('lead.qualified') }}" class="menu-link ">
-                            <div class="menu-text">Qualified Leads</div>
-                        </a>
-                    </div>
                 </div>
             </div>
-
-            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link d-none">
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Bank Details</div>
+                    <div class="menu-text">Testimonials</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
                     <div class="menu-item">
-                        <a href="{{ route('payment_mode') }}" class="menu-link ">
-                            <div class="menu-text">Manage Payment Mode </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Bank Detail </div>
+                        <a href="{{ route('testimonial') }}" class="menu-link ">
+                            <div class="menu-text"> Testimonial List</div>
                         </a>
                     </div>
                 </div>
             </div>
-
-            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link d-none">
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
-                    <div class="menu-text">Reports</div>
+                    <div class="menu-text">Blogs</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
                     <div class="menu-item">
-                        <a href="{{ route('payment_mode') }}" class="menu-link ">
-                            <div class="menu-text">Today Collection </div>
+                        <a href="{{ route('blog') }}" class="menu-link ">
+                            <div class="menu-text"> Blog List</div>
                         </a>
                     </div>
+                </div>
+            </div>
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Banners</div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
                     <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Today Disbursment </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Emi </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Loans </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Overdue Emi </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('bank') }}" class="menu-link ">
-                            <div class="menu-text">Day Book </div>
+                        <a href="{{ route('banner') }}" class="menu-link ">
+                            <div class="menu-text"> Banner List</div>
                         </a>
                     </div>
                 </div>
@@ -177,6 +111,11 @@
                     <div class="menu-item">
                         <a href="{{ route('company.edit', 1) }}" class="menu-link ">
                             <div class="menu-text">Manage Site Setting</div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('enquiry') }}" class="menu-link">
+                            <div class="menu-text">Enquiry List</div>
                         </a>
                     </div>
                 </div>
