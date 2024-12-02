@@ -7,7 +7,7 @@
     </div>
     <div class="navbar-nav">
         <!-- Dropdown Button -->
-        <div class="dropdown" onmouseover="showDropdown();">
+        {{-- <div class="dropdown" onmouseover="showDropdown();">
             <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa-solid fa-plus"></i> Action <i class="fa fa-arrow-down" aria-hidden="true"></i>
             </a>
@@ -20,7 +20,7 @@
                     @endif
                 @endforeach
             </ul>
-        </div>
+        </div> --}}
 
 
         {{-- <a href="{{ route('lead.create') }}"><button class="btn btn-primary">Add Lead</button></a> --}}

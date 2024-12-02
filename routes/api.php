@@ -38,6 +38,7 @@ Route::get('fetch-property',[ApiController::class, 'fetch_property']);
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
 Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
 Route::get('fetch-banner',[ApiController::class, 'fetch_banner']);
+Route::get('fetch-seo',[ApiController::class, 'fetch_seo']);
 Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
 Route::middleware(['jwt'])->group(function () {
     Route::post('user/get-aadhar-otp',[ApiController::class, 'get_aadhar_otp']);

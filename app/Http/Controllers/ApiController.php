@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Mail\Enquirys;
 use App\Models\Enquiry;
 use App\Models\Property;
+use App\Models\Seo;
 use Illuminate\Support\Facades\Mail;
 
 class ApiController extends Controller
@@ -514,6 +515,15 @@ class ApiController extends Controller
             return response()->json(['status' => 'OK', 'message' => 'Banner fetched successfully', 'data' => $get_banner], 200);
         } else {
             return response()->json(['status' => 'Error', 'message' => 'Banner not found']);
+        }
+    }
+
+    public function fetch_seo(Request $request){
+        $get_seo = Seo::where('status', 1)->where('url', $request->url)->first();
+        if ($get_seo) {
+            return response()->json(['status' => 'OK', 'message' => 'SEO fetched successfully', 'data' => $get_seo], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'SEO not found']);
         }
     }
 

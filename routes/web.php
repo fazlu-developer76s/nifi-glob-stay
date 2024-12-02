@@ -15,6 +15,7 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
 
 Route::get('/', function () {
@@ -98,7 +99,12 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/blog/update', [BlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/delete/{id}', [BlogController::class, 'destroy'])->name('blog.destroy');
 
-
+    // Blog Route
+    Route::get('/seo', [SeoController::class, 'index'])->name('seo');
+    Route::match(['get', 'post'], '/seo/create', [SeoController::class, 'create'])->name('seo.create');
+    Route::get('/seo/{id}', [SeoController::class, 'edit'])->name('seo.edit');
+    Route::post('/seo/update', [SeoController::class, 'update'])->name('seo.update');
+    Route::delete('/seo/delete/{id}', [SeoController::class, 'destroy'])->name('seo.destroy');
 
     // Notes Route
     Route::post('/note/save-notes', [NotesController::class, 'create'])->name('notes.create');

@@ -55,6 +55,9 @@ class CompanyController extends Controller
         $company->instagram = $request->instagram;
         $company->linkedin = $request->linkedin;
         $company->map_link = $request->map_link;
+        $company->header_script = $request->header_script;
+        $company->footer_script = $request->footer_script;
+        $company->map_link = $request->map_link;
 
         // Save the updated company
         $company->save();

@@ -136,6 +136,24 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Header Script</label>
+                                            <textarea type="text" name="header_script" class="form-control">{{ old('header_script', $company->header_script) }}</textarea>
+                                            @error('header_script')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Footer Script</label>
+                                            <textarea type="text" name="footer_script" class="form-control">{{ old('footer_script', $company->footer_script) }}</textarea>
+                                            @error('footer_script')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     {{-- <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Member Status</label>
