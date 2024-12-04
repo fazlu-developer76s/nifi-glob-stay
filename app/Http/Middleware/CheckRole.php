@@ -18,31 +18,32 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $get_user_role  = Auth::user()->role_id;
-        $route = request()->segment(1);  // Output: "posts"
-        if($get_user_role == 1){
-            return $next($request);
-        }
+        return $next($request);
+        // $get_user_role  = Auth::user()->role_id;
+        // $route = request()->segment(1);  // Output: "posts"
+        // if($get_user_role == 1){
+        //     return $next($request);
+        // }
 
-        if($get_user_role == 5 && $route == 'lead' ){
-            return $next($request);
-        }
-        if($get_user_role == 5 && $route == 'note' ){
-            return $next($request);
-        }
-        if($get_user_role == 5 && $route == 'change-status' ){
-            return $next($request);
-        }
-        if($get_user_role == 5 && $route == 'dashboard' ){
-            return $next($request);
-        }
+        // if($get_user_role == 5 && $route == 'lead' ){
+        //     return $next($request);
+        // }
+        // if($get_user_role == 5 && $route == 'note' ){
+        //     return $next($request);
+        // }
+        // if($get_user_role == 5 && $route == 'change-status' ){
+        //     return $next($request);
+        // }
+        // if($get_user_role == 5 && $route == 'dashboard' ){
+        //     return $next($request);
+        // }
 
-        if($get_user_role == 2 && $route == 'dashboard' ){
-            return $next($request);
-        }
-        if($get_user_role == 2 && $route == 'note' ){
-            return $next($request);
-        }
-        return redirect(route('dashboard'));
+        // if($get_user_role == 2 && $route == 'dashboard' ){
+        //     return $next($request);
+        // }
+        // if($get_user_role == 2 && $route == 'note' ){
+        //     return $next($request);
+        // }
+        // return redirect(route('dashboard'));
     }
 }

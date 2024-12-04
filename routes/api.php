@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ApiPropertyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -52,6 +53,25 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
     Route::post('user/post-review', [ApiController::class, 'post_review']);
     Route::get('user/fetch-review', [ApiController::class, 'fetch_review']);
+    // Get all properties
+    Route::get('user/properties', [ApiPropertyController::class, 'index']);
+    // Create a new property (GET and POST handled separately in API context)
+    Route::match(['get', 'post'],'user/properties/create', [ApiPropertyController::class, 'create']);
+    // Edit a property (GET for details)
+    Route::get('user/properties/{id}/edit', [ApiPropertyController::class, 'edit']);
+    // Update a property
+    Route::put('user/properties/{id}', [ApiPropertyController::class, 'update']);
+    // Delete a property
+    Route::delete('user/properties/{id}', [ApiPropertyController::class, 'destroy']);
+    // Check if data exists
+    Route::post('user/properties/check', [ApiPropertyController::class, 'check_exist_data']);
+    // Delete an image
+    Route::post('user/properties/image/delete', [ApiPropertyController::class, 'delete_image']);
+
+
+
+
+
 
     Route::post('user/get-aadhar-otp',[ApiController::class, 'get_aadhar_otp']);
     Route::post('user/check-aadhar-otp',[ApiController::class, 'checkaadharotp']);

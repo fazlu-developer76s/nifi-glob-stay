@@ -20,6 +20,8 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\PermissionCategory;
+use App\Http\Controllers\PermissionsubCategory;
 
 Route::get('/', function () {
     return view('home');
@@ -38,6 +40,18 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/store-roles', [RoleController::class, 'store_roles'])->name('store.roles');
     Route::get('/edit-roles/{id}', [RoleController::class, 'edit_roles'])->name('edit.roles');
     Route::delete('/destroy-roles/{id}', [RoleController::class, 'destroy_roles'])->name('destroy.roles');
+
+    // Permission Category Routes
+    Route::get('/permission_category', [PermissionCategory::class, 'index'])->name('permission.category');
+    Route::post('/store-permission_category', [PermissionCategory::class, 'store_permission_category'])->name('store.permission_category');
+    Route::get('/edit-permission_category/{id}', [PermissionCategory::class, 'edit_permission_category'])->name('edit.permission_category');
+    Route::delete('/destroy-permission_category/{id}', [PermissionCategory::class, 'destroy_permission_category'])->name('destroy.permission_category');
+
+    // Permission Sub Category Routes
+    Route::get('/permission_subcategory', [PermissionsubCategory::class, 'index'])->name('permission.subcategory');
+    Route::post('/store-permission_subcategory', [PermissionsubCategory::class, 'store_permission_subcategory'])->name('store.permission_subcategory');
+    Route::get('/edit-permission_subcategory/{id}', [PermissionsubCategory::class, 'edit_permission_subcategory'])->name('edit.permission_subcategory');
+    Route::delete('/destroy-permission_subcategory/{id}', [PermissionsubCategory::class, 'destroy_permission_subcategory'])->name('destroy.permission_subcategory');
 
     // Member Routes
     Route::get('/member', [MemberController::class, 'index'])->name('member');
@@ -60,6 +74,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Status Active Inactive Route
     Route::post('/change-status', [RoleController::class, 'change_status'])->name('change.status');
+    Route::post('/change-status-property', [RoleController::class, 'change_status_property'])->name('change.status.property');
 
     // Lead Routes
     Route::get('/lead', [LeadController::class, 'index'])->name('lead');

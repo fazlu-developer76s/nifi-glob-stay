@@ -82,6 +82,38 @@
     }
 </script>
 <script>
+    function ChangeStatusApproved(table_name, id) {
+        if(confirm('Are you sure you want to approve')){
+
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            if ($("#flexSwitchCheckDefaultproperty" + id + "").is(':checked')) {
+                var status = 1;
+            } else {
+                var status = 2;
+            }
+
+            $.ajax({
+                url: "{{ route('change.status.property') }}",
+                type: 'post',
+                data: {
+                    _token: csrfToken,
+                    table_name: table_name,
+                    id: id,
+                    status: status
+                },
+                success: function(response) {
+                    console.log(response);
+                }
+            });
+            return false;
+        }else{
+            if($("#flexSwitchCheckDefaultproperty" + id + "").is(':checked')){
+                $("#flexSwitchCheckDefaultproperty" + id + "").prop('checked', false);
+            }
+        }
+    }
+</script>
+<script>
     fetchNotes();
 
     function SaveNotes() {

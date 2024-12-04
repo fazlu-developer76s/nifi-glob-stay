@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card border-0 mb-4">
                         <div class="card-header h6 mb-0 bg-none p-3 d-flex justify-content-between align-items-center">
                             <div>
@@ -29,7 +29,7 @@
                             <div class="card-body">
                                 <div class="row mb-3">
                                     <div class="col-md-12">
-                                        <h4> Title:  {{ $getrole->title }}</h4>
+                                        <h4> Title: {{ $getrole->title }}</h4>
                                         <input type="hidden" name="role_id" value="{{ $getrole->id }}">
                                     </div>
                                     <div class="col-md-12">
@@ -38,19 +38,25 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    @if($getallpermission)
-                                    @foreach ( $getallpermission as $permission)
+                                    @if ($getallpermission)
+                                        @foreach ($getallpermission as $category)
+                                            <div class="col-md-3">
+                                                <h4>{{ $category->category_name }}</h4>
 
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <input type="checkbox" class="mt-2 sub_check" id="check{{ $permission->id }}" value="{{ (!empty($permission->permission_status->id)) ? $permission->permission_status->id : $permission->id ; }}" name="permission[]" {{ (!empty($permission->permission_status->permission_status) && $permission->permission_status->permission_status == 1) ? 'checked' : ' ' ; }}>
-                                            <input type="hidden" value="{{ (!empty($permission->id)) ? $permission->id : ' ' ; }}" name="hidden_id[]">
-                                            <label class="form-label" for="check{{ $permission->id }}">{{ $permission->title }}</label> <br>
+                                            @foreach ($category->permission as $permission)
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <input type="checkbox" class="mt-2 sub_check" id="check{{ $permission->id }}"
+                                                               value="{{ $permission->id }}" name="permission[]"
+                                                               {{ !empty($permission->permission_status) && $permission->permission_status->permission_status == 1 ? 'checked' : '' }}>
+                                                        <input type="hidden" value="{{ $permission->id }}" name="hidden_id[]">
+                                                        <label class="form-label" for="check{{ $permission->id }}">{{ $permission->title }}</label> <br>
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                    </div>
-                                    @endforeach
+                                        @endforeach
                                     @endif
-                                </div>
                             </div>
                             <div class="card-footer bg-none d-flex p-3">
                                 <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i>Submit</button>

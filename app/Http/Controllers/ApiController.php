@@ -474,7 +474,7 @@ class ApiController extends Controller
         $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
         foreach($get_cate as $row){
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->get();
+            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
             $get_fac = array();
             foreach($get_property as $property){
                 $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
@@ -500,9 +500,13 @@ class ApiController extends Controller
         }
     }
 
-    public function fetch_blog()
+    public function fetch_blog(Request $request)
     {
-        $get_blog = Blog::where('status', 1)->get();
+        $get_blog = Blog::where('status', 1);
+        if ($request->id) {
+            $get_blog->where('id', $request->id);
+        }
+        $get_blog = $get_blog->get();
         if ($get_blog) {
             return response()->json(['status' => 'OK', 'message' => 'Blog fetched successfully', 'data' => $get_blog], 200);
         } else {

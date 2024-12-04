@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-class PropertyController extends Controller
+class ApiPropertyController extends Controller
 {
     public function index()
     {
-        $title = "Property List";
         $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->get();
         $properties = array();
         foreach ($get_property as $property) {
@@ -25,12 +24,11 @@ class PropertyController extends Controller
             $properties[] = $property;
         }
         $allproperty = $properties;
-        return view('property.index', compact('title', 'allproperty'));
+        return response()->json(['status' => 'OK', 'data' => $properties],200);
     }
 
     public function create(Request $request)
     {
-        // dd($request);
         if ($request->method() == 'POST') {
             $validatedData = $request->validate([
                 'category_id' => 'required',
@@ -54,7 +52,7 @@ class PropertyController extends Controller
             //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
             // }
             $hotel = new Property();
-            $hotel->user_id = Auth::user()->id;
+            $hotel->user_id = $request->user->id;
             $hotel->category_id = $request->category_id;
             $hotel->hotel_name = $request->hotel_name;
             $hotel->hotel_rate = $request->hotel_rate;
@@ -105,12 +103,13 @@ class PropertyController extends Controller
                 }
                 $n++;
             }
-            return redirect()->route('property')->with('success', 'Property Added Successfully');
+            return response()->json(['status'=>'OK','message'=>'Property Added Successfully'],200);
         }
-        $title = "Create Property";
+
         $get_category = CategoriesModal::where('status', 1)->get();
         $get_facilities = Facilities::where('status', 1)->get();
-        return view('property.create', compact('title', 'get_category', 'get_facilities'));
+        return response()->json(['status'=>'OK','category'=>$get_category,'facilities'=>$get_facilities]);
+
     }
 
 

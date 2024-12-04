@@ -41,6 +41,7 @@
 
                                         <th class="text-nowrap">Created Date</th>
                                         <th class="text-nowrap">Status</th>
+                                        <th class="text-nowrap">Approved</th>
                                         <th class="text-nowrap">Action</th>
                                     </tr>
                                 </thead>
@@ -57,6 +58,11 @@
                                         <td>
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault{{ $property->id }}" {{ ($property->status == 1) ? 'checked' : '' }} onchange="ChangeStatus('properties',{{ $property->id }});" >
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefaultproperty{{ $property->id }}" {{ ($property->is_property_verified == 1) ? 'checked' : '' }} onchange="ChangeStatusApproved('properties',{{ $property->id }});" >
                                             </div>
                                         </td>
                                         <td>

@@ -17,7 +17,7 @@ class MemberController extends Controller
     {
 
         $title = "Member List";
-        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('users.role_id', 2)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
         return view('member.index', compact('title', 'allmember'));
     }
 
@@ -120,7 +120,7 @@ class MemberController extends Controller
         }
 
         $title = "Add Member";
-        $get_role = Roles::where('status', 1)->where('id', 2)->get();
+        $get_role = Roles::where('status', 1)->where('id','!=',1)->get();
         return view('member.create', compact('title', 'get_role'));
     }
 
