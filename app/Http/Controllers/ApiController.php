@@ -20,6 +20,7 @@ use App\Models\Enquiry;
 use App\Models\Gallary;
 use App\Models\Page;
 use App\Models\Property;
+use App\Models\PropertyReview;
 use App\Models\Seo;
 use Illuminate\Support\Facades\Mail;
 
@@ -572,4 +573,24 @@ class ApiController extends Controller
         $enc->save();
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
     }
+
+    public function post_review(Request $request){
+        $user_id = $request->user->id;
+        $review = new PropertyReview();
+        $review->user_id = $user_id;
+        $review->review = $request->review;
+        $review->rating = $request->rating;
+        $review->save();
+        return response()->json(['status' => 'OK','message' => 'Review posted successfully'], 200);
+    }
+
+    public function fetch_review(){
+        $reviews = DB::table('property_reviews as a')->join('users as b','a.user_id','=','b.id')->select('a.*','b.name as user_name','b.image as user_image')->where('a.status',1)->where('b.status',1)->get();
+        if($reviews){
+            return response()->json(['status' => 'OK', 'data' => $reviews], 200);
+        }else{
+            return response()->json(['status' => 'Error','message' => 'No reviews found'], 404);
+        }
+    }
+
 }

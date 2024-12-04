@@ -90,7 +90,7 @@
                                     <tr class="odd gradeX">
                                         <td width="1%" class="fw-bold text-dark">{{ $loop->iteration }}</td>
                                         <td>
-                                            <img src="{{ Storage::url($gallary->image) }}" alt="" class="img-fluid" style="max-width: 80px; height: auto;" />
+                                            <img src="{{ Storage::url($gallary->image) }}" alt="" class="img-fluid" style="max-width: 35px; height: auto;" />
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($gallary->created_at)->format('d F Y h:i A') }}</td>
                                         <td>

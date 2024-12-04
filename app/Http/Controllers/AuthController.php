@@ -16,44 +16,80 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'mobile_no' => [
-                    'required',
-                    'regex:/^[6-9][0-9]{9}$/',
-                ],
-                'email' => [
-                    'required',
-                    'email',
-                ],
-            ]);
-            $user = User::where('email', $request->email)
-                ->orWhere('mobile_no', $request->mobile_no)
-                ->first();
 
-            if ($user) {
-                return response()->json([
-                    'status' => "Error",
-                    'message' => "Email or Mobile Number already exists",
-                ], 409);
-            }
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->mobile_no = $request->mobile_no;
-            $user->status = 1;
-            $user->role_id = $request->role_id;
-            $user->created_at = now();
-            $user->updated_at = now();
-            $user->save();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'mobile_no' => [
+                'required',
+                'regex:/^[6-9][0-9]{9}$/',
+            ],
+            'email' => [
+                'required',
+                'email',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+            ],
+        ]);
+        $user = User::where('email', $request->email)
+            ->orWhere('mobile_no', $request->mobile_no)
+            ->first();
+        if ($user) {
             return response()->json([
-                'status' => "OK",
-                'message' => "User Created Successfully",
-                'data' => $user,
-            ], 201);
+                'status' => "Error",
+                'message' => "Email or Mobile Number already exists",
+            ], 409);
+        }
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->mobile_no = $request->mobile_no;
+        $user->password = Hash::make($request->password);
+        $user->status = 1;
+        $user->role_id = 2;
+        $user->created_at = now();
+        $user->updated_at = now();
+        $user->save();
+        return response()->json([
+            'status' => "OK",
+            'message' => "User Created Successfully",
+            'data' => $user,
+        ], 201);
     }
 
     public function login(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => [
+                'required',
+                'email',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+            ],
+        ]);
+        $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('b.id',2)->where('a.email', $request->email)->first();
+        if ($user && Hash::check($request->password, $user->password)) {
+            $token = $this->createJwtToken($user, $user->role_type);
+            if ($token) {
+                $this->ExpireToken($user->id);
+                $this->StoreToken($user->id, $token);
+            }
+            return response()->json([
+                'status' => "OK",
+                'token' => $token,
+                'user' => $user,
+                'role' => $user->role_type
+            ], 200);
+        } else {
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+    }
+    public function login_bkp(Request $request)
     {
         $validated = $request->validate([
             'mobile_no' => [
@@ -307,7 +343,6 @@ class AuthController extends Controller
 
     public function user_logout(Request $request)
     {
-
         $user_id = $request->user->id;
         $this->ExpireToken($user_id);
         return response()->json([
@@ -384,22 +419,23 @@ class AuthController extends Controller
         }
     }
 
-    public function referal(Request $request){
+    public function referal(Request $request)
+    {
         $user = $request->user;
-        if($user->role_id == 5){
+        if ($user->role_id == 5) {
             $user_type = 2;
         }
-        if($user->role_id == 3){
+        if ($user->role_id == 3) {
             $user_type = 1;
         }
-        if($user->role_id != 5 && $user->role_id !=3){
+        if ($user->role_id != 5 && $user->role_id != 3) {
             return response()->json([
-               'status' => 'error',
-               'message' => 'You Dont have permission to refer user'
+                'status' => 'error',
+                'message' => 'You Dont have permission to refer user'
             ], 401);
         }
         $referral_code = strtoupper(uniqid($user->id));
-        DB::table('referral_code')->insert(['user_id'=>$user->id,'code'=>$referral_code,'user_type'=>$user_type]);
+        DB::table('referral_code')->insert(['user_id' => $user->id, 'code' => $referral_code, 'user_type' => $user_type]);
         $referralUrl = route('referaluser') . '?referral_code=' . $referral_code;
         return response()->json([
             'status' => 'success',
@@ -407,7 +443,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register_referral_user(Request $request){
+    public function register_referral_user(Request $request)
+    {
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -450,5 +487,4 @@ class AuthController extends Controller
             'data' => $user,
         ], 201);
     }
-
 }

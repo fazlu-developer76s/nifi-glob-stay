@@ -17,6 +17,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
 
@@ -114,6 +115,14 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/seo/{id}', [SeoController::class, 'edit'])->name('seo.edit');
     Route::post('/seo/update', [SeoController::class, 'update'])->name('seo.update');
     Route::delete('/seo/delete/{id}', [SeoController::class, 'destroy'])->name('seo.destroy');
+
+    // Property Route
+    Route::get('/property', [PropertyController::class, 'index'])->name('property');
+    Route::match(['get', 'post'], '/property/create', [PropertyController::class, 'create'])->name('property.create');
+    Route::get('/property/{id}', [PropertyController::class, 'edit'])->name('property.edit');
+    Route::post('/property/update', [PropertyController::class, 'update'])->name('property.update');
+    Route::delete('/property/delete/{id}', [PropertyController::class, 'destroy'])->name('property.destroy');
+    Route::post('/property/delete-sub-image', [PropertyController::class, 'delete_image'])->name('delete.image');
 
     // Notes Route
     Route::post('/note/save-notes', [NotesController::class, 'create'])->name('notes.create');

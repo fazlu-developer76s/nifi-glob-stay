@@ -19,7 +19,6 @@ class JwtMiddleware
         if (!$token) {
             return response()->json(['error' => 'Token not provided'], 401);
         }
-
         try {
             $decoded = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
             if ($decoded->exp < time()) {

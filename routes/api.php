@@ -32,6 +32,10 @@ Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
+
+// glob stay public route
+Route::post('user/signup', [AuthController::class, 'signup']);
+Route::post('user/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
@@ -43,11 +47,16 @@ Route::get('fetch-gallary',[ApiController::class, 'fetch_gallary']);
 Route::get('fetch-pages',[ApiController::class, 'fetch_pages']);
 Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
 Route::middleware(['jwt'])->group(function () {
+
+    // glob stay validate route
+    Route::post('user/user-logout', [AuthController::class, 'user_logout']);
+    Route::post('user/post-review', [ApiController::class, 'post_review']);
+    Route::get('user/fetch-review', [ApiController::class, 'fetch_review']);
+
     Route::post('user/get-aadhar-otp',[ApiController::class, 'get_aadhar_otp']);
     Route::post('user/check-aadhar-otp',[ApiController::class, 'checkaadharotp']);
     Route::post('user/update-kyc',[ApiController::class, 'update_kyc']);
     Route::post('user/referal', [AuthController::class, 'referal']);
-    Route::post('user/user-logout', [AuthController::class, 'user_logout']);
     Route::post('user/get-services', [ApiController::class, 'get_services']);
     Route::post('user/get-packages', [ApiController::class, 'get_packages']);
     Route::post('user/create-pet', [ApiController::class, 'create_pet']);

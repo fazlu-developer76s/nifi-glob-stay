@@ -56,6 +56,11 @@
                             <div class="menu-text">Manage Facilities </div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('property') }}" class="menu-link ">
+                            <div class="menu-text">Add Property </div>
+                        </a>
+                    </div>
                     {{-- <div class="menu-item">
                         <a href="{{ route('package') }}" class="menu-link ">
                             <div class="menu-text">Manage Package </div>

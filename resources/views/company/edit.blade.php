@@ -45,7 +45,7 @@
                                             <label class="form-label">Logo</label>
                                             <input type="file" name="logo" class="form-control">
                                             @if($company->logo)
-                                            <img src="{{ asset('storage/'.$company->logo) }}" style="max-width: 100%; height: auto;">
+                                            <img src="{{ asset('storage/'.$company->logo) }}" style="max-width: 20%; height: auto; margin-top:10px;">
                                             @endif
                                             @error('logo')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -57,7 +57,7 @@
                                             <label class="form-label">Favicon</label>
                                             <input type="file" name="favicon" class="form-control">
                                             @if($company->favicon)
-                                            <img src="{{ asset('storage/'.$company->favicon) }}" style="max-width: 100%; height: auto;">
+                                            <img src="{{ asset('storage/'.$company->favicon) }}" style="max-width: 20%; height: auto; margin-top:10px;">
                                             @endif
                                             @error('favicon')
                                             <div class="invalid-feedback">{{ $message }}</div>

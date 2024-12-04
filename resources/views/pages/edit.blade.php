@@ -46,7 +46,7 @@
                                             <input type="file" name="image"
                                                    class="form-control @error('image') is-invalid @enderror">
                                             @if($pages->image)
-                                            <img src="{{ asset('storage/'.$pages->image) }}" style="max-width: 100%; height: auto;">
+                                            <img src="{{ asset('storage/'.$pages->image) }}" style="max-width: 20%; height: auto; margin-top:10px;">
                                             @endif
                                             @error('image')
                                             <div class="invalid-feedback">{{ $message }}</div>

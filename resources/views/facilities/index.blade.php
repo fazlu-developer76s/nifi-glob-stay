@@ -27,7 +27,7 @@
                                 Add Facilities
                             </div>
                         </div>
-                        <form action="{{ route($form_action) }}" method="POST">
+                        <form action="{{ route($form_action) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="{{ (isset($get_facilities)) ? $get_facilities->id : '' ; }}" name="hidden_id">
                             <div class="card-body">
@@ -41,6 +41,19 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Image</label>
+                                            <input class="form-control @error('image') is-invalid @enderror" type="file" name="image" />
+                                            @error('image')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        @if(isset($get_facilities->image))
+                                        <img src="{{ Storage::url($get_facilities->image) }}" alt="" class="img-fluid" style="max-width: 80px; height: auto;" />
+                                        <input type="hidden" name="hidden_image" value="{{ $get_facilities->image }}">
+                                        @endif
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -75,6 +88,7 @@
                                 <thead>
                                     <tr>
                                         <th width="1%"></th>
+                                        <th class="text-nowrap">Image</th>
                                         <th class="text-nowrap">Title</th>
                                         <th class="text-nowrap">Created Date</th>
                                         <th class="text-nowrap">Status</th>
@@ -86,6 +100,9 @@
                                     @foreach ($allfacilities as $facilities)
                                     <tr class="odd gradeX">
                                         <td width="1%" class="fw-bold text-dark">{{ $loop->iteration }}</td>
+                                        <td>
+                                            <img src="{{ Storage::url($facilities->image) }}" alt="" class="img-fluid" style="max-width: 30px; height: auto;" />
+                                        </td>
                                         <td>{{ $facilities->title }}</td>
                                         <td>{{ \Carbon\Carbon::parse($facilities->created_at)->format('d F Y h:i A') }}</td>
                                         <td>

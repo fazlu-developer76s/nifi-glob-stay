@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Facilities;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class FacilitiesController extends Controller
 {
@@ -17,8 +18,10 @@ class FacilitiesController extends Controller
 
     public function create(Request $request)
     {
+
         if ($request->method() == 'POST') {
             $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'title' => 'required',
                 'status' => 'required',
             ]);
@@ -37,6 +40,11 @@ class FacilitiesController extends Controller
             $facilities = new Facilities();
             $facilities->title = $request->title;
             $facilities->status = $request->status;
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filePath = $file->store('facilities', 'public');
+                $facilities->image = $filePath;
+            }
             $facilities->save();
             return redirect()->route('facilities')->with('success', 'Facilities Added Successfully');
         }
@@ -54,7 +62,7 @@ class FacilitiesController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'title' => 'required',
             'status' => 'required',
         ]);
@@ -72,6 +80,14 @@ class FacilitiesController extends Controller
         $facilities = Facilities::findOrFail($request->hidden_id);
         $facilities->title = $request->title;
         $facilities->status = $request->status;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filePath = $file->store('facilities', 'public');
+            $facilities->image = $filePath;
+            if ($request->filled('hidden_image') && Storage::disk('public')->exists($request->hidden_image)) {
+                Storage::disk('public')->delete($request->hidden_image);
+            }
+        }
         $facilities->updated_at = date('Y-m-d H:i:s');
         $facilities->save();
         return redirect()->route('facilities')->with('success', 'Facilities Updated Successfully');

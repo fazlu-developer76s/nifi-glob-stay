@@ -137,7 +137,7 @@
                                     <tr class="odd gradeX">
                                         <td width="1%" class="fw-bold text-dark">{{ $loop->iteration }}</td>
                                         <td>
-                                            <img src="{{ Storage::url($testimonial->image) }}" alt="" class="img-fluid" style="max-width: 40px; height: auto;" />
+                                            <img src="{{ Storage::url($testimonial->image) }}" alt="" class="img-fluid" style="max-width: 30px; height: auto;" />
                                         </td>
                                         <td>{{ $testimonial->name }}</td>
                                         <td>{{ $testimonial->title }}</td>

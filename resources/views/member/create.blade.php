@@ -53,15 +53,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Employee Type</label>
-                                            <input class="form-control @error('employe_type') is-invalid @enderror" type="text" name="employe_type" placeholder="Enter employe_type" value="@if(empty($get_member)) {{ old('employe_type') }} @else {{ (isset($get_member)) ? $get_member->employe_type : '' ; }} @endif" />
-                                            @error('employe_type')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Name</label>
@@ -89,15 +81,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Aadhar No.</label>
-                                            <input class="form-control @error('aadhar_no') is-invalid @enderror" type="text" name="aadhar_no" placeholder="Enter Aadhar No." value="@if(empty($get_member)) {{ old('aadhar_no') }} @else {{ (isset($get_member)) ? $get_member->aadhar_no : '' ; }} @endif" />
-                                            @error('aadhar_no')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Member Status</label>

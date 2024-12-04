@@ -88,10 +88,6 @@ class MemberController extends Controller
                     'required',
                     'regex:/^[6-9]\d{9}$/'
                 ],
-                'aadhar_no' => [
-                    'required',
-                    'regex:/^\d{12}$/'
-                ],
                 'status' => 'required',
                 'password' => [
                     'required',
@@ -107,9 +103,6 @@ class MemberController extends Controller
                 if ($check_data->mobile_no == $request->mobile_no) {
                     $message = "Mobile No.";
                 }
-                if ($check_data->aadhar_no == $request->aadhar_no) {
-                    $message = "Aadhar No.";
-                }
                 if ($check_data) {
                     return redirect()->route('member.create')->with('error', '' . $message . ' Already Exists');
                 }
@@ -119,8 +112,6 @@ class MemberController extends Controller
             $member->role_id = $request->role_id;
             $member->email = $request->email;
             $member->mobile_no = $request->mobile_no;
-            $member->employe_type = $request->employe_type;
-            $member->aadhar_no = $request->aadhar_no;
             $member->status = $request->status;
             $member->password = Hash::make($request->password);
             $member->save();
@@ -165,10 +156,6 @@ class MemberController extends Controller
                 'required',
                 'regex:/^[6-9]\d{9}$/'
             ],
-            'aadhar_no' => [
-                'required',
-                'regex:/^\d{12}$/'
-            ],
             'status' => 'required',
         ]);
 
@@ -185,9 +172,6 @@ class MemberController extends Controller
             if ($check_data->mobile_no == $request->mobile_no) {
                 $message .= "Mobile No. ";
             }
-            if ($check_data->aadhar_no == $request->aadhar_no) {
-                $message .= "Aadhar No. ";
-            }
 
             // Redirect back with an error message if any data exists
             if ($message) {
@@ -202,8 +186,6 @@ class MemberController extends Controller
         $member->role_id = $request->role_id;
         $member->email = $request->email;
         $member->mobile_no = $request->mobile_no;
-        $member->employe_type = $request->employe_type;
-        $member->aadhar_no = $request->aadhar_no;
         $member->status = $request->status;
         $member->save(); // Use save() to persist the changes
 
@@ -230,8 +212,7 @@ class MemberController extends Controller
         }
         $check_member = $query->where(function ($q) use ($request) {
             $q->where('email', $request->email)
-                ->orWhere('mobile_no', $request->mobile_no)
-                ->orWhere('aadhar_no', $request->aadhar_no);
+                ->orWhere('mobile_no', $request->mobile_no);
         })->first();
 
         return $check_member;
