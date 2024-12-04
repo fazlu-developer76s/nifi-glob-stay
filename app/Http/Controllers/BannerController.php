@@ -22,7 +22,7 @@ class BannerController extends Controller
             $request->validate([
                 'title' => 'required',
                 'type' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'status' => 'required',
             ]);
             $check_data = $this->check_exist_data($request, null);
@@ -64,7 +64,7 @@ class BannerController extends Controller
         $request->validate([
             'title' => 'required',
             'type' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required',
         ]);
         $check_data = $this->check_exist_data($request, $request->hidden_id);

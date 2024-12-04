@@ -21,7 +21,7 @@ class FacilitiesController extends Controller
 
         if ($request->method() == 'POST') {
             $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'title' => 'required',
                 'status' => 'required',
             ]);
@@ -62,7 +62,7 @@ class FacilitiesController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'title' => 'required',
             'status' => 'required',
         ]);

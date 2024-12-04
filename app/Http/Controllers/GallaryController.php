@@ -19,7 +19,7 @@ class GallaryController extends Controller
     {
         if ($request->method() == 'POST') {
             $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'status' => 'required',
             ]);
             $gallary = new Gallary();
@@ -45,7 +45,7 @@ class GallaryController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required',
         ]);
         $gallary = Gallary::findOrFail($request->hidden_id);

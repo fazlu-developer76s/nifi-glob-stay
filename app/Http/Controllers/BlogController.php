@@ -22,7 +22,7 @@ class BlogController extends Controller
             $request->validate([
                 // 'posted_at' => 'required|string',
                 'title' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'status' => 'required',
             ]);
             $check_data = $this->check_exist_data($request, null);
@@ -65,7 +65,7 @@ class BlogController extends Controller
         $request->validate([
             // 'posted_at' => 'required|string',
             'title' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required',
         ]);
         $check_data = $this->check_exist_data($request, $request->hidden_id);

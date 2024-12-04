@@ -20,7 +20,7 @@ class CategoryController extends Controller
         if ($request->method() == 'POST') {
             $request->validate([
                 'title' => 'required',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'status' => 'required',
             ]);
             $check_data = $this->check_exist_data($request, null);
@@ -59,7 +59,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'status' => 'required',
         ]);
         $check_data = $this->check_exist_data($request, $request->hidden_id);

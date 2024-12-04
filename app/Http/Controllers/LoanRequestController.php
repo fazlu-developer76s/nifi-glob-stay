@@ -53,7 +53,7 @@ class LoanRequestController extends Controller
             'name'  => 'required',
             'zip_code' => 'required|digits:6|numeric',
         ]);
-        
+
         $checkZipCode = DB::table('routezips as a')->leftJoin('routes as b','b.id','=','a.route_id')->select('a.*')->where('b.status',1)->where('a.zip_code', trim($request->zip_code))->where('a.status', 1)->first();
         if(!$checkZipCode)
         {
@@ -70,7 +70,7 @@ class LoanRequestController extends Controller
         $loan_request->loan_amount = $request->loan_amount;
         $loan_request->reason_of_loan = $request->reason_of_loan;
         $loan_request->zip_code = $request->zip_code;
-        
+
         if($request->user)
         {
 
@@ -156,9 +156,9 @@ class LoanRequestController extends Controller
         {
             $loan_requests->where('a.user_id',$request->user->id);
         }
-        
+
         $get_loan_list = $loan_requests->select('a.*','c.loan_status as loan_disbursement_status','b.kyc_status')->get();
-        
+
         if($get_loan_list)
         {
             $loan_list_req = array();
@@ -464,7 +464,7 @@ class LoanRequestController extends Controller
         if($loan_status)
         {
             $loan_request->where('loan_status', $loan_status);
-        }                
+        }
                $loan_list   = $loan_request->get();
         if($loan_list)
         {
@@ -485,7 +485,7 @@ class LoanRequestController extends Controller
 
     public function loan_report(Request $request)
     {
-        
+
         $user_id = $request->user->id;
         if($request->user->role_id != 1)
         {
@@ -494,7 +494,7 @@ class LoanRequestController extends Controller
                'message' => 'You Dont have permission to view loan report'
             ], 401);
         }
-        
+
         $loan_status = $request->loan_status;
         $from_date = $request->from_date;
         $to_date  = $request->to_date;
@@ -503,16 +503,16 @@ class LoanRequestController extends Controller
         if($loan_status)
         {
             $loan_request->where('loan_status', $loan_status);
-        }  
+        }
         if($to_date)
         {
             $loan_request->where('created_at', ' >= ', $to_date);
-        }  
+        }
         if($to_date)
         {
             $loan_request->where('created_at', ' <= ' ,  $to_date);
-        }  
-            
+        }
+
                $loan_list   = $loan_request->get();
         if($loan_list)
         {
@@ -533,7 +533,7 @@ class LoanRequestController extends Controller
 
     public function service_list(Request $request)
     {
-        
+
         $user_id = $request->user->id;
         // if($request->user->role_id != 1)
         // {
@@ -542,20 +542,20 @@ class LoanRequestController extends Controller
         //        'message' => 'You Dont have permission to view loan report'
         //     ], 401);
         // }
-        
+
         $route = $request->service_no;
         $service_name = $request->service_name;
         $service = Providers::where('status', 1);
-        
+
         if($route)
         {
             $service->where('route', $route);
-        }  
+        }
         if($service_name)
         {
             $service->where('title', 'like', "%$service_name%");
-        }  
-            
+        }
+
                $service_list   = $service->get();
         if($service_list)
         {
@@ -637,7 +637,7 @@ class LoanRequestController extends Controller
             ], 401);
             }
         }
-        
+
         $loan_disbursement = Loan_disbursement::where('loan_id',$loan_id)->first();
         $check_loan = Loan::where('id',$loan_id)->first();
         $users_details = User::find($check_loan->user_id);
@@ -690,10 +690,10 @@ class LoanRequestController extends Controller
                'message' => 'You Dont have permission to disbursement Loan List'
             ], 401);
         }
-        
+
         $request->validate([
             'loan_id' =>'required',
-            'image' =>'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' =>'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
         $loan_id = $request->loan_id;
         $loan_disbursement = Loan_disbursement::where('loan_id',$loan_id)->first();
@@ -710,13 +710,13 @@ class LoanRequestController extends Controller
         if ($request->hasFile('image')) {
             // Get the original file name
             $originalName = $request->file('image')->getClientOriginalName();
-        
+
             // Create a unique name for storing the file in the folder
             $uniqueName = time() . '_' . $originalName;
-        
+
             // Store the file with the unique name in the 'borrower' folder under 'public'
             $request->file('image')->storeAs('borrower', $uniqueName, 'public');
-        
+
             // Save the original name in the database
             $loan_details->image = $uniqueName;
         }
@@ -733,7 +733,7 @@ class LoanRequestController extends Controller
                'status' => 'error',
                'message' => 'Failed to upload image'
             ],401);
-       } 
+       }
    }
 
    public function disbursement_otp(Request $request)
@@ -746,7 +746,7 @@ class LoanRequestController extends Controller
            'message' => 'You Dont have permission to disbursement Loan List'
         ], 401);
     }
-    
+
     $request->validate([
         'loan_id' =>'required',
         'otp' => 'required|numeric|digits:4',
@@ -758,7 +758,7 @@ class LoanRequestController extends Controller
     $otp_type = 1;
     $module_type = 3;
     $otp_details = $this->otpVerify($check_loan->user_id, $otp, $otp_type, $module_type);
-    
+
     if($otp_details)
                 {
                  $current_time = Carbon::now();
@@ -772,7 +772,7 @@ class LoanRequestController extends Controller
                  }
                  else
                  {
-                   
+
                     if($loan_disbursement)
                     {
                         $loan_details = Loan_disbursement::find($loan_disbursement->id);
@@ -816,7 +816,7 @@ class LoanRequestController extends Controller
                            'message' => 'Loan Number not found'
                         ], 401);
                     }
-                    
+
                     $loan_details->disbrused_status = 2;
                     DB::table('loans')
                                 ->where('id', $check_loan->id)
@@ -848,9 +848,9 @@ class LoanRequestController extends Controller
             ->where('otp',$otp)
             ->orderBy('id',"desc")
             ->first();
-         
+
            return $query;
-          
+
         }
 
         public function payment_modes(Request $request)

@@ -46,7 +46,7 @@ class PropertyController extends Controller
                 'location' => 'nullable|string',
                 'room_type' => 'nullable|string',
                 'room_size' => 'nullable|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -76,6 +76,8 @@ class PropertyController extends Controller
                     $images[] = $filePath;
                 }
                 // $hotel->hotel_images = json_encode($images);
+            }else{
+                $images = array();
             }
             $hotel->save();
             $hotel->hotel_url = str_replace(' ', '-', strtolower($hotel->hotel_name)) . $hotel->id;
@@ -86,9 +88,10 @@ class PropertyController extends Controller
             $filteredArray = array_filter($request->number, function ($value) {
                 return !is_null($value);
             });
+            $n=0;
             foreach ($filteredArray as $key => $value) {
                 if (!empty($value)) {
-                    $facilityId = $request->facilities[$key] ?? null;
+                    $facilityId = $request->facilities[$n] ?? null;
                     if ($facilityId) {
                         DB::table('add_facilities_propery')->insert([
                             'property_id' => $hotel->id,
@@ -99,6 +102,7 @@ class PropertyController extends Controller
                         ]);
                     }
                 }
+                $n++;
             }
             return redirect()->route('property')->with('success', 'Property Added Successfully');
         }
@@ -143,77 +147,83 @@ class PropertyController extends Controller
 
     public function update(Request $request)
     {
-        $validatedData = $request->validate([
-            'category_id' => 'required',
-            'hotel_name' => 'required|string|max:255',
-            'hotel_rate' => 'required|integer',
-            'hotel_address' => 'nullable|string',
-            'hotel_description' => 'nullable|string',
-            'hotel_map_link' => 'nullable|string',
-            'state' => 'required|string',
-            'place' => 'required|string',
-            'price' => 'required|string',
-            'booking_days' => 'nullable|string',
-            'distance' => 'nullable|string',
-            'location' => 'nullable|string',
-            'room_type' => 'nullable|string',
-            'room_size' => 'nullable|string',
-            'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-        // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
-        // if ($checkData) {
-        //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
-        // }
-        $hotel = Property::findOrFail($request->hidden_id);
-        $hotel->user_id = Auth::user()->id;
-        $hotel->category_id = $request->category_id;
-        $hotel->hotel_name = $request->hotel_name;
-        $hotel->hotel_rate = $request->hotel_rate;
-        $hotel->hotel_address = $request->hotel_address;
-        $hotel->hotel_description = $request->hotel_description;
-        $hotel->hotel_map_link = $request->hotel_map_link;
-        $hotel->state = $request->state;
-        $hotel->place = $request->place;
-        $hotel->price = $request->price;
-        $hotel->booking_days = $request->booking_days;
-        $hotel->distance = $request->distance;
-        $hotel->location = $request->location;
-        $hotel->room_type = $request->room_type;
-        $hotel->room_size = $request->room_size;
-        $hotel->is_property_verified = 1;
-        $images = array();
-        if ($request->hasFile('hotel_images')) {
-            $images = [];
-            foreach ($request->file('hotel_images') as $image) {
-                $filePath = $image->store('hotel_images', 'public');
-                $images[] = $filePath;
-            }
-            // $hotel->hotel_images = json_encode($images);
-        }
-        $hotel->save();
-        $hotel->hotel_url = str_replace(' ', '-', strtolower($hotel->hotel_name)) . $hotel->id;
-        $hotel->save();
-        foreach ($images as $image) {
-            DB::table('properties_images')->insert(['property_id' => $hotel->id,  'image' => $image]);
-        }
-        $filteredArray = array_filter($request->number, function ($value) {
-            return !is_null($value);
-        });
-        foreach ($filteredArray as $key => $value) {
-            if (!empty($value)) {
-                $facilityId = $request->facilities[$key] ?? null;
-                if ($facilityId) {
-                    DB::table('add_facilities_propery')->insert([
-                        'property_id' => $hotel->id,
-                        'facilities_id' => $facilityId,
-                        'value' => $value,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+        if ($request->method() == 'POST') {
+            $validatedData = $request->validate([
+                'category_id' => 'required',
+                'hotel_name' => 'required|string|max:255',
+                'hotel_rate' => 'required|integer',
+                'hotel_address' => 'nullable|string',
+                'hotel_description' => 'nullable|string',
+                'hotel_map_link' => 'nullable|string',
+                'state' => 'required|string',
+                'place' => 'required|string',
+                'price' => 'required|string',
+                'booking_days' => 'nullable|string',
+                'distance' => 'nullable|string',
+                'location' => 'nullable|string',
+                'room_type' => 'nullable|string',
+                'room_size' => 'nullable|string',
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            ]);
+            // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
+            // if ($checkData) {
+            //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
+            // }
+            $hotel =  Property::findOrFail($request->hidden_id);
+            $hotel->user_id = Auth::user()->id;
+            $hotel->category_id = $request->category_id;
+            $hotel->hotel_name = $request->hotel_name;
+            $hotel->hotel_rate = $request->hotel_rate;
+            $hotel->hotel_address = $request->hotel_address;
+            $hotel->hotel_description = $request->hotel_description;
+            $hotel->hotel_map_link = $request->hotel_map_link;
+            $hotel->state = $request->state;
+            $hotel->place = $request->place;
+            $hotel->price = $request->price;
+            $hotel->booking_days = $request->booking_days;
+            $hotel->distance = $request->distance;
+            $hotel->location = $request->location;
+            $hotel->room_type = $request->room_type;
+            $hotel->room_size = $request->room_size;
+            $hotel->is_property_verified = 1;
+            if ($request->hasFile('hotel_images')) {
+                $images = [];
+                foreach ($request->file('hotel_images') as $image) {
+                    $filePath = $image->store('hotel_images', 'public');
+                    $images[] = $filePath;
                 }
+                // $hotel->hotel_images = json_encode($images);
+            }else{
+                $images = array();
             }
+            $hotel->save();
+            $hotel->hotel_url = str_replace(' ', '-', strtolower($hotel->hotel_name)) . $hotel->id;
+            $hotel->save();
+            foreach ($images as $image) {
+                DB::table('properties_images')->insert(['property_id' => $hotel->id,  'image' => $image]);
+            }
+            $delete_all_facilities = DB::table('add_facilities_propery')->where('property_id',$hotel->id)->delete();
+            $filteredArray = array_filter($request->number, function ($value) {
+                return !is_null($value);
+            });
+            $n=0;
+            foreach ($filteredArray as $key => $value) {
+                if (!empty($value)) {
+                    $facilityId = $request->facilities[$n] ?? null;
+                    if ($facilityId) {
+                        DB::table('add_facilities_propery')->insert([
+                            'property_id' => $hotel->id,
+                            'facilities_id' => $facilityId,
+                            'value' => $value,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+                $n++;
+            }
+            return redirect()->route('property')->with('success', 'Property Update Successfully');
         }
-        return redirect()->route('property')->with('success', 'Property Update Successfully');
     }
 
 
