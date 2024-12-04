@@ -471,13 +471,13 @@ class ApiController extends Controller
             ->when($type != "all", function ($query) use ($type) {
                 $query->where('id', $type);
             });
-        $get_cate = $get_category->get();
+        $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
         foreach($get_cate as $row){
             $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->get();
             $get_fac = array();
             foreach($get_property as $property){
-                $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+                $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
                 $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
                 $property->facilities = $get_faciflties;
                 $property->sub_img =  $get_sub_img;
