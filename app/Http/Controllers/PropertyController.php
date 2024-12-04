@@ -16,7 +16,7 @@ class PropertyController extends Controller
     public function index()
     {
         $title = "Property List";
-        $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->get();
+        $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->orderBy('a.id','desc')->get();
         $properties = array();
         foreach ($get_property as $property) {
             $property->images = DB::table('properties_images')->where('property_id', $property->id)->where('status', 1)->get();
