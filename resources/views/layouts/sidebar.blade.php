@@ -1,3 +1,8 @@
+@inject('helper', 'App\Helpers\Global_helper')
+@php
+    $property = $helper->getSidebarRolePermissions(Auth::user()->role_id, 'Property Listing');
+   
+@endphp
 <div id="sidebar" class="app-sidebar">
     <div class="app-sidebar-content find-link" data-scrollbar="true" data-height="100%">
         <div class="menu">
@@ -9,6 +14,7 @@
                     <div class="menu-text">Dashboard</div>
                 </a>
             </div>
+            @if(Auth::user()->role_id == 1)
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Member Management</div>
@@ -45,6 +51,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Category Management</div>
@@ -69,16 +76,13 @@
                             <div class="menu-text">Manage Facilities </div>
                         </a>
                     </div>
+                    @if($property == 1 || Auth::user()->role_id==1)
                     <div class="menu-item">
                         <a href="{{ route('property') }}" class="menu-link ">
                             <div class="menu-text">Manage Property </div>
                         </a>
                     </div>
-                    {{-- <div class="menu-item">
-                        <a href="{{ route('package') }}" class="menu-link ">
-                            <div class="menu-text">Manage Package </div>
-                        </a>
-                    </div> --}}
+                    @endif
                 </div>
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">

@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\Global_helper as Helper;
 
 class PropertyController extends Controller
 {
@@ -69,7 +70,12 @@ class PropertyController extends Controller
             $hotel->location = $request->location;
             $hotel->room_type = $request->room_type;
             $hotel->room_size = $request->room_size;
+            if(Auth::user()->role_id == 1){
+                
             $hotel->is_property_verified = 1;
+            }else{
+            $hotel->is_property_verified = 2;    
+            }
             if ($request->hasFile('hotel_images')) {
                 $images = [];
                 foreach ($request->file('hotel_images') as $image) {
@@ -186,7 +192,7 @@ class PropertyController extends Controller
             $hotel->location = $request->location;
             $hotel->room_type = $request->room_type;
             $hotel->room_size = $request->room_size;
-            $hotel->is_property_verified = 1;
+           
             if ($request->hasFile('hotel_images')) {
                 $images = [];
                 foreach ($request->file('hotel_images') as $image) {

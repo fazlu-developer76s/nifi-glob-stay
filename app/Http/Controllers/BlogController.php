@@ -38,6 +38,7 @@ class BlogController extends Controller
             }
             $blog = new Blog();
             $blog->title = $request->title;
+            $blog->blog_link = $request->blog_link;
             // $blog->posted_at = $request->posted_at;
             $blog->short_content = $request->short_content;
             $blog->status = $request->status;
@@ -85,6 +86,7 @@ class BlogController extends Controller
         $blog->short_content = $request->short_content;
         $blog->status = $request->status;
         $blog->long_content = $request->long_content;
+         $blog->blog_link = $request->blog_link;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filePath = $file->store('blog', 'public');

@@ -155,7 +155,7 @@
                                         <th class="text-nowrap">Phone</th>
                                         <th class="text-nowrap">Description</th>
                                         <th class="text-nowrap">Created At</th>
-                                        <!--<th class="text-nowrap">Action</th>-->
+                                        <th class="text-nowrap">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -168,7 +168,13 @@
                                         <td>{{ $lead->mobile_no }}</td>
                                         <td>{{ $lead->message }}</td>
                                         <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d F Y h:i A') }}</td>
-
+                                        <td>
+                                            @if(!empty($lead->property_id))
+                                                <a href="{{ $lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $lead->id : '#' }}" target="_blank">
+                                                    View
+                                                </a>
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                     @endif

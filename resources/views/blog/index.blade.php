@@ -67,6 +67,15 @@
                                             @enderror
                                         </div>
                                     </div>
+                                     <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Blog Link</label>
+                                            <input class="form-control @error('blog_link') is-invalid @enderror" type="url" name="blog_link" placeholder="Enter Blog Link" value="@if(empty($get_blog)) {{ old('blog_link') }} @else {{ (isset($get_blog)) ? $get_blog->blog_link : '' ; }} @endif" />
+                                            @error('blog_link')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Short Description</label>

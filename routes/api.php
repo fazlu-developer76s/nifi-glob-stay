@@ -30,7 +30,7 @@ use App\Http\Controllers\MessageController;
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/login', [AuthController::class, 'login']);
 Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
-Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
+Route::post('user/user-login-otp', [AuthController::class, 'user_otp']); 
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
 
@@ -53,6 +53,7 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
     Route::post('user/post-review', [ApiController::class, 'post_review']);
     Route::get('user/fetch-review', [ApiController::class, 'fetch_review']);
+    Route::post('user/property-whislist', [ApiController::class, 'property_whislist']);
     // Get all properties
     Route::get('user/properties', [ApiPropertyController::class, 'index']);
     // Create a new property (GET and POST handled separately in API context)
