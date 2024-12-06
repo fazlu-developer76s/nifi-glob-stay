@@ -1,7 +1,7 @@
 @inject('helper', 'App\Helpers\Global_helper')
 @php
     $property = $helper->getSidebarRolePermissions(Auth::user()->role_id, 'Property Listing');
-   
+
 @endphp
 <div id="sidebar" class="app-sidebar">
     <div class="app-sidebar-content find-link" data-scrollbar="true" data-height="100%">
@@ -71,6 +71,16 @@
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('amenities') }}" class="menu-link ">
+                            <div class="menu-text">Manage Amenities </div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('bedtype') }}" class="menu-link ">
+                            <div class="menu-text">Manage Bed Type </div>
+                        </a>
+                    </div>
                     <div class="menu-item">
                         <a href="{{ route('facilities') }}" class="menu-link ">
                             <div class="menu-text">Manage Facilities </div>

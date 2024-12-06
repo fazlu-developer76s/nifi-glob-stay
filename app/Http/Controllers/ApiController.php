@@ -480,7 +480,7 @@ class ApiController extends Controller
         $new_property_get = array();
         foreach($get_cate as $row){
             if($user_id){
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();    
+            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
             }else{
             $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
             }
@@ -491,8 +491,8 @@ class ApiController extends Controller
                 $property->facilities = $get_faciflties;
                 $property->sub_img =  $get_sub_img;
                 $get_fac[] = $property;
-            } 
-           
+            }
+
             $row->property = $get_property;
             $new_property_get[] = $row;
         }
@@ -606,10 +606,10 @@ class ApiController extends Controller
             return response()->json(['status' => 'Error','message' => 'No reviews found'], 404);
         }
     }
-    
-    
+
+
     public function property_whislist(Request $request){
-      
+
         $check_whislist = DB::table('whislist_property')->where('user_id', $request->user->id)->where('property_id', $request->property_id)->first();
         $add_whislist = DB::table('whislist_property')->insert(['user_id'=>$request->user->id,'property_id'=> $request->property_id]);
         if($check_whislist){
@@ -626,5 +626,42 @@ class ApiController extends Controller
             }
         }
     }
+
+    public function fetch_single_property(Request $request , $id){
+        if(isset($request->user->id) && $request->user->id){
+           $user_id = $request->user->id;
+       }else{
+          $user_id = 1;
+       }
+       if (!isset($request->cat)) {
+           return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
+       }
+       $type = $request->cat;
+       $get_category = CategoriesModal::where('status',1)
+           ->when($type != "all", function ($query) use ($type) {
+               $query->where('id', $type);
+           });
+       $get_cate = $get_category->orderBy('id','asc')->get();
+       $new_property_get = array();
+       foreach($get_cate as $row){
+           if($user_id){
+           $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('p.id',$id)->get();
+           }else{
+           $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('p.id',$id)->get();
+           }
+           $get_fac = array();
+           foreach($get_property as $property){
+               $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+               $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+               $property->facilities = $get_faciflties;
+               $property->sub_img =  $get_sub_img;
+               $get_fac[] = $property;
+           }
+
+           $row->property = $get_property;
+           $new_property_get[] = $row;
+       }
+       return response()->json(['status' => 'Success', 'data' => $new_property_get], 200);
+   }
 
 }

@@ -1,9 +1,9 @@
 @extends('layouts/app')
 @section('content')
 @if(isset($hotel))
-@php $form_action = "property.update" @endphp
+@php $form_action = "book.property.update" @endphp
 @else
-@php $form_action = "property.create" @endphp
+@php $form_action = "book.property.create" @endphp
 @endif
     <div class="container-fluid">
         <div id="content" class="app-content">
@@ -39,7 +39,7 @@
                                                 <option value="">Select Role</option>
                                                 @if($get_category)
                                                     @foreach ($get_category as $category)
-                                                        <option value="{{ $category->id }}"  {{ (request('id') == $category->id) ? 'selected' : '' }}  @if(empty($hotel)) {{ old('category_id') == $category->id ? 'selected' : '' }} @else {{ (isset($hotel) && $hotel->category_id == $category->id) ? 'selected' : '' ; }} @endif>{{ $category->title }}</option>
+                                                        <option value="{{ $category->id }}" {{ (request('id') == $category->id) ? 'selected' : '' }}  @if(empty($hotel)) {{ old('category_id') == $category->id ? 'selected' : '' }} @else {{ (isset($hotel) && $hotel->category_id == $category->id) ? 'selected' : '' ; }} @endif>{{ $category->title }}</option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -194,24 +194,24 @@
                                     </div>
                                     @endforeach
                                     @endif
-                                    <hr>
-                                    <h2>Add Facilities</h2>
-                                    <div class="row">
-                                    @foreach ($get_facilities as $faci)
-                                        <div class="col-md-2">
-                                            <div class="mb-3">
-                                                <input class="@error('facilities') is-invalid @enderror" type="checkbox" name="facilities[]" value="{{ $faci->id }}" id="checkfac{{ $faci->id }}" onchange="removeClasscheck('{{ $faci->id }}')" {{ ($faci->selected==1)?'checked':''; }}/>
-                                                <label class="form-label" for="checkfac{{ $faci->id }}">{{ $loop->iteration }}.</label>
-                                                <label class="form-label"for="checkfac{{ $faci->id }}">{{ $faci->title }}</label>
-                                                @error('facilities')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                                <input class="form-control @error('number') is-invalid @enderror checkclass{{ $faci->id }}  {{ ($faci->selected!=1)?'d-none':''; }} " type="number" name="number[]" value="{{ ($faci->selected==1)? $faci->value :''; }}"  />
+                                    {{-- <hr> --}}
+                                    {{-- <h2>Add Facilities</h2> --}}
+                                    {{-- <div class="row">
+                                        @foreach ($get_facilities as $faci)
+                                            <div class="col-md-2">
+                                                <div class="mb-3">
+                                                    <input class="@error('facilities') is-invalid @enderror" type="checkbox" name="facilities[]" value="{{ $faci->id }}" id="checkfac{{ $faci->id }}" onchange="removeClasscheck('{{ $faci->id }}')" {{ ($faci->selected==1)?'checked':''; }}/>
+                                                    <label class="form-label" for="checkfac{{ $faci->id }}">{{ $loop->iteration }}.</label>
+                                                    <label class="form-label"for="checkfac{{ $faci->id }}">{{ $faci->title }}</label>
+                                                    @error('facilities')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                    <input class="form-control @error('number') is-invalid @enderror checkclass{{ $faci->id }}  {{ ($faci->selected!=1)?'d-none':''; }} " type="number" name="number[]" value="{{ ($faci->selected==1)? $faci->value :''; }}"  />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                    @endforeach
-                                    </div>
+                                        @endforeach
+                                    </div> --}}
 
                                 </div>
                             </div>
@@ -263,8 +263,8 @@
 <script>
     function  AddProperty(){
         let get_category_id = $("#category_id").val()
-        if( get_category_id == 1 ){
-            const url = "{{ route('book.property.create') }}?id="+get_category_id+"";
+        if( get_category_id != 1 ){
+            const url = "{{ route('property.create') }}?id="+get_category_id+"";
             window.location.href = url; // Redirect to the generated URL
         }
     }

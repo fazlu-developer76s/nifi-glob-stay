@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AmenitiesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentModeController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BedController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GallaryController;
@@ -46,6 +48,12 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/store-permission_category', [PermissionCategory::class, 'store_permission_category'])->name('store.permission_category');
     Route::get('/edit-permission_category/{id}', [PermissionCategory::class, 'edit_permission_category'])->name('edit.permission_category');
     Route::delete('/destroy-permission_category/{id}', [PermissionCategory::class, 'destroy_permission_category'])->name('destroy.permission_category');
+
+    // Permission Category Routes
+    Route::get('/bedtype', [BedController::class, 'index'])->name('bedtype');
+    Route::post('/store-bedtype', [BedController::class, 'store_bedtype'])->name('store.bedtype');
+    Route::get('/edit-bedtype/{id}', [BedController::class, 'edit_bedtype'])->name('edit.bedtype');
+    Route::delete('/destroy-bedtype/{id}', [BedController::class, 'destroy_bedtype'])->name('destroy.bedtype');
 
     // Permission Sub Category Routes
     Route::get('/permission_subcategory', [PermissionsubCategory::class, 'index'])->name('permission.subcategory');
@@ -138,6 +146,10 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/property/update', [PropertyController::class, 'update'])->name('property.update');
     Route::delete('/property/delete/{id}', [PropertyController::class, 'destroy'])->name('property.destroy');
     Route::post('/property/delete-sub-image', [PropertyController::class, 'delete_image'])->name('delete.image');
+    Route::match(['get', 'post'], '/property/book/create', [PropertyController::class, 'book_create'])->name('book.property.create');
+    Route::get('/book/property/{id}', [PropertyController::class, 'book_edit'])->name('book.property.edit');
+    Route::post('/book/property/update', [PropertyController::class, 'book_update'])->name('book.property.update');
+
 
     // Notes Route
     Route::post('/note/save-notes', [NotesController::class, 'create'])->name('notes.create');
@@ -152,6 +164,14 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/facilities/update', [FacilitiesController::class, 'update'])->name('facilities.update');
     Route::delete('/facilities/delete/{id}', [FacilitiesController::class, 'destroy'])->name('facilities.destroy');
     Route::put('/addfacilities-package', [FacilitiesController::class, 'addfacilities_package'])->name('addfacilities.package');
+
+    // Amenties
+    Route::get('/amenities', [AmenitiesController::class, 'index'])->name('amenities');
+    Route::match(['get', 'post'], '/amenities/create', [AmenitiesController::class, 'create'])->name('amenities.create');
+    Route::get('/amenities/{id}', [AmenitiesController::class, 'edit'])->name('amenities.edit');
+    Route::post('/amenities/update', [AmenitiesController::class, 'update'])->name('amenities.update');
+    Route::delete('/amenities/delete/{id}', [AmenitiesController::class, 'destroy'])->name('amenities.destroy');
+    Route::put('/addamenities-package', [AmenitiesController::class, 'addamenities_package'])->name('addamenities.package');
 
     // Providers
     Route::get('/package', [PackageController::class, 'index'])->name('package');

@@ -30,7 +30,7 @@ use App\Http\Controllers\MessageController;
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/login', [AuthController::class, 'login']);
 Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
-Route::post('user/user-login-otp', [AuthController::class, 'user_otp']); 
+Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
 
@@ -40,6 +40,7 @@ Route::post('user/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
+Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);   
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
 Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
 Route::get('fetch-banner',[ApiController::class, 'fetch_banner']);

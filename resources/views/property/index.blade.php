@@ -50,7 +50,7 @@
                                         <th class="text-nowrap">State</th>
                                         <th class="text-nowrap">Place</th>
 
-                                        <th class="text-nowrap">Created Date</th>
+                                        <th class="text-nowrap">Created Date </th>
                                         <th class="text-nowrap">Status</th>
                                         @if($approved == 1 || Auth::user()->role_id == 1)
                                         <th class="text-nowrap">Approved</th>
@@ -82,11 +82,18 @@
                                         </td>
                                         @endif
                                         <td>
-                                            @if($update == 1 || Auth::user()->role_id == 1)
+                                            @if($property->category_id == 1)
                                             <a href="{{ route('property.edit', $property->id) }}" class="text-primary me-2">
+                                                <i class="fa fa-home"></i>
+                                            </a>
+                                            @endif
+
+                                            @if($update == 1 || Auth::user()->role_id == 1)
+                                            <a @if($property->category_id == 1)  href="{{ route('book.property.edit', $property->id) }}" @else href="{{ route('property.edit', $property->id) }}" @endif class="text-primary me-2">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             @endif
+
                                             @if($delete == 1 || Auth::user()->role_id == 1)
                                             <form action="{{ route('property.destroy', $property->id) }}" method="POST" style="display: inline;">
                                                 @csrf
