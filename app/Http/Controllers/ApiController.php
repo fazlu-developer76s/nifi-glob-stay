@@ -467,7 +467,7 @@ class ApiController extends Controller
         if(isset($request->user->id) && $request->user->id){
             $user_id = $request->user->id;
         }else{
-           $user_id = 1;
+           $user_id = " ";
         }
         if (!isset($request->type)) {
             return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
@@ -595,6 +595,7 @@ class ApiController extends Controller
         $user_id = $request->user->id;
         $review = new PropertyReview();
         $review->user_id = $user_id;
+        $review->property_id = $request->property_id;
         $review->review = $request->review;
         $review->rating = $request->rating;
         $review->save();
@@ -634,7 +635,7 @@ class ApiController extends Controller
         if(isset($request->user->id) && $request->user->id){
            $user_id = $request->user->id;
        }else{
-          $user_id = 1;
+          $user_id = '';
        }
        if (!isset($request->cat)) {
            return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
@@ -657,9 +658,23 @@ class ApiController extends Controller
             $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
             $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
             $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+            $reviews = DB::table('property_reviews as a')
+            ->join('users as b', 'a.user_id', '=', 'b.id')
+            ->leftJoin('properties as c', 'c.id', '=', 'a.property_id') // Added left join
+            ->select(
+                'a.*',
+                'b.name as user_name',
+                'b.image as user_image'
+            )
+            ->where('a.status', 1)
+            ->where('b.status', 1)
+            ->where('c.status', 1)
+            ->where('a.property_id', $property->id)
+            ->get();
             $property->facilities = $get_faciflties;
             $property->amenities = $get_amentities;
             $property->sub_img =  $get_sub_img;
+            $property->review =  $reviews;
             $get_fac[] = $property;
            }
 
