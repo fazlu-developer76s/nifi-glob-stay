@@ -193,6 +193,21 @@
                                         </div>
 
                                     @endforeach
+                                    <hr>
+                                    <h2>Add Amenities</h2>
+                                    <div class="row">
+                                    @foreach ($get_amenities as $ament)
+                                        <div class="col-md-2">
+                                            <div class="mb-3">
+                                                <input class="@error('amenities') is-invalid @enderror" type="checkbox" name="amenities[]" value="{{ $ament->id }}" id="checkament{{ $ament->id }}" {{ ($ament->selected==1)?'checked':''; }}/>
+                                                <label class="form-label" for="checkament{{ $ament->id }}">{{ $loop->iteration }}.</label>
+                                                <label class="form-label"for="checkament{{ $ament->id }}">{{ $ament->title }}</label>
+                                                @error('amenities')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    @endforeach
                                     </div>
 
                                 </div>

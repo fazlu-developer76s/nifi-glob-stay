@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\Global_helper as Helper;
+use App\Models\Amenities;
 
 class PropertyController extends Controller
 {
@@ -31,6 +32,7 @@ class PropertyController extends Controller
     public function create(Request $request)
     {
         if ($request->method() == 'POST') {
+
             $validatedData = $request->validate([
                 'category_id' => 'required',
                 'hotel_name' => 'required|string|max:255',
@@ -104,12 +106,18 @@ class PropertyController extends Controller
                 }
                 $n++;
             }
+            if($request->amenities){
+                foreach($request->amenities as $amenity){
+                    DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
+                }
+            }
             return redirect()->route('property')->with('success', 'Property Added Successfully');
         }
         $title = "Create Property";
         $get_category = CategoriesModal::where('status', 1)->get();
         $get_facilities = Facilities::where('status', 1)->get();
-        return view('property.create', compact('title', 'get_category', 'get_facilities'));
+        $get_amenities = Amenities::where('status', 1)->get();
+        return view('property.create', compact('title', 'get_category', 'get_facilities','get_amenities'));
     }
     public function edit($id)
     {
@@ -140,7 +148,18 @@ class PropertyController extends Controller
             }
             $get_facilities[] = $facility;
         }
-        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities'));
+        $get_amenities = array();
+        $amenttable = Amenities::where('status', 1)->get();
+        foreach ($amenttable as $ament) {
+            $get_fac_data = DB::table('add_amenties')->where('property_id', $id)->where('amenities_id', $ament->id)->first();
+            if ($get_fac_data) {
+                $ament->selected = 1;
+            } else {
+                $ament->selected = 0;
+            }
+            $get_amenities[] = $ament;
+        }
+        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities','get_amenities'));
     }
     public function update(Request $request)
     {
@@ -213,6 +232,12 @@ class PropertyController extends Controller
                     }
                 }
                 $n++;
+            }
+            $delete_all_amenities = DB::table('add_amenties')->where('property_id', $hotel->id)->delete();
+            if($request->amenities){
+                foreach($request->amenities as $amenity){
+                    DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
+                }
             }
             return redirect()->route('property')->with('success', 'Property Update Successfully');
         }
