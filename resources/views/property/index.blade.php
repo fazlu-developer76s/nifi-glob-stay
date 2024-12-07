@@ -80,7 +80,7 @@
                                         @endif
                                         <td>
                                             @if($property->category_id == 1)
-                                            <a href="{{ route('property.edit', $property->id) }}" class="text-primary me-2">
+                                            <a href="{{ route('book.add.room', $property->id) }}" class="text-primary me-2">
                                                 <i class="fa fa-home"></i>
                                             </a>
                                             @endif

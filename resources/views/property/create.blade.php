@@ -90,7 +90,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label"> Youtube Link</label>
-                                            <input class="form-control @error('youtube_link') is-invalid @enderror" type="text" name="youtube_link" placeholder="Enter Map Link" value="{{ old('youtube_link', $hotel->youtube_link ?? '') }}" />
+                                            <input class="form-control @error('youtube_link') is-invalid @enderror" type="text" name="youtube_link" placeholder="Enter Youtube Link" value="{{ old('youtube_link', $hotel->youtube_link ?? '') }}" />
                                             @error('youtube_link')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -99,7 +99,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label"> Rating</label>
-                                            <input class="form-control @error('rating') is-invalid @enderror" type="number" name="rating" placeholder="Enter Map Link" value="{{ old('rating', $hotel->rating ?? '') }}" />
+                                            <input class="form-control @error('rating') is-invalid @enderror" type="number" name="rating" placeholder="Enter Rating Link" value="{{ old('rating', $hotel->rating ?? '') }}" />
                                             @error('rating')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

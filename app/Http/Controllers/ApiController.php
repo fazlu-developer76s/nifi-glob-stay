@@ -654,11 +654,13 @@ class ApiController extends Controller
            }
            $get_fac = array();
            foreach($get_property as $property){
-               $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
-               $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
-               $property->facilities = $get_faciflties;
-               $property->sub_img =  $get_sub_img;
-               $get_fac[] = $property;
+            $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+            $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+            $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+            $property->facilities = $get_faciflties;
+            $property->amenities = $get_amentities;
+            $property->sub_img =  $get_sub_img;
+            $get_fac[] = $property;
            }
 
            $row->property = $get_property;

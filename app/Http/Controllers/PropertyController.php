@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\Global_helper as Helper;
 use App\Models\Amenities;
+use App\Models\Bedtype;
 
 class PropertyController extends Controller
 {
@@ -106,8 +107,8 @@ class PropertyController extends Controller
                 }
                 $n++;
             }
-            if($request->amenities){
-                foreach($request->amenities as $amenity){
+            if ($request->amenities) {
+                foreach ($request->amenities as $amenity) {
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
                 }
             }
@@ -117,7 +118,7 @@ class PropertyController extends Controller
         $get_category = CategoriesModal::where('status', 1)->get();
         $get_facilities = Facilities::where('status', 1)->get();
         $get_amenities = Amenities::where('status', 1)->get();
-        return view('property.create', compact('title', 'get_category', 'get_facilities','get_amenities'));
+        return view('property.create', compact('title', 'get_category', 'get_facilities', 'get_amenities'));
     }
     public function edit($id)
     {
@@ -159,7 +160,7 @@ class PropertyController extends Controller
             }
             $get_amenities[] = $ament;
         }
-        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities','get_amenities'));
+        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities', 'get_amenities'));
     }
     public function update(Request $request)
     {
@@ -234,8 +235,8 @@ class PropertyController extends Controller
                 $n++;
             }
             $delete_all_amenities = DB::table('add_amenties')->where('property_id', $hotel->id)->delete();
-            if($request->amenities){
-                foreach($request->amenities as $amenity){
+            if ($request->amenities) {
+                foreach ($request->amenities as $amenity) {
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
                 }
             }
@@ -425,5 +426,66 @@ class PropertyController extends Controller
             }
             return redirect()->route('property')->with('success', 'Property Update Successfully');
         }
+    }
+
+    public function add_room(Request $request, $id)
+    {
+        if (!$id) {
+            return redirect()->route('property');
+        }
+        if($request->method()=="POST"){
+            $validatedData = $request->validate([
+                'property_id' => 'required',
+                'flor_no' => 'required|string|max:255',
+                'room_no' => 'nullable|string',
+                'bed_id' => 'nullable|string',
+                'status' => 'required'
+            ]);
+            $insert_book = DB::table('add_book_property')->insertGetId([
+                'property_id' => $request->property_id,
+                'flor_no' => $request->flor_no,
+                'room_no' => $request->room_no,
+                'bed_id' => $request->bed_id,
+                'status' => $request->status
+            ]);
+
+            $filteredArray = array_filter($request->number, function ($value) {
+                return !is_null($value);
+            });
+            $n = 0;
+            foreach ($filteredArray as $key => $value) {
+                if (!empty($value)) {
+                    $facilityId = $request->facilities[$n] ?? null;
+                    if ($facilityId) {
+                        DB::table('add_book_facilities')->insert([
+                            'flor_id' => $insert_book,
+                            'facilities_id' => $facilityId,
+                            'value' => $value,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+                $n++;
+            }
+            if ($request->amenities) {
+                foreach ($request->amenities as $amenity) {
+                    DB::table('add_book_amenties')->insert(['flor_id' => $insert_book,  'amenities_id' => $amenity]);
+                }
+            }
+            return redirect()->route('book.add.room',['id'=>$request->property_id])->with('success', 'Room Added Successfully');
+        }
+
+        $allamenities = array();
+        $get_facilities = Facilities::where('status', 1)->get();
+        $get_amenities = Amenities::where('status', 1)->get();
+        $get_bed = Bedtype::where('status', 1)->get();
+        $allflor = DB::table('add_book_property as a')
+        ->leftJoin('bedtypes as b', 'a.bed_id', '=', 'b.id')
+        ->select('a.*', 'b.title as bed_name')
+        ->where('a.status', 1)
+        ->where('b.status', 1)
+        ->get();
+        return view('property.add_room', compact('allflor', 'get_facilities', 'get_bed', 'get_amenities', 'id'));
     }
 }

@@ -149,6 +149,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::match(['get', 'post'], '/property/book/create', [PropertyController::class, 'book_create'])->name('book.property.create');
     Route::get('/book/property/{id}', [PropertyController::class, 'book_edit'])->name('book.property.edit');
     Route::post('/book/property/update', [PropertyController::class, 'book_update'])->name('book.property.update');
+    Route::match(['get', 'post'],'/book/property/aad/room/{id}', [PropertyController::class, 'add_room'])->name('book.add.room');
 
 
     // Notes Route

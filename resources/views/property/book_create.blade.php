@@ -58,16 +58,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"> Rate</label>
-                                            <input class="form-control @error('hotel_rate') is-invalid @enderror" type="number" name="hotel_rate" placeholder="Enter  Rate" value="{{ old('hotel_rate', $hotel->hotel_rate ?? '') }}" />
-                                            @error('hotel_rate')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label"> Address</label>
@@ -97,6 +87,33 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"> Youtube Link</label>
+                                            <input class="form-control @error('youtube_link') is-invalid @enderror" type="text" name="youtube_link" placeholder="Enter Youtube Link" value="{{ old('youtube_link', $hotel->youtube_link ?? '') }}" />
+                                            @error('youtube_link')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"> Number Of Floors</label>
+                                            <input class="form-control @error('num_of_flors') is-invalid @enderror" type="number" name="num_of_flors" placeholder="Enter Number Of Floors" value="{{ old('num_of_flors', $hotel->num_of_flors ?? '') }}" />
+                                            @error('num_of_flors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"> Rating</label>
+                                            <input class="form-control @error('rating') is-invalid @enderror" type="number" name="rating" placeholder="Enter Rating" value="{{ old('rating', $hotel->rating ?? '') }}" />
+                                            @error('rating')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -108,15 +125,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Place</label>
-                                            <input class="form-control @error('place') is-invalid @enderror" type="text" name="place" placeholder="Enter Place" value="{{ old('place', $hotel->place ?? '') }}" />
-                                            @error('place')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -158,25 +166,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Room Type</label>
-                                            <input class="form-control @error('room_type') is-invalid @enderror" type="text" name="room_type" placeholder="Enter Room Type" value="{{ old('room_type', $hotel->room_type ?? '') }}" />
-                                            @error('room_type')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Room Size</label>
-                                            <input class="form-control @error('room_size') is-invalid @enderror" type="text" name="room_size" placeholder="Enter Room Size" value="{{ old('room_size', $hotel->room_size ?? '') }}" />
-                                            @error('room_size')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label"> Images</label>
