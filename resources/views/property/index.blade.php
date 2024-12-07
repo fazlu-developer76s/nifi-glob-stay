@@ -48,8 +48,6 @@
                                         <th class="text-nowrap">Category Name</th>
                                         <th class="text-nowrap">Name</th>
                                         <th class="text-nowrap">State</th>
-                                        <th class="text-nowrap">Place</th>
-
                                         <th class="text-nowrap">Created Date </th>
                                         <th class="text-nowrap">Status</th>
                                         @if($approved == 1 || Auth::user()->role_id == 1)
@@ -67,7 +65,6 @@
                                         <td>{{ $property->category_name }}</td>
                                         <td>{{ $property->hotel_name }}</td>
                                         <td>{{ $property->state }}</td>
-                                        <td>{{ $property->place }}</td>
                                         <td>{{ \Carbon\Carbon::parse($property->created_at)->format('d F Y h:i A') }}</td>
                                         <td>
                                             <div class="form-check form-switch">
