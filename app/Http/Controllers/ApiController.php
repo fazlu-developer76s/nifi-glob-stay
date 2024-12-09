@@ -662,8 +662,8 @@ class ApiController extends Controller
             ->join('users as b', 'a.user_id', '=', 'b.id')
             ->leftJoin('properties as c', 'c.id', '=', 'a.property_id') // Added left join
             ->select(
-                'a.*',
-                'b.name as user_name',
+                'a.*', 
+                'b.name as user_name', 
                 'b.image as user_image'
             )
             ->where('a.status', 1)

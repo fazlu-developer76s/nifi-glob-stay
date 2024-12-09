@@ -40,7 +40,7 @@ Route::post('user/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
-Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);
+Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);   
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
 Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
 Route::get('fetch-banner',[ApiController::class, 'fetch_banner']);
@@ -49,12 +49,12 @@ Route::get('fetch-gallary',[ApiController::class, 'fetch_gallary']);
 Route::get('fetch-pages',[ApiController::class, 'fetch_pages']);
 Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
 Route::get('fetch-review', [ApiController::class, 'fetch_review']);
+
 Route::middleware(['jwt'])->group(function () {
 
     // glob stay validate route
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
     Route::post('user/post-review', [ApiController::class, 'post_review']);
-
     Route::post('user/property-whislist', [ApiController::class, 'property_whislist']);
     // Get all properties
     Route::get('user/properties', [ApiPropertyController::class, 'index']);
