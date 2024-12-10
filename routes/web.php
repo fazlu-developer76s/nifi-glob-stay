@@ -63,6 +63,8 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Member Routes
     Route::get('/member', [MemberController::class, 'index'])->name('member');
+    Route::get('approved/member', [MemberController::class, 'approved_index'])->name('approved.member');
+    Route::get('pending/member', [MemberController::class, 'pending_index'])->name('pending.member');
     Route::get('/borrower', [MemberController::class, 'borrower'])->name('borrower');
     Route::get('/userlocation', [MemberController::class, 'borrower'])->name('userlocation')->middleware('user_location');
     Route::post('/user_location/check-otp', [MemberController::class, 'check_otp'])->name('userlocation.otp.check');
@@ -82,6 +84,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Status Active Inactive Route
     Route::post('/change-status', [RoleController::class, 'change_status'])->name('change.status');
+    Route::post('/user-verified', [RoleController::class, 'user_verified'])->name('user.verified');
     Route::post('/change-status-property', [RoleController::class, 'change_status_property'])->name('change.status.property');
 
     // Lead Routes
@@ -141,6 +144,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Property Route
     Route::get('/property', [PropertyController::class, 'index'])->name('property');
+    Route::get('pending/property', [PropertyController::class, 'pending_index'])->name('pending.property');
     Route::match(['get', 'post'], '/property/create', [PropertyController::class, 'create'])->name('property.create');
     Route::get('/property/{id}', [PropertyController::class, 'edit'])->name('property.edit');
     Route::post('/property/update', [PropertyController::class, 'update'])->name('property.update');

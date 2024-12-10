@@ -42,6 +42,9 @@
                                         <th class="text-nowrap">Role</th>
                                         <th class="text-nowrap">Created Date</th>
                                         <th class="text-nowrap">Status</th>
+                                        @if(isset($is_user))
+                                        <th class="text-nowrap">Verify User</th>
+                                        @endif
                                         <th class="text-nowrap">Action</th>
                                     </tr>
                                 </thead>
@@ -60,6 +63,13 @@
                                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault{{ $member->id }}" {{ ($member->status==1) ? 'checked' : '' }}  onchange="ChangeStatus('users',{{ $member->id }});" >
                                               </div>
                                         </td>
+                                        @if(isset($is_user))
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="is_user_verified{{ $member->id }}" {{ ($member->is_user_verified==1) ? 'checked' : '' }}  onchange="is_user_verified('users',{{ $member->id }});" >
+                                              </div>
+                                        </td>
+                                        @endif
                                         <td>
                                             @if($firstSegment = Request::segment(1) ===  "borrower" || $firstSegment = Request::segment(1) ===  "userlocation")
                                             <a href="{{ route('member.view', $member->id) }}" class="text-primary me-2">

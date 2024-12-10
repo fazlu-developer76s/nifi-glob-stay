@@ -80,6 +80,30 @@
         });
         return false;
     }
+    function is_user_verified(table_name, id) {
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+        if ($("#is_user_verified" + id + "").is(':checked')) {
+            var status = 1;
+        } else {
+            var status = 2;
+        }
+        $.ajax({
+            url: "{{ route('user.verified') }}",
+            type: 'post',
+            data: {
+                _token: csrfToken,
+                table_name: table_name,
+                id: id,
+                status: status
+            },
+            success: function(response) {
+                   var routeUrl = "{{ route('approved.member') }}";
+                    window.location.href = routeUrl;
+                console.log(response);
+            }
+        });
+        return false;
+    }
 </script>
 <script>
     function ChangeStatusApproved(table_name, id) {
@@ -102,6 +126,8 @@
                     status: status
                 },
                 success: function(response) {
+                          var routeUrl = "{{ route('property') }}";
+                    window.location.href = routeUrl;
                     console.log(response);
                 }
             });

@@ -16,9 +16,10 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
-
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
             'mobile_no' => [
                 'required',
                 'regex:/^[6-9][0-9]{9}$/',
@@ -27,11 +28,7 @@ class AuthController extends Controller
                 'required',
                 'email',
             ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-            ],
+          
         ]);
         $user = User::where('email', $request->email)
             ->orWhere('mobile_no', $request->mobile_no)
@@ -46,12 +43,20 @@ class AuthController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->mobile_no = $request->mobile_no;
-        $user->password = Hash::make($request->password);
+        $user->address = $request->address;
         $user->status = 1;
         $user->role_id = 2;
         $user->created_at = now();
         $user->updated_at = now();
         $user->save();
+        if ($otp = $this->userOTP($request->mobile_no)) {
+            $this->GenerateOTP($otp, $user->id);
+            return response()->json([
+                'status' => "OK",
+                'message' => "Please Enter Otp to verify user",
+            ], 200);
+        }
+            
         return response()->json([
             'status' => "OK",
             'message' => "User Created Successfully",
@@ -102,6 +107,12 @@ class AuthController extends Controller
         ]);
         $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('a.mobile_no', $request->mobile_no)->first();
         if ($user) {
+            if($user->is_user_verified == 2){
+                   return response()->json([
+                    'status' => "OK",
+                    'message' => "seller approve pending for admin side",
+                ], 200);
+            }
             if ($otp = $this->userOTP($request->mobile_no)) {
                 $this->GenerateOTP($otp, $user->id);
                 return response()->json([
@@ -165,12 +176,22 @@ class AuthController extends Controller
                     $this->ExpireToken($user->id);
                     $this->StoreToken($user->id, $token);
                 }
-                return response()->json([
+                if(isset($user->is_user_verified) && $user->is_user_verified == 1){
+                     DB::table('users')->where('id',$user->id)->update(['is_mobile_verified'=>1]);
+                     return response()->json([
                     'status' => "OK",
                     'token' => $token,
                     'user' => $user,
                     'role' => $role_details->title
                 ], 200);
+                }else{
+                    DB::table('users')->where('id',$user->id)->update(['is_mobile_verified'=>1]);
+                     return response()->json([
+                    'status' => "OK",
+                    'message' => "Seller Approval pending for admin side"
+                ], 200);
+                }
+               
             }
         }
         if (!$user) {
@@ -241,7 +262,6 @@ class AuthController extends Controller
     public function userOTP($mobile_no)
     {
         $otp = 1234;
-        return $otp;
         $entity_id = 1701159540601889654;
         $senderId  = "NRSOFT";
         $temp_id   = "1707164805234023036";

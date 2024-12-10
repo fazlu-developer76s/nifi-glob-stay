@@ -19,7 +19,7 @@ class PropertyController extends Controller
     public function index()
     {
         $title = "Property List";
-        $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->orderBy('a.id', 'desc')->get();
+        $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->where('a.is_property_verified','1')->orderBy('a.id', 'desc')->get();
         $properties = array();
         foreach ($get_property as $property) {
             $property->images = DB::table('properties_images')->where('property_id', $property->id)->where('status', 1)->get();
@@ -30,6 +30,23 @@ class PropertyController extends Controller
         $allproperty = $properties;
         return view('property.index', compact('title', 'allproperty'));
     }
+    
+    public function pending_index(){
+        
+        $title = "Property List";
+        $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->where('a.is_property_verified','2')->orderBy('a.id', 'desc')->get();
+        $properties = array();
+        $is_property = 1;
+        foreach ($get_property as $property) {
+            $property->images = DB::table('properties_images')->where('property_id', $property->id)->where('status', 1)->get();
+            $property->facilities = DB::table('add_facilities_propery as a')->join('facilities as b', 'a.facilities_id', '=', 'b.id')->select('a.*', 'b.title as facility_name')
+                ->where('a.status', '1')->where('a.property_id', $property->id)->where('b.status', 1)->get();
+            $properties[] = $property;
+        }
+        $allproperty = $properties;
+        return view('property.index', compact('title', 'allproperty','is_property'));
+    }
+    
     public function create(Request $request)
     {
         if ($request->method() == 'POST') {

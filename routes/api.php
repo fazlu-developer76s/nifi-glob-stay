@@ -27,16 +27,16 @@ use App\Http\Controllers\MessageController;
 // });
 
 
-Route::post('user/signup', [AuthController::class, 'signup']);
-Route::post('user/login', [AuthController::class, 'login']);
-Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
-Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
+// Route::post('user/signup', [AuthController::class, 'signup']);
+// Route::post('user/login', [AuthController::class, 'login_bkp']);
+// Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
-Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
+// Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
 
 // glob stay public route
 Route::post('user/signup', [AuthController::class, 'signup']);
-Route::post('user/login', [AuthController::class, 'login']);
+Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
+Route::post('user/login', [AuthController::class, 'login_bkp']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
@@ -70,6 +70,8 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/properties/check', [ApiPropertyController::class, 'check_exist_data']);
     // Delete an image
     Route::post('user/properties/image/delete', [ApiPropertyController::class, 'delete_image']);
+    
+    Route::post('user/permission', [ApiController::class, 'permission']);
 
 
 

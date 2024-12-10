@@ -50,8 +50,10 @@
                                         <th class="text-nowrap">State</th>
                                         <th class="text-nowrap">Created Date </th>
                                         <th class="text-nowrap">Status</th>
+                                        @if(isset($is_property))
                                         @if($approved == 1 || Auth::user()->role_id == 1)
                                         <th class="text-nowrap">Approved</th>
+                                        @endif
                                         @endif
                                         <th class="text-nowrap">Action</th>
                                     </tr>
@@ -71,12 +73,14 @@
                                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault{{ $property->id }}" {{ ($property->status == 1) ? 'checked' : '' }} onchange="ChangeStatus('properties',{{ $property->id }});" >
                                             </div>
                                         </td>
+                                        @if(isset($is_property))
                                         @if($approved == 1 || Auth::user()->role_id == 1)
                                         <td>
                                             <div class="form-check form-switch">
                                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefaultproperty{{ $property->id }}" {{ ($property->is_property_verified == 1) ? 'checked' : '' }} onchange="ChangeStatusApproved('properties',{{ $property->id }});" >
                                             </div>
                                         </td>
+                                        @endif
                                         @endif
                                         <td>
                                             @if($property->category_id == 1)
@@ -90,7 +94,8 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             @endif
-
+                                            
+                                            
                                             @if($delete == 1 || Auth::user()->role_id == 1)
                                             <form action="{{ route('property.destroy', $property->id) }}" method="POST" style="display: inline;">
                                                 @csrf
@@ -100,6 +105,7 @@
                                                 </button>
                                             </form>
                                             @endif
+                                            
                                         </td>
                                     </tr>
                                     @endforeach

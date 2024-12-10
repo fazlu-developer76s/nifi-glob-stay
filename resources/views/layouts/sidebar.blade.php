@@ -31,6 +31,16 @@
                             <div class="menu-text">Members</div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('approved.member') }}" class="menu-link">
+                            <div class="menu-text">Approved Sellers</div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('pending.member') }}" class="menu-link">
+                            <div class="menu-text">Pending Sellers</div>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link">
@@ -89,9 +99,15 @@
                     @if($property == 1 || Auth::user()->role_id==1)
                     <div class="menu-item">
                         <a href="{{ route('property') }}" class="menu-link ">
-                            <div class="menu-text">Manage Property </div>
+                            <div class="menu-text">Listed Property </div>
                         </a>
                     </div>
+                     <div class="menu-item">
+                        <a href="{{ route('pending.property') }}" class="menu-link ">
+                            <div class="menu-text">Pending Property </div>
+                        </a>
+                    </div>
+                    
                     @endif
                 </div>
             </div>

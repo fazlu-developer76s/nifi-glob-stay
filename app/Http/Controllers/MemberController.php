@@ -17,8 +17,23 @@ class MemberController extends Controller
     {
 
         $title = "Member List";
-        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id','!=',2)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
         return view('member.index', compact('title', 'allmember'));
+    }
+    
+    public function approved_index(){
+        
+        $title = "Member List";
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id',2)->where('users.is_user_verified',1)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
+        return view('member.index', compact('title', 'allmember'));
+    }
+    
+    public function pending_index(){
+        
+        $title = "Member List";
+        $is_user = 1;
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id',2)->where('users.is_user_verified',2)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
+        return view('member.index', compact('title', 'allmember','is_user'));
     }
 
     public function member_kyc(Request $request)

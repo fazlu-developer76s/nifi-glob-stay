@@ -179,4 +179,17 @@ public function update_permission(Request $request)
             return response()->json(['status' => false]);
         }
     }
+    
+    public function user_verified(Request $request){
+        
+        $table_name = $request->table_name;
+        $id = $request->id;
+        $status = $request->status;
+        $change_status = DB::table($table_name)->where('id', $id)->update(['is_user_verified' => $status, 'updated_at' => date('Y-m-d H:i:s')]);
+        if ($change_status) {
+            return response()->json(['status' => 'user verified successfully']);
+        } else {
+            return response()->json(['status' => false]);
+        }
+    }
 }

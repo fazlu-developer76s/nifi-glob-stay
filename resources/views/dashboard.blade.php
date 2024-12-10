@@ -1,5 +1,8 @@
 @extends('layouts/app')
 @section('content')
+@inject('helper', 'App\Helpers\Global_helper')
+
+
 <div class="app-sidebar-bg"></div>
 <div class="app-sidebar-mobile-backdrop"><a href="#" data-dismiss="app-sidebar-mobile"
         class="stretched-link"></a></div>
@@ -18,103 +21,121 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <a href="#">
                 <div class="card">
-                    <div class="card-body no-padding" style="height:208px">
-                        <div class="alert alert-callout alert-info no-margin">
-                            <strong class="text-xl" style="font-size: 50px;">1
+                    <div class="card-body no-padding" style="height:180px">
+                        <div class="alert alert-callout  no-margin text-center">
+                            <strong class="text-xl" style="font-size: 30px;"> Properties
                                 <?php //$reqdata['COUNT(id)'];
-                                ?></strong><br>
-                            <span class="opacity-90">Request List</span>
-                            <!-- <h1 class="pull-right text-info" style="margin-top: -20px;"><img src="assets/img/icon.png" width="100px"></h1> -->
+                                ?></strong><hr>
+                                <div class="row card_div">
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-success" style="font-size: 20px;">Approved </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Propertylist('1'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-warning" style="font-size: 20px;">Pending </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Propertylist('2'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" >
+                                        <span class="opacity-90 text-danger" style="font-size: 20px;">Rejected </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Propertylist('3'); }} </span>
+                                    </div>
+                                
+                                </div>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
-        <div class="col-lg-9">
-            <div class="row">
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-danger no-margin">
-                                    <!-- <h1 class="pull-right text-danger"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">42.90%</strong><br />
-                                    <span class="opacity-50">Bounce rate</span>
+        <div class="col-lg-4">
+            <a href="#">
+                <div class="card">
+                    <div class="card-body no-padding" style="height:180px">
+                        <div class="alert alert-callout  no-margin text-center">
+                            <strong class="text-xl" style="font-size: 30px;"> Sellers
+                                <?php //$reqdata['COUNT(id)'];
+                                ?></strong><hr>
+                                <div class="row card_div">
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-success" style="font-size: 20px;">Approved </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Sellers('1'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-warning" style="font-size: 20px;">Pending </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Sellers('2'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" >
+                                        <span class="opacity-90 text-danger" style="font-size: 20px;">Rejected </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Sellers('3'); }} </span>
+                                    </div>
+                                
                                 </div>
-                            </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-warning no-margin">
-                                    <!-- <h1 class="pull-right text-warning"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">$ 32,829</strong><br />
-                                    <span class="opacity-50">Revenue</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-success no-margin">
-                                    <!-- <h1 class="pull-right text-success"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">42.90%</strong><br />
-                                    <span class="opacity-50">Bounce rate</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-danger no-margin">
-                                    <!-- <h1 class="pull-right text-danger"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">54 sec.</strong><br />
-                                    <span class="opacity-50">Avg. time on site</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-warning no-margin">
-                                    <!-- <h1 class="pull-right text-warning"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">$ 32,829</strong><br />
-                                    <span class="opacity-50">Revenue</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4">
-                    <a href="#">
-                        <div class="card">
-                            <div class="card-body no-padding">
-                                <div class="alert alert-callout alert-success no-margin">
-                                    <!-- <h1 class="pull-right text-success"><img src="assets/img/icon.png" width="50px;"></h1> -->
-                                    <strong class="text-xl">42.90%</strong><br />
-                                    <span class="opacity-50">Bounce rate</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
+            </a>
         </div>
+        <div class="col-lg-4">
+            <a href="#">
+                <div class="card">
+                    <div class="card-body no-padding" style="height:180px">
+                        <div class="alert alert-callout  no-margin text-center">
+                            <strong class="text-xl" style="font-size: 30px;"> Enquires
+                                <?php //$reqdata['COUNT(id)'];
+                                ?></strong><hr>
+                                <div class="row card_div">
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-success" style="font-size: 20px;">Contact </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Enquiry('1'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" style="border-right:2px solid black;">
+                                        <span class="opacity-90 text-warning" style="font-size: 20px;">Property  </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Enquiry('2'); }} </span>
+                                    </div>
+                                    <div class="col-md-4" >
+                                        <span class="opacity-90 text-secondary" style="font-size: 20px;">Other </span>
+                                        <br>
+                                        <span class="opacity-90"  style="font-size: 20px;" >{{ $helper->Enquiry('3'); }} </span>
+                                    </div>
+                                
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+
+       <div class="row">
+            @if($helper->getTablesCount())
+                @foreach($helper->getTablesCount() as $data) 
+                    <div class="col-lg-3">
+                        <a href="#">
+                            <div class="card">
+                                <div class="card-body no-padding">
+                                    <div class="alert alert-callout alert-success no-margin">
+                                        <!-- Dynamic Content -->
+                                        <span class="opacity-100">{{ str_replace('_',' ',$data['name'])  }}</span><br>
+                                        <strong class="text-xl">{{ $data['count'] }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            @endif
+        </div>
+
     </div>
 </div>
 <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top"

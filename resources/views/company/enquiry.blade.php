@@ -143,16 +143,40 @@
                             <!--    <button class="btn btn-primary">Create Lead</button>-->
                             <!--</a>-->
                         </div>
-
+                        
 
                         <div class="card-body">
                             <table id="data-table-default" class="table table-striped table-bordered align-middle">
+                                <!--<div class="row">-->
+                                <!--    <div class="col-md-7">-->
+                                        
+                                <!--    </div>-->
+                                    
+                                <!--    <div class="col-md-3">-->
+                                <!--        <form action="{{ route('enquiry') }}" method="POST" enctype="multipart/form-data">-->
+                                <!--         @csrf-->
+                                <!--        <select name="type" class="form-control">-->
+                                <!--            <option value="contact_us">Contact Us</option>-->
+                                <!--            <option value="contact_us">Property</option>-->
+                                <!--        </select> -->
+                                <!--    <input type="submit">-->
+                                <!--    </form>-->
+                                <!--    </div>-->
+                                <!--     <div class="col-md-1">-->
+                                        
+                                <!--    </div>-->
+                                <!--</div>-->
+                                
                                 <thead>
+                               
                                     <tr>
                                         <th width="1%"></th>
                                         <th class="text-nowrap">Full Name</th>
                                         <th class="text-nowrap">Email</th>
                                         <th class="text-nowrap">Phone</th>
+                                        <th class="text-nowrap">Location</th>
+                                        <th class="text-nowrap">Budget</th>
+                                        <th class="text-nowrap">Plan Date</th>
                                         <th class="text-nowrap">Description</th>
                                         <th class="text-nowrap">Created At</th>
                                         <th class="text-nowrap">Action</th>
@@ -166,6 +190,10 @@
                                         <td>{{ ucwords($lead->name) }}</td>
                                         <td>{{ ucwords($lead->email) }}</td>
                                         <td>{{ $lead->mobile_no }}</td>
+                                        <td>{{ $lead->location }}</td>
+                                        <td>{{ $lead->budget }}</td>
+                                    <td>{{ (!empty($lead->plan_date)) ? date('d-m-Y',strtotime($lead->plan_date)) : '' ; }}</td>
+
                                         <td>{{ $lead->message }}</td>
                                         <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d F Y h:i A') }}</td>
                                         <td>
@@ -173,6 +201,8 @@
                                                 <a href="{{ $lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $lead->id : '#' }}" target="_blank">
                                                     View
                                                 </a>
+                                            @else
+                                            Contact
                                             @endif
                                         </td>
                                     </tr>

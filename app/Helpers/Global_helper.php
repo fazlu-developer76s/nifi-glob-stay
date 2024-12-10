@@ -314,6 +314,72 @@ class Global_helper
 
     return $has_permission ? 1 : 2;
 }
+ 
+    public static function Propertylist($type)
+    {
+        $query = DB::table('properties');
+        if ($type==1 || $type == 2) {
+            $query->where('is_property_verified', $type)->where('status', 1);
+        }else{
+              $query->where('status', 2 );
+        }
+    
+        return $query->count();
+    }
+    
+    public static function Sellers($type)
+    {
+        $query = DB::table('users');
+        if ($type==1 || $type == 2) {
+            $query->where('is_user_verified', $type)->where('status', 1);
+        }else{
+              $query->where('status', 2 );
+        }
+    
+        return $query->count();
+    }
+
+  
+    
+    public static function Enquiry($type)
+    {
+        $query = DB::table('enquiries')->where('status', 1);
+    
+        if ($type == 1) {
+            $query->whereNull('property_id');
+        } elseif ($type == 2) {
+            $query->whereNotNull('property_id');
+        } else {
+            return 0;
+        }
+    
+        return $query->count();
+    }
+    
+    public static function getTablesCount()
+    {
+        $tables = [
+            'Category' => 'categories',
+            'Amenities' => 'amenities',
+            'Bed_Type' => 'bedtypes',
+            'Banner' => 'banners',
+            'Blog' => 'blogs',
+            'Review' => 'property_reviews',
+        ];
+    
+        $result = [];
+    
+        foreach ($tables as $name => $table) {
+            $count = DB::table($table)->where('status', 1)->count();
+            $result[] = [
+                'name' => $name,
+                'count' => $count,
+            ];
+        }
+    
+        return $result;
+    }
+
 
 
 

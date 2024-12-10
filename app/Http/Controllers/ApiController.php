@@ -467,7 +467,7 @@ class ApiController extends Controller
         if(isset($request->user->id) && $request->user->id){
             $user_id = $request->user->id;
         }else{
-           $user_id = " ";
+           $user_id = "";
         }
         if (!isset($request->type)) {
             return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
@@ -480,7 +480,7 @@ class ApiController extends Controller
         $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
         foreach($get_cate as $row){
-            if($user_id){
+            if(!empty($user_id)){
             $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
             }else{
             $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
@@ -587,6 +587,18 @@ class ApiController extends Controller
         $enc->email = $request->email;
         $enc->mobile_no = $request->mobile_no;
         $enc->message = $request->message;
+        if($request->property_id){
+        $enc->property_id = $request->property_id;    
+        }
+        if($request->location){
+        $enc->location = $request->location;    
+        }
+        if($request->budget){
+        $enc->budget = $request->budget;    
+        }
+        if($request->plan_date){
+        $enc->plan_date = $request->plan_date;    
+        }
         $enc->save();
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
     }
@@ -635,7 +647,7 @@ class ApiController extends Controller
         if(isset($request->user->id) && $request->user->id){
            $user_id = $request->user->id;
        }else{
-          $user_id = '';
+          $user_id = "";
        }
        if (!isset($request->cat)) {
            return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
@@ -648,7 +660,7 @@ class ApiController extends Controller
        $get_cate = $get_category->orderBy('id','asc')->get();
        $new_property_get = array();
        foreach($get_cate as $row){
-           if($user_id){
+           if(!empty($user_id)){
            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('p.id',$id)->get();
            }else{
            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('p.id',$id)->get();
@@ -682,6 +694,46 @@ class ApiController extends Controller
            $new_property_get[] = $row;
        }
        return response()->json(['status' => 'Success', 'data' => $new_property_get], 200);
+   }
+   
+   public function permission(Request $request){
+        $role_id = $request->user->role_id;
+        $permission_name = $request->title;
+         try {
+        // Fetch the permission data from the database
+        $get_permission = DB::table('role_permission as a')
+            ->join('permissions as b', 'a.permission_id', '=', 'b.id')
+            ->join('permission_category as c', 'b.per_cate_id', '=', 'c.id')
+            ->select('a.*', 'b.title', 'c.category_name')
+            ->where('a.status', 1)
+            ->where('b.status', 1)
+            ->where('c.status', 1)
+            ->where('a.role_id', $role_id)
+            ->where('b.title', $permission_name)
+            ->first();
+        
+        // Check if permission data exists and if the permission_status is 1
+        if ($get_permission && $get_permission->permission_status == 1) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Permission granted',
+                'permission_status' => 1
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Permission denied',
+            'permission_status' => 2
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Handle errors and return a proper response
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong: ' . $e->getMessage()
+        ], 500);
+    }
    }
 
 }
