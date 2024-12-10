@@ -588,18 +588,19 @@ class ApiController extends Controller
         $enc->mobile_no = $request->mobile_no;
         $enc->message = $request->message;
         if($request->property_id){
-        $enc->property_id = $request->property_id;    
+        $enc->property_id = $request->property_id;
         }
         if($request->location){
-        $enc->location = $request->location;    
+        $enc->location = $request->location;
         }
         if($request->budget){
-        $enc->budget = $request->budget;    
+        $enc->budget = $request->budget;
         }
         if($request->plan_date){
-        $enc->plan_date = $request->plan_date;    
+        $enc->plan_date = $request->plan_date;
         }
         $enc->save();
+        DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Create Lead"]);
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
     }
 
@@ -674,8 +675,8 @@ class ApiController extends Controller
             ->join('users as b', 'a.user_id', '=', 'b.id')
             ->leftJoin('properties as c', 'c.id', '=', 'a.property_id') // Added left join
             ->select(
-                'a.*', 
-                'b.name as user_name', 
+                'a.*',
+                'b.name as user_name',
                 'b.image as user_image'
             )
             ->where('a.status', 1)
@@ -695,7 +696,7 @@ class ApiController extends Controller
        }
        return response()->json(['status' => 'Success', 'data' => $new_property_get], 200);
    }
-   
+
    public function permission(Request $request){
         $role_id = $request->user->role_id;
         $permission_name = $request->title;
@@ -711,7 +712,7 @@ class ApiController extends Controller
             ->where('a.role_id', $role_id)
             ->where('b.title', $permission_name)
             ->first();
-        
+
         // Check if permission data exists and if the permission_status is 1
         if ($get_permission && $get_permission->permission_status == 1) {
             return response()->json([

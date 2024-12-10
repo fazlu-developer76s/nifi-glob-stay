@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
@@ -69,7 +71,16 @@ class CompanyController extends Controller
 
     public function enquiry(){
         $title = 'Enquiry List'   ;
-        $alllead = DB::table('enquiries as a')->where('a.status',1)->orderBy('a.id','desc')->get();
-        return view('company.enquiry', compact('alllead','title'));
+
+        $query = DB::table('enquiries as a')->where('a.status',1);
+        if(Auth::user()->role_id != 1){
+            $query->where('user_id',Auth::user()->id);
+        }
+        $alllead = $query->orderBy('a.id','desc')->get();
+        $get_user = User::where('status', 1)
+        ->where('role_id', 4)
+        ->where('is_user_verified', 1)
+        ->get();
+        return view('company.enquiry', compact('alllead','get_user'));
     }
 }

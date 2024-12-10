@@ -143,15 +143,15 @@
                             <!--    <button class="btn btn-primary">Create Lead</button>-->
                             <!--</a>-->
                         </div>
-                        
+
 
                         <div class="card-body">
                             <table id="data-table-default" class="table table-striped table-bordered align-middle">
                                 <!--<div class="row">-->
                                 <!--    <div class="col-md-7">-->
-                                        
+
                                 <!--    </div>-->
-                                    
+
                                 <!--    <div class="col-md-3">-->
                                 <!--        <form action="{{ route('enquiry') }}" method="POST" enctype="multipart/form-data">-->
                                 <!--         @csrf-->
@@ -163,12 +163,12 @@
                                 <!--    </form>-->
                                 <!--    </div>-->
                                 <!--     <div class="col-md-1">-->
-                                        
+
                                 <!--    </div>-->
                                 <!--</div>-->
-                                
+
                                 <thead>
-                               
+
                                     <tr>
                                         <th width="1%"></th>
                                         <th class="text-nowrap">Full Name</th>
@@ -179,6 +179,7 @@
                                         <th class="text-nowrap">Plan Date</th>
                                         <th class="text-nowrap">Description</th>
                                         <th class="text-nowrap">Created At</th>
+                                        <th class="text-nowrap">Type</th>
                                         <th class="text-nowrap">Action</th>
                                     </tr>
                                 </thead>
@@ -192,18 +193,30 @@
                                         <td>{{ $lead->mobile_no }}</td>
                                         <td>{{ $lead->location }}</td>
                                         <td>{{ $lead->budget }}</td>
-                                    <td>{{ (!empty($lead->plan_date)) ? date('d-m-Y',strtotime($lead->plan_date)) : '' ; }}</td>
+                                        <td>{{ (!empty($lead->plan_date)) ? date('d-m-Y',strtotime($lead->plan_date)) : '' ; }}</td>
 
                                         <td>{{ $lead->message }}</td>
                                         <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d F Y h:i A') }}</td>
                                         <td>
                                             @if(!empty($lead->property_id))
-                                                <a href="{{ $lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $lead->id : '#' }}" target="_blank">
-                                                    View
-                                                </a>
-                                            @else
-                                            Contact
-                                            @endif
+                                            <a href="{{ $lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $lead->property_id : '#' }}" target="_blank">
+                                                View
+                                            </a>
+                                        @else
+                                        Contact
+                                        @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('lead.view', $lead->id) }}" class="text-success me-2">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="text-success me-2" data-bs-toggle="modal" data-bs-target="#myModal" onclick="OpenAssignModal('{{ Auth::user()->id }}','{{ $lead->id }}','{{ $lead->user_id }}');">
+                                                <i class="fas fa-exchange-alt" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="#" class="text-secondary me-2" data-bs-toggle="modal"
+                                                data-bs-target="#exampleModalRight" onclick="ViewrightModal({{ $lead->id }})">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -242,6 +255,40 @@
                     </div> --}}
                 </div>
             </div>
+        </div>
+    </div>
+    <!-- Modal Structure -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="myModalLabel">Modal Title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Modal content with select option -->
+            <form>
+                <div class="mb-3">
+                <input type="hidden" id="current_lead_id">
+                <input type="hidden" id="current_user_id">
+                <input type="hidden" id="lead_create_user_id">
+                <label for="selectOption" class="form-label">Select User</label>
+                <select id="selectOption" class="form-select" aria-label="Default select example">
+                    <option value="">Select User</option>
+                    @foreach ( $get_user as $user )
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+                </div>
+                <span class="assign_error text-danger"></span>
+                <span class="assign_success text-success"></span>
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="AssignLead();">Save changes</button>
+            </div>
+        </div>
         </div>
     </div>
 

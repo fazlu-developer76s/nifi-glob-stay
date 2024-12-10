@@ -112,19 +112,18 @@ class LeadController extends Controller
 
     public function view($id)
     {
-        $get_route = Route::where('status', 1)->get();
+
         $user_id = Auth::user()->id;
         $get_note = DB::table('notes')->where('loan_request_id', $id)->where('title', 'View Lead')->where('user_id', $user_id)->first();
-
         if (!$get_note) {
             DB::table('notes')->insert(['loan_request_id' => $id, 'user_id' => $user_id, 'loan_status' => 2, 'title' => "View Lead"]);
-            Loan_request::where('id', $id)->update(['loan_status' => 2]);
+            DB::table('enquiries')->where('id', $id)->update(['loan_status' => 2]);
         }
         $title = "View Lead";
-        $get_lead_1 = Loan_request::where('status', '!=', 3)->where('id', $id)->first();
-        $get_user = Member::where('status', 1)->where('id', $get_lead_1->user_id)->first();
-        $get_lead = DB::table('loan_requests')->leftJoin('users', 'loan_requests.user_id', '=', 'users.id')->leftJoin('providers', 'providers.id', '=', 'loan_requests.service_no')->select('loan_requests.*', 'users.name as username', 'providers.title as service_name')->where('loan_requests.status', '!=', '3')->where('loan_requests.loan_status', '!=', 5)->where('loan_requests.id', $id)->orderBy('loan_requests.id', 'desc')->first();
-        return view('lead.view', compact('title', 'get_lead', 'get_user','get_route'));
+        $get_lead = DB::table('enquiries')->join('users', 'enquiries.user_id', '=', 'users.id')->select('enquiries.*', 'users.name as username')->where('enquiries.status', '!=', '3')->where('enquiries.id',$id)->orderBy('enquiries.id', 'desc')->first();
+        $get_providers = DB::table('providers')->where('status',1)->get();
+        $get_assign_id = DB::table('assign_lead')->where('lead_id',$id)->orderBy('id', 'desc')->limit(1)->first();
+        return view('lead.view', compact('title', 'get_lead','get_providers','get_assign_id'));
     }
 
     public function kyclead_view($id)
@@ -176,10 +175,6 @@ class LeadController extends Controller
 
     public function update(Request $request)
     {
-
-
-
-
 
         if ($request->loan_status == "approved") {
             $request->validate([
@@ -320,8 +315,8 @@ class LeadController extends Controller
 
     public function viewright_modal(Request $request)
     {
-        $lead_id = $request->lead_id;
 
+        $lead_id = $request->lead_id;
         // Fetching notes with users
         $notes = DB::table('notes')
             ->leftJoin('users', 'notes.user_id', '=', 'users.id')
@@ -486,6 +481,35 @@ class LeadController extends Controller
                 DB::table('kyc_leads')->where('id', $request->hidden_id)->update(['kyc_status' => $request->kyc_status]);
                 return redirect()->route('kyclead.view', ['id' => $request->hidden_id])->with('success', 'kyc successfully updated');
             }
+        }
+    }
+    public function assign_lead(Request $request) {
+
+        $lead_id = $request->lead_id;
+        $current_user_id = $request->current_user_id;
+        $assign_user_id = $request->assign_user_id;
+        $insert_log = DB::table('assign_lead')->insert([
+            'lead_id' => $lead_id,
+            'current_user_id' => $current_user_id,
+            'assign_user_id' => $assign_user_id
+        ]);
+        $get_assing_user = DB::table('users')->where('id',$assign_user_id)->where('status',1)->first();
+        $insert_notes = DB::table('notes')->insert([
+            'loan_request_id' => $lead_id,
+            'user_id' => $current_user_id,
+            'loan_status' => 4,
+            'title' => 'Lead Assign To ' .$get_assing_user->name.''
+
+        ]);
+        $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>3]);
+        $update_user_id = DB::table('enquiries')
+        ->where('user_id', $current_user_id)
+        ->where('id', $lead_id)
+        ->update(['user_id' => $assign_user_id]);
+        if ($insert_log) {
+            return response()->json(['success' => true, 'message' => 'Lead assigned successfully']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Failed to assign lead']);
         }
     }
 }

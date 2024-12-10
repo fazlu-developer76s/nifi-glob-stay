@@ -62,6 +62,7 @@
                 </div>
             </div>
             @endif
+            @if(Auth::user()->role_id == 1)
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Category Management</div>
@@ -75,12 +76,15 @@
                     </div>
                 </div>
             </div>
+            @endif
+
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Property Management</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
+                    @if(Auth::user()->role_id == 1)
                     <div class="menu-item">
                         <a href="{{ route('amenities') }}" class="menu-link ">
                             <div class="menu-text">Manage Amenities </div>
@@ -96,6 +100,7 @@
                             <div class="menu-text">Manage Facilities </div>
                         </a>
                     </div>
+                    @endif
                     @if($property == 1 || Auth::user()->role_id==1)
                     <div class="menu-item">
                         <a href="{{ route('property') }}" class="menu-link ">
@@ -107,10 +112,11 @@
                             <div class="menu-text">Pending Property </div>
                         </a>
                     </div>
-                    
+
                     @endif
                 </div>
             </div>
+            @if(Auth::user()->role_id == 1)
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Testimonials</div>
@@ -181,12 +187,15 @@
                     </div>
                 </div>
             </div>
+            @endif
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 4)
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Site Setting</div>
                     <div class="menu-caret"></div>
                 </a>
                 <div class="menu-submenu">
+                    @if(Auth::user()->role_id == 1)
                     <div class="menu-item">
                         <a href="{{ route('company.edit', 1) }}" class="menu-link ">
                             <div class="menu-text">Manage Site Setting</div>
@@ -197,6 +206,7 @@
                             <div class="menu-text">Manage Seo</div>
                         </a>
                     </div>
+                    @endif
                     <div class="menu-item">
                         <a href="{{ route('enquiry') }}" class="menu-link">
                             <div class="menu-text">Enquiry List</div>
@@ -204,7 +214,7 @@
                     </div>
                 </div>
             </div>
-
+            @endif
             <div class="menu-item d-flex"> <a href="javascript:;" class="app-sidebar-minify-btn ms-auto"
                     data-toggle="app-sidebar-minify"><i class="fa fa-angle-double-left"></i></a> </div>
         </div>

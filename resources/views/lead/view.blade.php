@@ -1,70 +1,70 @@
 @extends('layouts/app')
 
 @section('content')
-    <style>
-        strong {
-            font-weight: bold;
-        }
+<style>
+    strong {
+        font-weight: bold;
+    }
 
-        .lead-status-badge {
-            font-size: 0.9rem;
-            padding: 5px 10px;
-            border-radius: 12px;
-        }
+    .lead-status-badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
 
+    .info_div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .first_div {
+        flex: 0 0 40%;
+        text-align: left;
+    }
+
+    .second_div {
+        flex: 0 0 55%;
+        text-align: left;
+    }
+
+    .container-fluid {
+        padding: 0 2rem;
+    }
+
+    .page-header {
+        margin-bottom: 1rem;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.9rem;
+    }
+
+    .card {
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        padding: 1rem 1.5rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
         .info_div {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .first_div {
-            flex: 0 0 40%;
+            flex-direction: column;
             text-align: left;
         }
 
         .second_div {
-            flex: 0 0 55%;
             text-align: left;
+            margin-top: 0.5rem;
         }
-
-        .container-fluid {
-            padding: 0 2rem;
-        }
-
-        .page-header {
-            margin-bottom: 1rem;
-        }
-
-        .breadcrumb-item {
-            font-size: 0.9rem;
-        }
-
-        .card {
-            margin-bottom: 2rem;
-        }
-
-        .card-header {
-            padding: 1rem 1.5rem;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .info_div {
-                flex-direction: column;
-                text-align: left;
-            }
-
-            .second_div {
-                text-align: left;
-                margin-top: 0.5rem;
-            }
-        }
-    </style>
+    }
+</style>
 
     @if (isset($get_lead))
         @php $form_action = "lead.update"; @endphp
@@ -72,17 +72,17 @@
         @php $form_action = "lead.create"; @endphp
     @endif
     <input type="hidden" id="user_id" value="{{ Auth::user()->id }}">
-    <input type="hidden" id="lead_id" value="{{ isset($get_lead) ? $get_lead->id : ' ' }}">
+    <input type="hidden" id="lead_id" value="{{ isset($get_lead) ? @$get_lead->id : ' ' }}">
     <div class="container-fluid">
         <div id="content" class="app-content">
             <div class="d-flex align-items-center mb-3">
                 <div>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:;">Lead</a></li>
-                        <li class="breadcrumb-item active"><i class="fa fa-arrow-back"></i> Create Lead</li>
+                        <li class="breadcrumb-item"><a href="javascript:;">Enquiry</a></li>
+                        <li class="breadcrumb-item active"><i class="fa fa-arrow-back"></i> Create Enquiry</li>
                     </ol>
-                    <h1 class="page-header mb-0">Lead</h1>
+                    <h1 class="page-header mb-0">Enquiry</h1>
                 </div>
             </div>
 
@@ -92,10 +92,10 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">Lead Information</h4>
+                            <h4 class="mb-0">Enquiry Information</h4>
                         </div>
 
-                        @switch($get_lead->loan_status)
+                        @switch(@$get_lead->loan_status)
                             @case(1)
                                 @php $loan_status = "Pending"; @endphp
                             @break
@@ -128,144 +128,78 @@
                                 <div class="col-md-6">
                                     <table class="table table-bordered">
                                         <tbody>
-                                            <tr>
-                                                <td><strong>Lead Date:</strong></td>
-                                                <td>{{ \Carbon\Carbon::parse($get_lead->lead_create_date)->format('d F Y h:i A') }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Work:</strong></td>
-                                                <td>{{ $get_lead->work ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Work Address:</strong></td>
-                                                <td>{{ $get_lead->work_address ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Shop/Thiya:</strong></td>
-                                                <td>{{ $get_lead->shop_thiya ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Home Address:</strong></td>
-                                                <td>{{ $get_lead->home_address ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Loan Amount:</strong></td>
-                                                <td>{{ $get_lead->loan_amount ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Balance :</strong></td>
-                                                <td>{{ $get_lead->balance ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Old Loan :</strong></td>
-                                                <td>{{ $get_lead->old_loan ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>File No. :</strong></td>
-                                                <td>{{ $get_lead->old_loan ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>R. N. No. :</strong></td>
-                                                <td>{{ $get_lead->old_loan ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Accountant Sign :</strong></td>
-                                                <td>{{ $get_lead->old_loan ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Guarantor Name:</strong></td>
-                                                <td>{{ $get_lead->old_loan ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Remark:</strong></td>
-                                                <td>{{ $get_lead->reason_of_loan ?? 'N/A' }}</td>
-                                            </tr>
-
-
-
-
-
-
 
                                             <tr>
-                                                <td><strong>Created By:</strong></td>
-                                                <td>{{ isset($get_user->name) ? ucwords($get_user->name) : 'N/A' }}</td>
+                                                {{-- <h4>Customer Information</h4> --}}
+                                                <td><strong>Full Name:</strong></td>
+                                                <td>{{ ucwords(@$get_lead->name ?? 'N/A') }}</td>
                                             </tr>
+
+                                            <tr>
+                                                <td><strong>Mobile No:</strong></td>
+                                                <td>{{ @$get_lead->mobile_no ?? 'N/A' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Location:</strong></td>
+                                                <td>{{ @$get_lead->location ?? 'N/A' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Plan Date:</strong></td>
+                                                <td>{{ (!empty($get_lead->plan_date)) ? date('d-m-Y',strtotime($get_lead->plan_date)) : '' ; }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Created At:</strong></td>
+                                                <td>{{ \Carbon\Carbon::parse(@$get_lead->created_at)->format('d F Y h:i A') ?? 'N/A' }}</td>
+                                            </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="col-md-6">
                                     <table class="table table-bordered">
                                         <tbody>
+
                                             <tr>
-                                                <td><strong>Name:</strong></td>
-                                                <td>{{ ucwords($get_lead->name ?? 'N/A') }}</td>
+                                                {{-- <h4 >Occupation Details</h4> --}}
+                                                <td><strong>Email:</strong></td>
+                                                <td>{{ ucwords(@$get_lead->email ?? 'N/A') }}</td>
                                             </tr>
                                             <tr>
-                                                <td><strong>Phone:</strong></td>
-                                                <td>{{ $get_lead->mobile ?? 'N/A' }}</td>
+                                                <td><strong>Message:</strong></td>
+                                                <td>{{ @$get_lead->message ?? 'N/A' }}</td>
                                             </tr>
                                             <tr>
-                                                <td><strong>Cheque:</strong></td>
-                                                <td>{{ $get_lead->cheque ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Home Type:</strong></td>
-                                                <td>{{ $get_lead->home_type ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>File Hain:</strong></td>
-                                                <td>{{ $get_lead->file_hai ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Tut:</strong></td>
-                                                <td>{{ $get_lead->tut ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>+/-Day:</strong></td>
-                                                <td>{{ $get_lead->plus_day ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Loan Type:</strong></td>
-                                                <td>{{ $get_lead->loan_type ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Sr No:</strong></td>
-                                                <td>{{ $get_lead->ser_no ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Amount :</strong></td>
-                                                <td>{{ $get_lead->ser_no ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Guarantor:</strong></td>
-                                                <td>{{ $get_lead->guarantor ?? 'N/A' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong>Service :</strong></td>
-                                                <td>{{ $get_lead->service_name ?? 'N/A' }}</td>
+                                                <td><strong>Budget:</strong></td>
+                                                <td>{{ @$get_lead->budget ?? 'N/A' }}  </td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Lead Status:</strong></td>
-                                                <td id="fetch_loan_status">
-                                                    {{ isset($loan_status) ? str_replace('_', ' ', $loan_status) : 'N/A' }}
+                                                <td>{{ @$get_lead->loan_status ?? 'N/A' }}</td>
+                                            </tr>
+                                            @if(!empty($get_lead->property_id))
+                                            <tr>
+                                                <td><strong>Property Link:</strong></td>
+                                                <td>
+                                                    <a href="{{ $get_lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $get_lead->property_id : '#' }}" target="_blank">
+                                                        View
+                                                    </a>
                                                 </td>
                                             </tr>
+                                            @endif
+
                                         </tbody>
                                     </table>
                                 </div>
+
                             </div>
                         </div>
 
 
                     </div>
                 </div>
-                @if ($get_lead->loan_status >= 3)
+
                     <div class="col-md-8">
-                    @else
-                        <div class="col-md-12">
-                @endif
+
 
                 <div class="card">
                     <div class="card-header bg-info text-white">
@@ -275,23 +209,26 @@
                         <ul class="list-group" id="note_html">
                             <!-- Notes will be appended here dynamically -->
                         </ul>
-                        @if ($get_lead->loan_status < 3)
+                        @if ( @$get_lead->loan_status == 2)
                             <button class="btn btn-outline-primary mt-5"
-                                onclick="startDisscussion({{ isset($get_lead->id) ? $get_lead->id : ' ' }}, {{ Auth::user()->id }}, '');">Start
-                                Discussion</button>
+                                onclick="startDisscussion({{ isset($get_lead->id) ? @$get_lead->id : ' ' }}, {{ Auth::user()->id }}, '');">Proceed</button>
                         @endif
                     </div>
                 </div>
             </div>
 
-            @if ($get_lead->loan_status >= 3)
+            @if (
+                    (Auth::user()->role_id == 1 || $get_assign_id->assign_user_id == Auth::user()->id) &&
+                    @$get_lead->loan_status >= 3
+                )
+
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header bg-info text-white">
                             <h4 class="mb-0">Notes</h4>
                         </div>
                         <div class="card-body">
-                            <form action="#" method="POST">
+                            <form action="#" method="POST" >
                                 @csrf
                                 <!-- Textarea Field -->
                                 <div class="mb-3">
@@ -303,28 +240,16 @@
                                 <!-- Select Field -->
                                 <div class="mb-3">
                                     <label for="option" class="form-label">Select Status</label>
-                                    <select class="form-select get_status" id="status" name="option" onchange="CheckStatus()">
-                                        <option selected>Select an option</option>
-                                        <option value="3" {{ $get_lead->loan_status == 3 ? 'selected' : '' }}>Under
-                                            Discussion</option>
-                                        {{-- <option value="4" {{ $get_lead->loan_status == 4 ? 'selected' : '' }}>Pending For KYC</option> --}}
-                                        <option value="5" {{ $get_lead->loan_status == 5 ? 'selected' : '' }}>
-                                            Qualified</option>
-                                        <option value="6" {{ $get_lead->loan_status == 6 ? 'selected' : '' }}>Rejected
-                                        </option>
+                                    <select class="form-select" id="status" name="option">
+                                        <option selected value="">Select an option</option>
+                                        <option value="3" {{ @$get_lead->loan_status == 3 ? 'selected' : '' }}>Under Processing</option>
+                                        <option value="4" {{ @$get_lead->loan_status == 4 ? 'selected' : '' }}>Move to Lender</option>
+                                        <option value="5" {{ @$get_lead->loan_status == 5 ? 'selected' : '' }}>Sanction</option>
+                                        <option value="6" {{ @$get_lead->loan_status == 6 ? 'selected' : '' }}>Disbursed</option>
+                                        <option value="7" {{ @$get_lead->loan_status == 7 ? 'selected' : '' }}>Rejected</option>
                                     </select>
                                 </div>
-                                <div class="mb-3 d-none select_route_id">
-                                    <label for="option" class="form-label">Select Route</label>
-                                    <select class="form-control custom-select-icon @error('route_id') is-invalid @enderror" name="route_id" id="select_route_id">
-                                        <option value="">Select Route </option>
-                                    @if($get_route)
-                                        @foreach ($get_route as $route)
-                                            <option value="{{ $route->id }}" >{{ ucwords($route->route) . ' ('. $route->title . ")"  }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                </div>
+
                                 <!-- Submit Button -->
                                 <span type="submit" class="btn btn-primary" onclick="return SaveNotes();">Submit</button>
                             </form>
@@ -334,5 +259,5 @@
             @endif
         </div>
     </div>
-    </div>
+</div>
 @endsection

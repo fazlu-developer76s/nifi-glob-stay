@@ -92,10 +92,9 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/lead-admin', [LeadController::class, 'admin_lead'])->name('lead.admin');
     Route::match(['get', 'post'], '/lead/create', [LeadController::class, 'create'])->name('lead.create');
     Route::get('/lead/edit/{id}', [LeadController::class, 'edit'])->name('lead.edit');
-    Route::get('/lead/view/{id}', [LeadController::class, 'view'])->name('lead.view');
+
     Route::post('/lead/update', [LeadController::class, 'update'])->name('lead.update');
     Route::delete('/lead/delete/{id}', [LeadController::class, 'destroy'])->name('lead.destroy');
-    Route::post('/viewright-modal', [LeadController::class, 'viewright_modal'])->name('viewright.modal');
     Route::get('/lead-qualified', [LeadController::class, 'qualified_leads'])->name('lead.qualified');
     Route::get('/kyclead/view/{id}', [LeadController::class, 'kyclead_view'])->name('kyclead.view');
     Route::post('/kyc-process', [LeadController::class, 'kyc_process'])->name('kyc.process');
@@ -204,4 +203,10 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('pages/{id}/edit', [PagesController::class, 'edit'])->name('pages.edit');
     Route::post('pages/{id}', [PagesController::class, 'update'])->name('pages.update');
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
+
+    // enquiry assign
+    Route::post('/assign-lead', [LeadController::class, 'assign_lead'])->name('assign.lead');
+
+    Route::post('/viewright-modal', [LeadController::class, 'viewright_modal'])->name('viewright.modal');
+    Route::get('/lead/view/{id}', [LeadController::class, 'view'])->name('lead.view');
 });
