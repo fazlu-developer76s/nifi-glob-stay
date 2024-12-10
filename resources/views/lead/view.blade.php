@@ -180,7 +180,7 @@
                                             <tr>
                                                 <td><strong>Property Link:</strong></td>
                                                 <td>
-                                                    <a href="{{ $get_lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $get_lead->property_id : '#' }}" target="_blank">
+                                                    <a href="{{ $get_lead->property_id ? 'https://globstay.com/details/' . $get_lead->property_id : '#' }}" target="_blank">
                                                         View
                                                     </a>
                                                 </td>

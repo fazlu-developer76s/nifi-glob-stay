@@ -199,7 +199,7 @@
                                         <td>{{ \Carbon\Carbon::parse($lead->created_at)->format('d F Y h:i A') }}</td>
                                         <td>
                                             @if(!empty($lead->property_id))
-                                            <a href="{{ $lead->property_id ? 'https://globstay-updates.vercel.app/details/' . $lead->property_id : '#' }}" target="_blank">
+                                            <a href="{{ $lead->property_id ? 'https://globstay.com/details/' . $lead->property_id : '#' }}" target="_blank">
                                                 View
                                             </a>
                                         @else
