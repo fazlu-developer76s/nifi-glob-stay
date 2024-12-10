@@ -156,6 +156,8 @@
             Swal.fire("Error!", "Notes Title Required!", "error"); // Correct SweetAlert2 syntax
             return false;
         }
+
+
         if (status == 5) {
             if (route_id === '') {
                 Swal.fire("Error!", "Please Select Route!", "error"); // Correct SweetAlert2 syntax
@@ -180,19 +182,22 @@
                     Swal.fire("Error!", "Route Does Not Exist for This Zipcode", "error");
                     return false;
                 }
-
-                if (response == 1) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Lead Qualified Successfully!",
-                        icon: "success",
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(function() {
-                        var routeUrl = "{{ route('lead') }}";
-                        window.location.href = routeUrl;
-                    });
+                if(status == 5){
+                    window.location.reload();
                 }
+
+                // if (response == 1) {
+                //     Swal.fire({
+                //         title: "Success!",
+                //         text: "Lead Qualified Successfully!",
+                //         icon: "success",
+                //         timer: 2000,
+                //         showConfirmButton: false
+                //     }).then(function() {
+                //         var routeUrl = "{{ route('lead') }}";
+                //         window.location.href = routeUrl;
+                //     });
+                // }
 
                 let loan_status;
                 switch (status) {
@@ -529,7 +534,8 @@
                 $(".assign_error").text('');
                 $(".assign_success").text("Lead Assigned Successfully");
                 setTimeout(() => {
-                    window.location.reload();
+                    var routeUrl = "{{ route('enquiry') }}";
+                    window.location.href = routeUrl;
                 }, 2000);
             },
             error: function(xhr, status, error) {

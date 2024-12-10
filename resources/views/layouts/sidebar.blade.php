@@ -188,7 +188,7 @@
                 </div>
             </div>
             @endif
-            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 4)
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 4 || Auth::user()->role_id == 5 )
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Site Setting</div>

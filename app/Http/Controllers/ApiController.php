@@ -600,7 +600,7 @@ class ApiController extends Controller
         $enc->plan_date = $request->plan_date;
         }
         $enc->save();
-        DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Create Lead"]);
+        DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Initial Stage"]);
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
     }
 

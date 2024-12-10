@@ -209,24 +209,22 @@
                         <ul class="list-group" id="note_html">
                             <!-- Notes will be appended here dynamically -->
                         </ul>
-                        @if ( @$get_lead->loan_status == 2)
-                            <button class="btn btn-outline-primary mt-5"
-                                onclick="startDisscussion({{ isset($get_lead->id) ? @$get_lead->id : ' ' }}, {{ Auth::user()->id }}, '');">Proceed</button>
-                        @endif
+
+                            {{-- <button class="btn btn-outline-primary mt-5"
+                                onclick="startDisscussion({{ isset($get_lead->id) ? @$get_lead->id : ' ' }}, {{ Auth::user()->id }}, '');">Proceed</button> --}}
+
                     </div>
                 </div>
             </div>
 
-            @if (
-                    (Auth::user()->role_id == 1 || $get_assign_id->assign_user_id == Auth::user()->id) &&
-                    @$get_lead->loan_status >= 3
-                )
 
+            @if(Auth::user()->role_id == 1 || @$get_lead->user_id == Auth::user()->id )
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header bg-info text-white">
                             <h4 class="mb-0">Notes</h4>
                         </div>
+
                         <div class="card-body">
                             <form action="#" method="POST" >
                                 @csrf
@@ -242,22 +240,65 @@
                                     <label for="option" class="form-label">Select Status</label>
                                     <select class="form-select" id="status" name="option">
                                         <option selected value="">Select an option</option>
-                                        <option value="3" {{ @$get_lead->loan_status == 3 ? 'selected' : '' }}>Under Processing</option>
-                                        <option value="4" {{ @$get_lead->loan_status == 4 ? 'selected' : '' }}>Move to Lender</option>
-                                        <option value="5" {{ @$get_lead->loan_status == 5 ? 'selected' : '' }}>Sanction</option>
-                                        <option value="6" {{ @$get_lead->loan_status == 6 ? 'selected' : '' }}>Disbursed</option>
-                                        <option value="7" {{ @$get_lead->loan_status == 7 ? 'selected' : '' }}>Rejected</option>
+                                        <option value="2" {{ @$get_lead->loan_status == 2 ? 'selected' : '' }}>Team Call</option>
+                                        <option value="3" {{ @$get_lead->loan_status == 3 ? 'selected' : '' }}>Call Disconnected</option>
+                                        <option value="4" {{ @$get_lead->loan_status == 4 ? 'selected' : '' }}>Ringing</option>
+                                        <option value="5" {{ @$get_lead->loan_status == 5 ? 'selected' : '' }}>Pipeline</option>
+                                        <option value="6" {{ @$get_lead->loan_status == 6 ? 'selected' : '' }}>Visit Align</option>
+                                        <option value="7" {{ @$get_lead->loan_status == 7 ? 'selected' : '' }}>Conversion</option>
+                                        <option value="8" {{ @$get_lead->loan_status == 8 ? 'selected' : '' }}>Rejected</option>
                                     </select>
                                 </div>
-
                                 <!-- Submit Button -->
                                 <span type="submit" class="btn btn-primary" onclick="return SaveNotes();">Submit</button>
                             </form>
+
                         </div>
+
+                        @if($get_lead->loan_status == 5)
+                        <a href="#" class="text-success me-2" data-bs-toggle="modal" data-bs-target="#myModal" onclick="OpenAssignModal('{{ Auth::user()->id }}','{{ $get_lead->id }}','{{ $get_lead->user_id }}');">
+                            <span type="submit" class="btn btn-primary">Lead Assign</button>
+                        </a>
+                        @endif
                     </div>
                 </div>
-            @endif
+                @endif
         </div>
     </div>
 </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="myModalLabel">Modal Title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <!-- Modal content with select option -->
+            <form>
+                <div class="mb-3">
+                <input type="hidden" id="current_lead_id">
+                <input type="hidden" id="current_user_id">
+                <input type="hidden" id="lead_create_user_id">
+                <label for="selectOption" class="form-label">Select User</label>
+                <select id="selectOption" class="form-select" aria-label="Default select example">
+                    <option value="">Select User</option>
+                    @foreach ( $get_user as $user )
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+                </div>
+                <span class="assign_error text-danger"></span>
+                <span class="assign_success text-success"></span>
+            </form>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="AssignLead();">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
 @endsection

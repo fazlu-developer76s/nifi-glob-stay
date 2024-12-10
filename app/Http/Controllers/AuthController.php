@@ -16,7 +16,7 @@ class AuthController extends Controller
 
     public function signup(Request $request)
     {
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
@@ -28,7 +28,7 @@ class AuthController extends Controller
                 'required',
                 'email',
             ],
-          
+
         ]);
         $user = User::where('email', $request->email)
             ->orWhere('mobile_no', $request->mobile_no)
@@ -56,7 +56,7 @@ class AuthController extends Controller
                 'message' => "Please Enter Otp to verify user",
             ], 200);
         }
-            
+
         return response()->json([
             'status' => "OK",
             'message' => "User Created Successfully",
@@ -191,7 +191,7 @@ class AuthController extends Controller
                     'message' => "Seller Approval pending for admin side"
                 ], 200);
                 }
-               
+
             }
         }
         if (!$user) {

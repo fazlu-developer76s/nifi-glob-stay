@@ -20,16 +20,16 @@ class MemberController extends Controller
         $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id','!=',2)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
         return view('member.index', compact('title', 'allmember'));
     }
-    
+
     public function approved_index(){
-        
+
         $title = "Member List";
         $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id',2)->where('users.is_user_verified',1)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
         return view('member.index', compact('title', 'allmember'));
     }
-    
+
     public function pending_index(){
-        
+
         $title = "Member List";
         $is_user = 1;
         $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id',2)->where('users.is_user_verified',2)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
@@ -129,6 +129,7 @@ class MemberController extends Controller
             $member->mobile_no = $request->mobile_no;
             $member->status = $request->status;
             $member->password = Hash::make($request->password);
+            $member->is_user_verified = 1;
             $member->save();
             $insert_id = $member->id;
             return redirect()->route('member')->with('success', 'Member Added Successfully');
@@ -143,7 +144,11 @@ class MemberController extends Controller
     {
         $title = "Edit Member";
         $get_member = Member::where('status', '!=', 3)->where('role_id', '!=', 1)->where('id', $id)->first();
-        $get_role = Roles::where('status', 1)->where('id', 2)->get();
+        if($get_member->role_id == 2){
+            $get_role = Roles::where('status', 1)->where('id', 2)->get();
+        }else{
+            $get_role = Roles::where('status', 1)->where('id','!=', 2)->where('id','!=', 1)->get();
+        }
         return view('member.create', compact('title', 'get_member', 'get_role',));
     }
 

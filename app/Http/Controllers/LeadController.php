@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Ui\Presets\React;
 use App\Models\Providers;
 use App\Models\Route;
+use App\Models\User;
 
 class LeadController extends Controller
 {
@@ -115,15 +116,19 @@ class LeadController extends Controller
 
         $user_id = Auth::user()->id;
         $get_note = DB::table('notes')->where('loan_request_id', $id)->where('title', 'View Lead')->where('user_id', $user_id)->first();
-        if (!$get_note) {
-            DB::table('notes')->insert(['loan_request_id' => $id, 'user_id' => $user_id, 'loan_status' => 2, 'title' => "View Lead"]);
-            DB::table('enquiries')->where('id', $id)->update(['loan_status' => 2]);
-        }
+        // if (!$get_note) {
+            // DB::table('notes')->insert(['loan_request_id' => $id, 'user_id' => $user_id, 'loan_status' => 2, 'title' => "View Lead"]);
+            // DB::table('enquiries')->where('id', $id)->update(['loan_status' => 2]);
+        // }
         $title = "View Lead";
         $get_lead = DB::table('enquiries')->join('users', 'enquiries.user_id', '=', 'users.id')->select('enquiries.*', 'users.name as username')->where('enquiries.status', '!=', '3')->where('enquiries.id',$id)->orderBy('enquiries.id', 'desc')->first();
         $get_providers = DB::table('providers')->where('status',1)->get();
         $get_assign_id = DB::table('assign_lead')->where('lead_id',$id)->orderBy('id', 'desc')->limit(1)->first();
-        return view('lead.view', compact('title', 'get_lead','get_providers','get_assign_id'));
+        $get_user = User::where('status', 1)
+        ->where('role_id', 4)
+        ->where('is_user_verified', 1)
+        ->get();
+        return view('lead.view', compact('title', 'get_lead','get_providers','get_assign_id','get_user'));
     }
 
     public function kyclead_view($id)
@@ -334,39 +339,54 @@ class LeadController extends Controller
                 // Switch for loan status
                 switch ($note->loan_status) {
                     case 1:
-                        $loan_status = "Pending";
+                        $loan_status = "Initial Stage";
                         $class = "warning";
                         $added_by = "Created By";
                         break;
                     case 2:
-                        $loan_status = "View";
+                        $loan_status = "Follow up / Team Call";
                         $class = "primary";
-                        $added_by = "Viewed By";
+                        $added_by = "Team Call By";
                         break;
                     case 3:
-                        $loan_status = "Under Discussion";
+                        $loan_status = "Follow up / Call Disconnected";
                         $class = "secondary";
-                        $added_by = "Discussion By";
+                        $added_by = "Call Disconnected By";
                         break;
                     case 4:
-                        $loan_status = "Pending KYC";
-                        $class = "danger";
-                        $added_by = "Discussion By";
+                        $loan_status = "Follow up / Ringing ";
+                        $class = "warning";
+                        $added_by = "Ringing  By";
                         break;
                     case 5:
-                        $loan_status = "Qualified";
-                        $added_by = "Qualified By";
+                        $loan_status = "Pipeline ";
                         $class = "success";
+                        $added_by = "Pipeline By";
                         break;
                     case 6:
+                        $loan_status = "Visit align";
+                        $class = "info";
+                        $added_by = "Visit align By";
+                        break;
+                    case 7:
+                        $loan_status = "Conversion";
+                        $class = "success";
+                        $added_by = "Conversion By";
+                        break;
+                    case 8:
                         $loan_status = "Rejected";
+                        $class = "danger";
                         $added_by = "Rejected By";
-                        $class = "danger"; // Corrected typo "dangeer"
+                        break;
+                    case 9:
+                        $loan_status = "Lead Assign";
+                        $class = "info";
+                        $added_by = "Assign By";
                         break;
                     default:
                         $loan_status = "Unknown";
                         $class = "light";
-                        $added_by = '';
+                        $added_by = " ";
                         break;
                 }
 
@@ -497,15 +517,16 @@ class LeadController extends Controller
         $insert_notes = DB::table('notes')->insert([
             'loan_request_id' => $lead_id,
             'user_id' => $current_user_id,
-            'loan_status' => 4,
+            'loan_status' => 9,
             'title' => 'Lead Assign To ' .$get_assing_user->name.''
 
         ]);
-        $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>3]);
+        $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>9]);
         $update_user_id = DB::table('enquiries')
         ->where('user_id', $current_user_id)
         ->where('id', $lead_id)
         ->update(['user_id' => $assign_user_id]);
+
         if ($insert_log) {
             return response()->json(['success' => true, 'message' => 'Lead assigned successfully']);
         } else {
