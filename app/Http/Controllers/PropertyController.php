@@ -30,9 +30,9 @@ class PropertyController extends Controller
         $allproperty = $properties;
         return view('property.index', compact('title', 'allproperty'));
     }
-    
+
     public function pending_index(){
-        
+
         $title = "Property List";
         $get_property = DB::table('properties as a')->join('categories as b', 'a.category_id', '=', 'b.id')->select('a.*', 'b.title as category_name')->where('a.status', '!=', '3')->where('b.status', 1)->where('a.is_property_verified','2')->orderBy('a.id', 'desc')->get();
         $properties = array();
@@ -46,11 +46,10 @@ class PropertyController extends Controller
         $allproperty = $properties;
         return view('property.index', compact('title', 'allproperty','is_property'));
     }
-    
+
     public function create(Request $request)
     {
         if ($request->method() == 'POST') {
-
             $validatedData = $request->validate([
                 'category_id' => 'required',
                 'hotel_name' => 'required|string|max:255',
@@ -105,18 +104,17 @@ class PropertyController extends Controller
             foreach ($images as $image) {
                 DB::table('properties_images')->insert(['property_id' => $hotel->id,  'image' => $image]);
             }
-            $filteredArray = array_filter($request->number, function ($value) {
-                return !is_null($value);
-            });
+
             $n = 0;
-            foreach ($filteredArray as $key => $value) {
+            foreach ($request->facilities as $key => $value) {
+
                 if (!empty($value)) {
                     $facilityId = $request->facilities[$n] ?? null;
                     if ($facilityId) {
                         DB::table('add_facilities_propery')->insert([
                             'property_id' => $hotel->id,
-                            'facilities_id' => $facilityId,
-                            'value' => $value,
+                            'facilities_id' => $value,
+                            'value' => $request->number[$key],
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -465,19 +463,16 @@ class PropertyController extends Controller
                 'bed_id' => $request->bed_id,
                 'status' => $request->status
             ]);
-
-            $filteredArray = array_filter($request->number, function ($value) {
-                return !is_null($value);
-            });
             $n = 0;
-            foreach ($filteredArray as $key => $value) {
+            foreach ($request->facilities as $key => $value) {
+
                 if (!empty($value)) {
                     $facilityId = $request->facilities[$n] ?? null;
                     if ($facilityId) {
                         DB::table('add_book_facilities')->insert([
-                            'flor_id' => $insert_book,
-                            'facilities_id' => $facilityId,
-                            'value' => $value,
+                            'property_id' => $insert_book,
+                            'facilities_id' => $value,
+                            'value' => $request->number[$key],
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -485,6 +480,7 @@ class PropertyController extends Controller
                 }
                 $n++;
             }
+
             if ($request->amenities) {
                 foreach ($request->amenities as $amenity) {
                     DB::table('add_book_amenties')->insert(['flor_id' => $insert_book,  'amenities_id' => $amenity]);
