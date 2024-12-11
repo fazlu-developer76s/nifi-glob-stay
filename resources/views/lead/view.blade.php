@@ -172,10 +172,10 @@
                                                 <td><strong>Budget:</strong></td>
                                                 <td>{{ @$get_lead->budget ?? 'N/A' }}  </td>
                                             </tr>
-                                            <tr>
+                                            {{-- <tr>
                                                 <td><strong>Lead Status:</strong></td>
                                                 <td>{{ @$get_lead->loan_status ?? 'N/A' }}</td>
-                                            </tr>
+                                            </tr> --}}
                                             @if(!empty($get_lead->property_id))
                                             <tr>
                                                 <td><strong>Property Link:</strong></td>
