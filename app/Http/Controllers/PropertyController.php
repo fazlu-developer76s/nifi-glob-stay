@@ -230,18 +230,16 @@ class PropertyController extends Controller
                 DB::table('properties_images')->insert(['property_id' => $hotel->id,  'image' => $image]);
             }
             $delete_all_facilities = DB::table('add_facilities_propery')->where('property_id', $hotel->id)->delete();
-            $filteredArray = array_filter($request->number, function ($value) {
-                return !is_null($value);
-            });
             $n = 0;
-            foreach ($filteredArray as $key => $value) {
+            foreach ($request->facilities as $key => $value) {
+
                 if (!empty($value)) {
                     $facilityId = $request->facilities[$n] ?? null;
                     if ($facilityId) {
                         DB::table('add_facilities_propery')->insert([
                             'property_id' => $hotel->id,
-                            'facilities_id' => $facilityId,
-                            'value' => $value,
+                            'facilities_id' => $value,
+                            'value' => $request->number[$key],
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
