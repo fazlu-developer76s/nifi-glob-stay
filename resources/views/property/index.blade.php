@@ -84,9 +84,9 @@
                                         @endif
                                         <td>
                                             @if($property->category_id == 1)
-                                            <a href="{{ route('book.add.room', $property->id) }}" class="text-primary me-2">
-                                                <i class="fa fa-home"></i>
-                                            </a>
+                                            <!--<a href="{{ route('book.add.room', $property->id) }}" class="text-primary me-2">-->
+                                            <!--    <i class="fa fa-home"></i>-->
+                                            <!--</a>-->
                                             @endif
 
                                             @if($update == 1 || Auth::user()->role_id == 1)

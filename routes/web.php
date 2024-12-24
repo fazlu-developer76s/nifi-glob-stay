@@ -26,7 +26,7 @@ use App\Http\Controllers\PermissionCategory;
 use App\Http\Controllers\PermissionsubCategory;
 
 Route::get('/', function () {
-    return view('home');
+    return view('auth.login');
 });
 
 Auth::routes();

@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{{ (!empty($title)) ? $title : config('app.name', 'Laravel') ; }} </title>
+    <title>{{ (!empty($title)) ? $title : 'Globstay' ; }} </title>
     <style>
         .app-header{
             position: fixed !important;

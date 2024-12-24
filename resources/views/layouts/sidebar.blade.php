@@ -31,16 +31,16 @@
                             <div class="menu-text">Members</div>
                         </a>
                     </div>
-                    <div class="menu-item">
-                        <a href="{{ route('approved.member') }}" class="menu-link">
-                            <div class="menu-text">Approved Sellers</div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="{{ route('pending.member') }}" class="menu-link">
-                            <div class="menu-text">Pending Sellers</div>
-                        </a>
-                    </div>
+                    <!--<div class="menu-item">-->
+                    <!--    <a href="{{ route('approved.member') }}" class="menu-link">-->
+                    <!--        <div class="menu-text">Approved Sellers</div>-->
+                    <!--    </a>-->
+                    <!--</div>-->
+                    <!--<div class="menu-item">-->
+                    <!--    <a href="{{ route('pending.member') }}" class="menu-link">-->
+                    <!--        <div class="menu-text">Pending Sellers</div>-->
+                    <!--    </a>-->
+                    <!--</div>-->
                 </div>
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link">

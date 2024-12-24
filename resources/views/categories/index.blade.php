@@ -19,7 +19,7 @@
             </div>
             <!-- Row for equal division -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="card border-0 mb-4">
                         <div class="card-header h6 mb-0 bg-none p-3 d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
@@ -76,7 +76,7 @@
                 </div>
 
                 <!-- Table Section -->
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <div class="card border-0 mb-4">
                         <div class="card-header h6 mb-0 bg-none p-3 d-flex align-items-center" style="border-bottom: 1px solid #2196f3;">
                             <i class="fab fa-buromobelexperte fa-lg fa-fw text-dark text-opacity-50 me-1"></i>
