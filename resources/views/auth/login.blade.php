@@ -66,14 +66,21 @@
                                         <div class="form-group mb-0 row">
                                             <div class="col-12">
                                                 <div class="d-grid">
-                                                    <button class="btn btn-primary" name="login" type="submit">LOGIN <i class="fas fa-sign-in-alt ms-1"></i></button>
+                                                    <button class="btn btn-primary" name="login" type="submit">LOGIN
+                                                        <i class="fas fa-sign-in-alt ms-1"></i></button>
                                                 </div>
                                             </div>
-                                            {{-- @if (Route::has('password.request'))
-                                            <a class="btn btn-link" href="{{ route('password.request') }}">
-                                                {{ __('Forgot Your Password?') }}
-                                            </a>
-                                        @endif --}}
+                                            @if (Route::has('password.request'))
+                                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                                    {{ __('Forgot Your Password?') }}
+                                                </a>
+                                            @endif
+                                            @if (Route::has('signup'))
+                                                <p class="text-center mt-3">
+                                                    Don't have an account? <a href="{{ route('signup') }}">Register
+                                                        with us</a>
+                                                </p>
+                                            @endif
                                         </div>
 
 

@@ -40,14 +40,16 @@ Route::post('user/login', [AuthController::class, 'login_bkp']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
-Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);   
+Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
 Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
 Route::get('fetch-banner',[ApiController::class, 'fetch_banner']);
 Route::get('fetch-seo',[ApiController::class, 'fetch_seo']);
 Route::get('fetch-gallary',[ApiController::class, 'fetch_gallary']);
+Route::get('fetch-job-title',[ApiController::class, 'fetch_job_title']);
 Route::get('fetch-pages',[ApiController::class, 'fetch_pages']);
 Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
+Route::post('send-career-enquiry',[ApiController::class, 'send_career_enquiry']);
 Route::get('fetch-review', [ApiController::class, 'fetch_review']);
 
 Route::middleware(['jwt'])->group(function () {
@@ -70,7 +72,7 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/properties/check', [ApiPropertyController::class, 'check_exist_data']);
     // Delete an image
     Route::post('user/properties/image/delete', [ApiPropertyController::class, 'delete_image']);
-    
+
     Route::post('user/permission', [ApiController::class, 'permission']);
 
 

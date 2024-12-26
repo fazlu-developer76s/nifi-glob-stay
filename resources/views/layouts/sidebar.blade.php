@@ -132,6 +132,19 @@
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Job Title</div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('job') }}" class="menu-link ">
+                            <div class="menu-text"> Job List</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Blogs</div>
                     <div class="menu-caret"></div>
                 </a>
@@ -210,6 +223,11 @@
                     <div class="menu-item">
                         <a href="{{ route('enquiry') }}" class="menu-link">
                             <div class="menu-text">Enquiry List</div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('career.enquiry') }}" class="menu-link">
+                            <div class="menu-text">Career Enquiry List</div>
                         </a>
                     </div>
                 </div>

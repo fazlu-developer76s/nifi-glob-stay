@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CareerEnquirys;
 use App\Models\Banner;
 use App\Models\Blog;
 use App\Models\CategoriesModal;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Mail\Enquirys;
 use App\Models\Enquiry;
 use App\Models\Gallary;
+use App\Models\Jobs;
+use App\Models\JobsEnq;
 use App\Models\Page;
 use App\Models\Property;
 use App\Models\PropertyReview;
@@ -556,6 +559,15 @@ class ApiController extends Controller
         }
     }
 
+    public function fetch_job_title(Request $request){
+        $get_job_title = Jobs::where('status', 1)->get();
+        if ($get_job_title) {
+            return response()->json(['status' => 'OK', 'message' => 'Job Title fetched successfully', 'data' => $get_job_title], 200);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Job Title not found']);
+        }
+    }
+
     public function fetch_pages(Request $request){
 
         $get_page = Page::where('page_name', $request->page_name)->first();
@@ -602,6 +614,42 @@ class ApiController extends Controller
         $enc->save();
         DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Initial Stage"]);
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
+    }
+
+    public function send_career_enquiry(Request $request){
+
+        $company_info = CmsModal::where('status', 1)->first();
+        if ($request->job_id == '') {
+            return response()->json(['status' => 'Error', 'message' => 'Job Title is required'], 400);
+        }
+        if ($request->name == '') {
+            return response()->json(['status' => 'Error', 'message' => 'Name is required'], 400);
+        }
+
+        if ($request->email == '' || !filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json(['status' => 'Error', 'message' => 'A valid email is required'], 400);
+        }
+
+        if ($request->mobile_no == '' || !preg_match('/^\d{10}$/', $request->mobile_no)) {
+            return response()->json(['status' => 'Error', 'message' => 'Mobile number must be a 10-digit integer'], 400);
+        }
+        $job_info = Jobs::find($request->job_id);
+        $request['job_info'] = $job_info;
+
+        Mail::to($company_info->email)->send(new CareerEnquirys($request));
+
+        $enc = new JobsEnq();
+        $enc->job_id = $request->job_id;
+        $enc->name = $request->name;
+        $enc->email = $request->email;
+        $enc->phone = $request->mobile_no;
+        $enc->description = $request->description;
+        if ($request->hasFile('resume')) {
+            $imagePath = $request->file('resume')->store('resume', 'public');
+            $enc->resume = $imagePath;
+        }
+        $enc->save();
+        return response()->json(['status' => 'OK', 'message' => 'Career Enquiry sent successfully'], 200);
     }
 
     public function post_review(Request $request){

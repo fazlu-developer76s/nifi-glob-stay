@@ -27,12 +27,13 @@
         <div class="navbar-item navbar-user dropdown">
             <a href="#"
                 class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown"> <img
-                    src="{{ asset('assets/img/user.png') }}" /> <span> <span class="d-none d-md-inline">{{ Auth::user()->name }}</span> <b
+                    src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : asset('assets/img/user.png') }}" /> <span> <span class="d-none d-md-inline">{{ Auth::user()->name }}</span> <b
                         class="caret"></b> </span>
                      </a>
             <div class="dropdown-menu dropdown-menu-end me-1">
+                <a href="{{ route('profile.update') }}" class="dropdown-item">Edit Profile</a>
+                <a href="{{ route('change.password') }}" class="dropdown-item">Change Password</a>
                 {{-- <a href="javascript:;" class="dropdown-item">Edit Profile</a>
-                <a href="javascript:;" class="dropdown-item">Change Password</a>
                 <a href="manage-contact.php" class="dropdown-item">Setting</a> --}}
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}"onclick="event.preventDefault();document.getElementById('logout-form').submit();">

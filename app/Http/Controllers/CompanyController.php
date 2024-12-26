@@ -102,4 +102,21 @@ class CompanyController extends Controller
             ->get();
         return view('company.enquiry', compact('alllead', 'get_user'));
     }
+
+
+    public function career_enquiry(Request $request){
+        $title = 'Career Enquiry List';
+        $enquiry_career = DB::table('tbl_career_enquiry as a')
+        ->leftJoin('job_title as b', 'a.job_id', '=', 'b.id')
+        ->select(
+            'a.*',
+            'b.id as job_post_id'
+        )
+        ->where('a.status', 1)
+        ->where('b.status', 1)
+        ->orderBy('a.id', 'desc')
+        ->get();
+        return view('company.careerenquiry', compact('enquiry_career'));
+    }
+
 }

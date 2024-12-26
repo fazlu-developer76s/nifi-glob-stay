@@ -18,6 +18,7 @@ use App\Http\Controllers\BedController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GallaryController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SeoController;
@@ -33,9 +34,15 @@ Auth::routes();
 
 // Grouping all routes with auth middleware
 Route::middleware(['auth', 'checkRole'])->group(function () {
+    Route::get('/register',function(){
+        redirect(route('login'));
+    });
+    Route::get('/profile-update',[MemberController::class, 'profile_update'])->name('profile.update')->middleware('auth');
+    Route::get('/change-password',[MemberController::class, 'change_password'])->name('change.password')->middleware('auth');
+    Route::post('/update-password',[MemberController::class, 'update_password'])->name('update.password')->middleware('auth');
     // Dashboard Route
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [DashboardController::class, 'index'])->name('home');
 
     // Role Routes
     Route::get('/roles', [RoleController::class, 'index'])->name('roles');
@@ -112,6 +119,13 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/testimonial/{id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
     Route::post('/testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
     Route::delete('/testimonial/delete/{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
+
+    // Job Title Route
+    Route::get('/job', [JobController::class, 'index'])->name('job');
+    Route::match(['get', 'post'], '/job/create', [JobController::class, 'create'])->name('job.create');
+    Route::get('/job/{id}', [JobController::class, 'edit'])->name('job.edit');
+    Route::post('/job/update', [JobController::class, 'update'])->name('job.update');
+    Route::delete('/job/delete/{id}', [JobController::class, 'destroy'])->name('job.destroy');
 
     // Banners Route
     Route::get('/banner', [BannerController::class, 'index'])->name('banner');
@@ -203,6 +217,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('pages/{id}/edit', [PagesController::class, 'edit'])->name('pages.edit');
     Route::post('pages/{id}', [PagesController::class, 'update'])->name('pages.update');
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
+    Route::get('career-enquiry', [CompanyController::class, 'career_enquiry'])->name('career.enquiry');
 
     // enquiry assign
     Route::post('/assign-lead', [LeadController::class, 'assign_lead'])->name('assign.lead');
