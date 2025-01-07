@@ -64,6 +64,7 @@ class PropertyController extends Controller
                 'distance' => 'nullable|string',
                 'location' => 'nullable|string',
                 'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -83,6 +84,11 @@ class PropertyController extends Controller
             $hotel->booking_days = $request->booking_days;
             $hotel->distance = $request->distance;
             $hotel->location = $request->location;
+            if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('hotel_images', 'public');
+            $hotel->hotel_image = $path;
+            }
+            
             if (Auth::user()->role_id == 1) {
                 $hotel->is_property_verified = 1;
             } else {
@@ -213,6 +219,10 @@ class PropertyController extends Controller
             $hotel->booking_days = $request->booking_days;
             $hotel->distance = $request->distance;
             $hotel->location = $request->location;
+            if ($request->hasFile('thumbnail')) {
+                $path = $request->file('thumbnail')->store('hotel_images', 'public');
+                $hotel->hotel_image = $path;
+            }
             if ($request->hasFile('hotel_images')) {
                 $images = [];
                 foreach ($request->file('hotel_images') as $image) {
@@ -307,6 +317,7 @@ class PropertyController extends Controller
                 'distance' => 'nullable|string',
                 'location' => 'nullable|string',
                 'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -326,6 +337,10 @@ class PropertyController extends Controller
             $hotel->booking_days = $request->booking_days;
             $hotel->distance = $request->distance;
             $hotel->location = $request->location;
+            if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('hotel_images', 'public');
+            $hotel->hotel_image = $path;
+            }
             if (Auth::user()->role_id == 1) {
                 $hotel->is_property_verified = 1;
             } else {
@@ -421,6 +436,10 @@ class PropertyController extends Controller
             $hotel->booking_days = $request->booking_days;
             $hotel->distance = $request->distance;
             $hotel->location = $request->location;
+            if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('hotel_images', 'public');
+            $hotel->hotel_image = $path;
+            }
             if ($request->hasFile('hotel_images')) {
                 $images = [];
                 foreach ($request->file('hotel_images') as $image) {

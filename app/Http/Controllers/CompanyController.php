@@ -118,5 +118,12 @@ class CompanyController extends Controller
         ->get();
         return view('company.careerenquiry', compact('enquiry_career'));
     }
+    
+     public function destroy($id)
+    {
+        $lead = DB::table('tbl_career_enquiry')->where('id',$id)->where('status',1)->first();
+        $delete_lead = DB::table('tbl_career_enquiry')->where('id',$id)->update(['status'=>3]);
+        return redirect()->route('career.enquiry')->with('success', 'Lead deleted successfully.');
+    }
 
 }

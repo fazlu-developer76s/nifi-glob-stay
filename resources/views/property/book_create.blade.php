@@ -166,23 +166,53 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12">
+                                <div class="row g-3">
+                                    <!-- Thumbnail Image Upload -->
+                                    <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label"> Images</label>
+                                            <label class="form-label">Thumbnail Image</label>
+                                            <input class="form-control @error('thumbnail') is-invalid @enderror" type="file" name="thumbnail" />
+                                            @error('thumbnail')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                
+                                        <!-- Display Existing Thumbnail -->
+                                        @if(!empty($hotel->hotel_image))
+                                        <div class="mb-4 text-center">
+                                            <img src="{{ asset('storage/'. $hotel->hotel_image) }}" class="img-thumbnail" alt="Hotel Thumbnail" style="max-width: 150px; height: auto;">
+                                        </div>
+                                        @endif
+                                    </div>
+                                
+                                    <!-- Multiple Images Upload -->
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Additional Images</label>
                                             <input class="form-control @error('hotel_images.*') is-invalid @enderror" type="file" name="hotel_images[]" multiple />
                                             @error('hotel_images.*')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                
+                                        <!-- Display Existing Images -->
+                                        @if(!empty($hotel->images))
+                                        <div class="row g-2">
+                                            @foreach($hotel->images as $img)
+                                            <div class="col-4 col-md-3 col-lg-2 position-relative">
+                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="cursor: pointer;" onclick="Deletesubimage('{{ $img->id }}')">
+                                                    &times;
+                                                </span>
+                                                <img src="{{ asset('storage/'. $img->image) }}" class="img-thumbnail" alt="Hotel Image" style="width: 100%; height: auto;">
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                        @endif
                                     </div>
-                                    @if(!empty($hotel->images))
-                                    @foreach($hotel->images as $img)
-                                    <div class="col-md-1 mb-4">
-                                        <span class="fa fa-remove" onclick="Deletesubimage('{{ $img->id }}')"></span>
-                                        <img src="{{ asset('storage/'. $img->image) }}" class="img-thumbnail" alt="hotel image" style="width: 100%; height:100px;">
-                                    </div>
-                                    @endforeach
-                                    @endif
+                                </div>
+
+                                   
+
                                     {{-- <hr> --}}
                                     {{-- <h2>Add Facilities</h2> --}}
                                     {{-- <div class="row">
