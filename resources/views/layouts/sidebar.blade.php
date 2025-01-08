@@ -74,6 +74,11 @@
                             <div class="menu-text"> Category List</div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('propertycategory') }}" class="menu-link ">
+                            <div class="menu-text"> Property Category List</div>
+                        </a>
+                    </div>
                 </div>
             </div>
             @endif

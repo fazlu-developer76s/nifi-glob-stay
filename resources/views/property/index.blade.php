@@ -47,7 +47,6 @@
                                         <th width="1%"></th>
                                         <th class="text-nowrap">Category Name</th>
                                         <th class="text-nowrap">Name</th>
-                                        <th class="text-nowrap">State</th>
                                         <th class="text-nowrap">Created Date </th>
                                         <th class="text-nowrap">Status</th>
                                         @if(isset($is_property))
@@ -66,7 +65,6 @@
                                         <td width="1%" class="fw-bold text-dark">{{ $loop->iteration }}</td>
                                         <td>{{ $property->category_name }}</td>
                                         <td>{{ $property->hotel_name }}</td>
-                                        <td>{{ $property->state }}</td>
                                         <td>{{ \Carbon\Carbon::parse($property->created_at)->format('d F Y h:i A') }}</td>
                                         <td>
                                             <div class="form-check form-switch">
@@ -94,8 +92,8 @@
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             @endif
-                                            
-                                            
+
+
                                             @if($delete == 1 || Auth::user()->role_id == 1)
                                             <form action="{{ route('property.destroy', $property->id) }}" method="POST" style="display: inline;">
                                                 @csrf
@@ -105,7 +103,7 @@
                                                 </button>
                                             </form>
                                             @endif
-                                            
+
                                         </td>
                                     </tr>
                                     @endforeach

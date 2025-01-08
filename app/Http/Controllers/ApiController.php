@@ -484,9 +484,9 @@ class ApiController extends Controller
         $new_property_get = array();
         foreach($get_cate as $row){
             if(!empty($user_id)){
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->select('p.*','pg.title as category_name','c.status as whislist_status')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
+            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->leftJoin('property_categories as d','p.property_category_id','=','d.id')->select('p.*','pg.title as category_name','c.status as whislist_status','d.title as property_category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('d.status',1)->get();
             }else{
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->select('p.*','pg.title as category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->get();
+            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('property_categories as d','p.property_category_id','=','d.id')->select('p.*','pg.title as category_name','d.title as property_category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('d.status',1)->get();
             }
             $get_fac = array();
             foreach($get_property as $property){

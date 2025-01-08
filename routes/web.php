@@ -25,6 +25,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\PermissionCategory;
 use App\Http\Controllers\PermissionsubCategory;
+use App\Http\Controllers\PropertyCategoryController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -112,6 +113,13 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/category/{id}', [CategoryController::class, 'edit'])->name('category.edit');
     Route::post('/category/update', [CategoryController::class, 'update'])->name('category.update');
     Route::delete('/category/delete/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+
+    // Category Route
+    Route::get('/propertycategory', [PropertyCategoryController::class, 'index'])->name('propertycategory');
+    Route::match(['get', 'post'], '/propertycategory/create', [PropertyCategoryController::class, 'create'])->name('propertycategory.create');
+    Route::get('/propertycategory/{id}', [PropertyCategoryController::class, 'edit'])->name('propertycategory.edit');
+    Route::post('/propertycategory/update', [PropertyCategoryController::class, 'update'])->name('propertycategory.update');
+    Route::delete('/propertycategory/delete/{id}', [PropertyCategoryController::class, 'destroy'])->name('propertycategory.destroy');
 
     // Testimonals Route
     Route::get('/testimonial', [TestimonialController::class, 'index'])->name('testimonial');
