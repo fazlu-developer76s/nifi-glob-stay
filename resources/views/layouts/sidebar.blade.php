@@ -224,6 +224,11 @@
                             <div class="menu-text">Manage Seo</div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('import') }}" class="menu-link ">
+                            <div class="menu-text">Import Leads</div>
+                        </a>
+                    </div>
                     @endif
                     <div class="menu-item">
                         <a href="{{ route('enquiry') }}" class="menu-link">

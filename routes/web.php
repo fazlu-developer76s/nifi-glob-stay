@@ -18,6 +18,7 @@ use App\Http\Controllers\BedController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GallaryController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PropertyController;
@@ -162,6 +163,13 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/seo/{id}', [SeoController::class, 'edit'])->name('seo.edit');
     Route::post('/seo/update', [SeoController::class, 'update'])->name('seo.update');
     Route::delete('/seo/delete/{id}', [SeoController::class, 'destroy'])->name('seo.destroy');
+
+    // Seo Route
+    Route::get('/import', [ImportController::class, 'index'])->name('import');
+    Route::match(['get', 'post'], '/import/create', [ImportController::class, 'create'])->name('import.create');
+    Route::get('/import/{id}', [ImportController::class, 'edit'])->name('import.edit');
+    Route::post('/import/update', [ImportController::class, 'update'])->name('import.update');
+    Route::delete('/import/delete/{id}', [ImportController::class, 'destroy'])->name('import.destroy');
 
     // Property Route
     Route::get('/property', [PropertyController::class, 'index'])->name('property');
