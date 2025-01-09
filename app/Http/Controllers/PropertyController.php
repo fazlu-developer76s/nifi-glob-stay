@@ -117,6 +117,9 @@ class PropertyController extends Controller
             }
 
             $n = 0;
+            if($request->facilities){
+                
+    
             foreach ($request->facilities as $key => $value) {
 
                 if (!empty($value)) {
@@ -133,6 +136,8 @@ class PropertyController extends Controller
                 }
                 $n++;
             }
+            }
+            
             if ($request->amenities) {
                 foreach ($request->amenities as $amenity) {
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
@@ -252,6 +257,7 @@ class PropertyController extends Controller
             }
             $delete_all_facilities = DB::table('add_facilities_propery')->where('property_id', $hotel->id)->delete();
             $n = 0;
+            if($request->facilities){
             foreach ($request->facilities as $key => $value) {
 
                 if (!empty($value)) {
@@ -267,6 +273,7 @@ class PropertyController extends Controller
                     }
                 }
                 $n++;
+            }
             }
             $delete_all_amenities = DB::table('add_amenties')->where('property_id', $hotel->id)->delete();
             if ($request->amenities) {

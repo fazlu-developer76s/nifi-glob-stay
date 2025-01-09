@@ -203,6 +203,11 @@
                             <div class="menu-text">Our Vision</div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('pages.edit', 3) }}" class="menu-link ">
+                            <div class="menu-text">Career</div>
+                        </a>
+                    </div>
                 </div>
             </div>
             @endif

@@ -66,6 +66,7 @@
                                                 <option value="contact" {{ old('type') == "contact" ? 'selected' : '' }} {{ (isset($get_banner) && $get_banner->type == "contact") ? 'selected' : '' ; }}>Contact Us</option>
                                                 <option value="testimonial" {{ old('type') == "testimonial" ? 'selected' : '' }} {{ (isset($get_banner) && $get_banner->type == "testimonial") ? 'selected' : '' ; }}>Testimonial</option>
                                                 <option value="blog " {{ old('type') == "blog" ? 'selected' : '' }} {{ (isset($get_banner) && $get_banner->type == "blog") ? 'selected' : '' ; }}>Blogs</option>
+                                                     <option value="career " {{ old('type') == "career" ? 'selected' : '' }} {{ (isset($get_banner) && $get_banner->type == "career") ? 'selected' : '' ; }}>Career</option>
                                             </select>
                                             @error('type')
                                             <div class="invalid-feedback">{{ $message }}</div>
