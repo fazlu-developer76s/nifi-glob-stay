@@ -88,7 +88,7 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Content</label>
-                                            <textarea class="form-control @error('description') is-invalid @enderror" type="text" name="description" placeholder="Enter description">@if(empty($get_banner)) {{ old('description') }} @else {{ (isset($get_banner)) ? $get_banner->description : '' ; }} @endif</textarea>
+                                            <textarea class="form-control @error('description') is-invalid @enderror" id="editor" type="text" name="description" placeholder="Enter description">@if(empty($get_banner)) {{ old('description') }} @else {{ (isset($get_banner)) ? $get_banner->description : '' ; }} @endif</textarea>
                                             @error('description')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

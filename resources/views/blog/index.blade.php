@@ -79,7 +79,7 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Short Description</label>
-                                            <textarea class="form-control @error('short_content') is-invalid @enderror" type="text" name="short_content" placeholder="Enter short_content">@if(empty($get_blog)) {{ old('short_content') }} @else {{ (isset($get_blog)) ? $get_blog->short_content : '' ; }} @endif</textarea>
+                                            <textarea class="form-control @error('short_content') is-invalid @enderror" type="text" name="short_content" id="editor" placeholder="Enter short_content">@if(empty($get_blog)) {{ old('short_content') }} @else {{ (isset($get_blog)) ? $get_blog->short_content : '' ; }} @endif</textarea>
                                             @error('short_content')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -88,7 +88,7 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Long Description</label>
-                                            <textarea class="form-control @error('long_content') is-invalid @enderror" type="text" name="long_content" placeholder="Enter long_content">@if(empty($get_blog)) {{ old('long_content') }} @else {{ (isset($get_blog)) ? $get_blog->long_content : '' ; }} @endif</textarea>
+                                            <textarea class="form-control @error('long_content') is-invalid @enderror" id="editor2" type="text" name="long_content" placeholder="Enter long_content">@if(empty($get_blog)) {{ old('long_content') }} @else {{ (isset($get_blog)) ? $get_blog->long_content : '' ; }} @endif</textarea>
                                             @error('long_content')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

@@ -235,6 +235,10 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
     Route::get('career-enquiry', [CompanyController::class, 'career_enquiry'])->name('career.enquiry');
     Route::delete('career/delete/{id}', [CompanyController::class, 'destroy'])->name('career.destroy');
+    
+        Route::delete('enquiry/delete/{id}', [CompanyController::class, 'enquiry_destroy'])->name('enquiry.destroy');
+    
+    
 
     // enquiry assign
     Route::post('/assign-lead', [LeadController::class, 'assign_lead'])->name('assign.lead');

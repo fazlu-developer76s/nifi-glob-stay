@@ -137,7 +137,7 @@
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Description</label>
-                                                    <textarea class="form-control @error('hotel_description') is-invalid @enderror" name="hotel_description"
+                                                    <textarea class="form-control @error('hotel_description') is-invalid @enderror" name="hotel_description" id="editor"
                                                         placeholder="Enter Description">{{ old('hotel_description', $hotel->hotel_description ?? '') }}</textarea>
                                                     @error('hotel_description')
                                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -234,28 +234,32 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <!-- District Dropdown -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">District</label>
-                                                    <select
-                                                        class="form-control @error('district_tehsil') is-invalid @enderror"
-                                                        name="district_tehsil">
-                                                        <option value="">Select District</option>
-                                                        <option value="District 1"
-                                                            {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'District 1' ? 'selected' : '' }}>
-                                                            District 1</option>
-                                                        <option value="District 2"
-                                                            {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'District 2' ? 'selected' : '' }}>
-                                                            District 2</option>
-                                                        <option value="District 3"
-                                                            {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'District 3' ? 'selected' : '' }}>
-                                                            District 3</option>
-                                                    </select>
-                                                    @error('district_tehsil')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                          <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">District</label>
+                <select class="form-control @error('district_tehsil') is-invalid @enderror" name="district_tehsil">
+                    <option value="">Select District</option>
+                    <option value="Almora" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Almora' ? 'selected' : '' }}>Almora</option>
+                    <option value="Bageshwar" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Bageshwar' ? 'selected' : '' }}>Bageshwar</option>
+                    <option value="Chamoli" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Chamoli' ? 'selected' : '' }}>Chamoli</option>
+                    <option value="Champawat" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Champawat' ? 'selected' : '' }}>Champawat</option>
+                    <option value="Dehradun" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Dehradun' ? 'selected' : '' }}>Dehradun</option>
+                    <option value="Haridwar" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Haridwar' ? 'selected' : '' }}>Haridwar</option>
+                    <option value="Nainital" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Nainital' ? 'selected' : '' }}>Nainital</option>
+                    <option value="Pauri Garhwal" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Pauri Garhwal' ? 'selected' : '' }}>Pauri Garhwal</option>
+                    <option value="Pithoragarh" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Pithoragarh' ? 'selected' : '' }}>Pithoragarh</option>
+                    <option value="Rudraprayag" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Rudraprayag' ? 'selected' : '' }}>Rudraprayag</option>
+                    <option value="Tehri Garhwal" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Tehri Garhwal' ? 'selected' : '' }}>Tehri Garhwal</option>
+                    <option value="New Garhwal" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'New Garhwal' ? 'selected' : '' }}>New Garhwal</option>
+                    <option value="Udham Singh Nagar" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Udham Singh Nagar' ? 'selected' : '' }}>Udham Singh Nagar</option>
+                    <option value="Uttarkashi" {{ old('district_tehsil', $hotel->district_tehsil ?? '') == 'Uttarkashi' ? 'selected' : '' }}>Uttarkashi</option>
+                </select>
+                @error('district_tehsil')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
+
 
                                             <!-- Zipcode Input -->
                                             <div class="col-md-6">
@@ -284,26 +288,68 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Area Size (in sq. ft.)</label>
+                                                <input type="number" 
+                                                    class="form-control @error('area_size') is-invalid @enderror" 
+                                                    name="area_size" placeholder="Enter Area Size" 
+                                                    value="{{ old('area_size', $hotel->area_size ?? '') }}" />
+                                                @error('area_size')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
 
                                             <!-- Area Size Input -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Area Size (in Sq. Ft.)</label>
-                                                    <input type="number"
-                                                        class="form-control @error('area_size') is-invalid @enderror"
-                                                        name="area_size" placeholder="Enter Area Size"
-                                                        value="{{ old('area_size', $hotel->area_size ?? '') }}" />
-                                                    @error('area_size')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                           <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Area Type</label>
+                                    <select
+                                        class="form-control @error('area_type') is-invalid @enderror"
+                                        name="area_type">
+                                        <option value="">Select Area Type</option>
+                                        <option value="nali"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'nali' ? 'selected' : '' }}>
+                                            Nali</option>
+                                        <option value="square_feet"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'square_feet' ? 'selected' : '' }}>
+                                            Square Feet</option>
+                                        <option value="bigha"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'bigha' ? 'selected' : '' }}>
+                                            Bigha</option>
+                                        <option value="acre"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'acre' ? 'selected' : '' }}>
+                                            Acre</option>
+                                        <option value="hectare"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'hectare' ? 'selected' : '' }}>
+                                            Hectare</option>
+                                        <option value="kanal"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'kanal' ? 'selected' : '' }}>
+                                            Kanal</option>
+                                        <option value="marla"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'marla' ? 'selected' : '' }}>
+                                            Marla</option>
+                                        <option value="gaj"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'gaj' ? 'selected' : '' }}>
+                                            Gaj</option>
+                                        <option value="square_yard"
+                                            {{ old('area_type', $hotel->area_type ?? '') == 'square_yard' ? 'selected' : '' }}>
+                                            Square Yard</option>
+                                    </select>
+                                    @error('area_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
 
                                             <!-- Site Specification (Description) -->
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Site Specification (Description)</label>
-                                                    <textarea class="form-control @error('site_specification') is-invalid @enderror" name="site_specification"
+                                                    <textarea class="form-control @error('site_specification') is-invalid @enderror" name="site_specification" id="editor2"
                                                         rows="4" placeholder="Enter site description">{{ old('site_specification', $hotel->site_specification ?? '') }}</textarea>
                                                     @error('site_specification')
                                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -331,53 +377,94 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Price Type</label>
+                                            <select
+                                                class="form-control @error('price_type') is-invalid @enderror"
+                                                name="price_type">
+                                                <option value="">Select Price Type</option>
+                                                <option value="nali"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'nali' ? 'selected' : '' }}>
+                                                    Nali</option>
+                                                <option value="square_feet"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'square_feet' ? 'selected' : '' }}>
+                                                    Square Feet</option>
+                                                <option value="bigha"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'bigha' ? 'selected' : '' }}>
+                                                    Bigha</option>
+                                                <option value="acre"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'acre' ? 'selected' : '' }}>
+                                                    Acre</option>
+                                                <option value="hectare"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'hectare' ? 'selected' : '' }}>
+                                                    Hectare</option>
+                                                <option value="kanal"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'kanal' ? 'selected' : '' }}>
+                                                    Kanal</option>
+                                                <option value="marla"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'marla' ? 'selected' : '' }}>
+                                                    Marla</option>
+                                                <option value="gaj"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'gaj' ? 'selected' : '' }}>
+                                                    Gaj</option>
+                                                <option value="yard"
+                                                    {{ old('price_type', $hotel->price_type ?? '') == 'yard' ? 'selected' : '' }}>
+                                                    Yard</option>
+                                            </select>
+                                            @error('price_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
 
                                             <!-- Markup Dropdown -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Markup (%)</label>
-                                                    <select class="form-control @error('markup') is-invalid @enderror"
-                                                        name="markup">
-                                                        <option value="">Select Markup</option>
-                                                        @for ($i = 0; $i <= 100; $i += 5)
-                                                            <option value="{{ $i }}"
-                                                                {{ old('markup', $hotel->markup ?? '') == $i ? 'selected' : '' }}>
-                                                                {{ $i }}%</option>
-                                                        @endfor
-                                                    </select>
-                                                    @error('markup')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                            <!--<div class="col-md-6">-->
+                                            <!--    <div class="mb-3">-->
+                                            <!--        <label class="form-label">Markup (%)</label>-->
+                                            <!--        <select class="form-control @error('markup') is-invalid @enderror"-->
+                                            <!--            name="markup">-->
+                                            <!--            <option value="">Select Markup</option>-->
+                                            <!--            @for ($i = 0; $i <= 100; $i += 5)-->
+                                            <!--                <option value="{{ $i }}"-->
+                                            <!--                    {{ old('markup', $hotel->markup ?? '') == $i ? 'selected' : '' }}>-->
+                                            <!--                    {{ $i }}%</option>-->
+                                            <!--            @endfor-->
+                                            <!--        </select>-->
+                                            <!--        @error('markup')-->
+                                            <!--            <div class="invalid-feedback">{{ $message }}</div>-->
+                                            <!--        @enderror-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
 
                                             <!-- Markup Value B2C -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Markup Value B2C</label>
-                                                    <input
-                                                        class="form-control @error('markup_value_b2c') is-invalid @enderror"
-                                                        type="text" name="markup_value_b2c" placeholder="Enter Price"
-                                                        value="{{ old('markup_value_b2c', $hotel->markup_value_b2c ?? '') }}" />
-                                                    @error('markup_value_b2c')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                            <!--<div class="col-md-6">-->
+                                            <!--    <div class="mb-3">-->
+                                            <!--        <label class="form-label">Markup Value B2C</label>-->
+                                            <!--        <input-->
+                                            <!--            class="form-control @error('markup_value_b2c') is-invalid @enderror"-->
+                                            <!--            type="text" name="markup_value_b2c" placeholder="Enter Price"-->
+                                            <!--            value="{{ old('markup_value_b2c', $hotel->markup_value_b2c ?? '') }}" />-->
+                                            <!--        @error('markup_value_b2c')-->
+                                            <!--            <div class="invalid-feedback">{{ $message }}</div>-->
+                                            <!--        @enderror-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
 
                                             <!-- Markup Value B2B -->
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Markup Value B2B</label>
-                                                    <input
-                                                        class="form-control @error('markup_value_b2b') is-invalid @enderror"
-                                                        type="text" name="markup_value_b2b" placeholder="Enter Price"
-                                                        value="{{ old('markup_value_b2b', $hotel->markup_value_b2b ?? '') }}" />
-                                                    @error('markup_value_b2b')
-                                                        <div class="invalid-feedback">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                            <!--<div class="col-md-6">-->
+                                            <!--    <div class="mb-3">-->
+                                            <!--        <label class="form-label">Markup Value B2B</label>-->
+                                            <!--        <input-->
+                                            <!--            class="form-control @error('markup_value_b2b') is-invalid @enderror"-->
+                                            <!--            type="text" name="markup_value_b2b" placeholder="Enter Price"-->
+                                            <!--            value="{{ old('markup_value_b2b', $hotel->markup_value_b2b ?? '') }}" />-->
+                                            <!--        @error('markup_value_b2b')-->
+                                            <!--            <div class="invalid-feedback">{{ $message }}</div>-->
+                                            <!--        @enderror-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
                                         </div>
                                     </div>
                                 </div>

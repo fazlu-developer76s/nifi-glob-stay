@@ -19,7 +19,7 @@ class PagesController extends Controller
     {
         $request->validate([
             'title' => 'required|string',
-            'image' => 'nullable|image|image|mimes:jpg,jpeg,png,svg|max:2048',
+            'image' => 'nullable|image|image|mimes:jpg,jpeg,png,svg',
             'paragraph' => 'required|string',
         ]);
         $pages = Page::findOrFail($id);

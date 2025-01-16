@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\Import;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use DB;
 
 class ImportController extends Controller
 {
     public function index()
     {
+        
         $title = "Import List";
-        $allimport = Import::where('status', '!=', '3')->orderBy('id', 'desc')->get();
+        $allimport = DB::table('users as a')->leftJoin('tbl_import as b','b.user_id','=','a.id')->select('a.name as user_name','b.*')->where('b.status',1)->get();
         return view('import.index', compact('title', 'allimport'));
     }
 
@@ -31,6 +33,7 @@ class ImportController extends Controller
             $duplicateCount = $import->getDuplicateCount();
             $totalCount = $insertCount + $duplicateCount;
             $import = new Import();
+            $import->user_id = $request->user_id;
             $import->title = $request->title;
             $import->import_count = $insertCount;
             $import->duplicate_count = $duplicateCount;
@@ -41,7 +44,8 @@ class ImportController extends Controller
             return redirect()->route('import')->with('success', $message);
         }
         $title = "Create Import";
-        return view('import.create', compact('title'));
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('users.status', '!=', 3)->select('users.*', 'roles.title')->where('roles.status','!=',3)->get();
+        return view('import.create', compact('title','allmember'));
 
     }
 

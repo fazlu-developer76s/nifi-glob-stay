@@ -129,6 +129,15 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
+                                            <label class="form-label">Youtube Link</label>
+                                            <input type="url" name="youtube_link" class="form-control" value="{{ old('youtube_link', $company->youtube_link) }}">
+                                            @error('youtube_link')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
                                             <label class="form-label">Map Link</label>
                                             <textarea type="url" name="map_link" class="form-control">{{ old('map_link', $company->map_link) }}</textarea>
                                             @error('map_link')

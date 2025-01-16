@@ -37,6 +37,9 @@
             background: #67722e !important;
             color: black !important;
         }
+          .cke_notification_warning{
+        display: none !important;
+    }
     </style>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <!-- CSRF Token -->

@@ -466,7 +466,7 @@ class ApiController extends Controller
 
     public function fetch_property(Request $request)
     {
-
+      
         if(isset($request->user->id) && $request->user->id){
             $user_id = $request->user->id;
         }else{
@@ -483,11 +483,73 @@ class ApiController extends Controller
         $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
         foreach($get_cate as $row){
-            if(!empty($user_id)){
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('whislist_property as c','p.id','=','c.property_id')->leftJoin('property_categories as d','p.property_category_id','=','d.id')->select('p.*','pg.title as category_name','c.status as whislist_status','d.title as property_category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('d.status',1)->get();
-            }else{
-            $get_property = DB::table('properties as p')->leftJoin('categories as pg','p.category_id','=','pg.id')->leftJoin('property_categories as d','p.property_category_id','=','d.id')->select('p.*','pg.title as category_name','d.title as property_category_name')->where('p.status',1)->where('pg.status',1)->where('p.category_id',$row->id)->where('p.is_property_verified',1)->where('d.status',1)->get();
+                if(!empty($user_id)){
+         $query = DB::table('properties as p')
+        ->leftJoin('categories as pg', 'p.category_id', '=', 'pg.id')
+        ->leftJoin('whislist_property as c', 'p.id', '=', 'c.property_id')
+        ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
+        ->select(
+            'p.*',
+            'pg.title as category_name',
+            'c.status as whislist_status',
+            'd.title as property_category_name'
+        )
+        ->where([
+            ['p.status', '=', 1],
+            ['pg.status', '=', 1],
+            ['p.category_id', '=', $row->id],
+            ['p.is_property_verified', '=', 1],
+            ['d.status', '=', 1]
+        ]);
+
+        // Group OR conditions for filters
+        $query->where(function ($query) use ($request) {
+            if ($request->area_type) {
+                $query->orWhere('p.hotel_name', 'LIKE', '%' . $request->area_type . '%');
             }
+            if ($request->area_size) {
+                $query->orWhere('p.area_size', 'LIKE', '%' . $request->area_size . '%');
+            }
+            // if ($request->area_type) {
+            //     $query->orWhere('p.area_type', 'LIKE', '%' . $request->area_type . '%');
+            // }
+            if ($request->location) {
+                $query->orWhere('p.location', 'LIKE', '%' . $request->location . '%');
+            }
+        });
+
+// Execute the query and fetch properties
+$get_property = $query->get();
+
+            }else{
+$query = DB::table('properties as p')
+    ->leftJoin('categories as pg', 'p.category_id', '=', 'pg.id')
+    ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
+    ->select('p.*', 'pg.title as category_name', 'd.title as property_category_name')
+    ->where('p.status', 1)
+    ->where('pg.status', 1)
+    ->where('p.category_id', $row->id)
+    ->where('p.is_property_verified', 1)
+    ->where('d.status', 1);
+
+// Add a group for the orWhere conditions
+        $query->where(function ($query) use ($request) {
+            if ($request->area_type) {
+                $query->orWhere('p.hotel_name', 'LIKE', '%' . $request->area_type . '%');
+            }
+            if ($request->area_size) {
+                $query->orWhere('p.area_size', 'LIKE', '%' . $request->area_size . '%');
+            }
+            // if ($request->area_type) {
+            //     $query->orWhere('p.area_type', 'LIKE', '%' . $request->area_type . '%');
+            // }
+            if ($request->location) {
+                $query->orWhere('p.location', 'LIKE', '%' . $request->location . '%');
+            }
+        });
+
+$get_property = $query->get();
+
             $get_fac = array();
             foreach($get_property as $property){
                 $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
@@ -504,7 +566,7 @@ class ApiController extends Controller
         }
         return response()->json(['status' => 'Success', 'data' => $new_property_get], 200);
     }
-
+}
 
     public function fetch_testimonial()
     {
@@ -570,7 +632,7 @@ class ApiController extends Controller
 
     public function fetch_pages(Request $request){
 
-        $get_page = Page::where('page_name', $request->page_name)->first();
+        $get_page = Page::get();
         if ($get_page) {
             return response()->json(['status' => 'OK', 'message' => 'Page fetched successfully', 'data' => $get_page], 200);
         } else {

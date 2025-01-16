@@ -17,7 +17,7 @@ class MemberController extends Controller
     {
 
         $title = "Member List";
-        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('roles.id','!=',2)->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->get();
+        $allmember = DB::table('users')->leftJoin('roles', 'roles.id', '=', 'users.role_id')->where('users.role_id', '!=',1)->where('users.status', '!=', 3)->select('users.*', 'roles.title')->where('roles.status','!=',3)->get();
         return view('member.index', compact('title', 'allmember'));
     }
 

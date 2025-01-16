@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Imports;
-
+use Auth;
 use App\Models\Enquiry;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class LeadImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-
+     
         $existingUser = DB::table('enquiries')->where('mobile_no', $row['number'])->first();
 
         if ($existingUser) {
@@ -31,14 +31,23 @@ class LeadImport implements ToModel, WithHeadingRow
         }
 
         // Insert the data using DB::table()
-        DB::table('enquiries')->insert([
-            'name' => $row['name'],
-            'email' => $row['mail_id'],
-            'mobile_no' => $row['number'],
-            'date' => $row['date'],
-            'location' => $row['current_location'],
-            'preferd_location' => $row['preferred_location'],
+         $id = DB::table('enquiries')->insertGetId([
+                'name' => $row['name'],
+                'email' => $row['mail_id'],
+                'mobile_no' => $row['number'],
+                'user_id' => $_POST['user_id'],
+                'date' => $row['date'],
+                'location' => $row['current_location'],
+                'preferd_location' => $row['preferred_location'],
+            ]);
+            DB::table('notes')->insert(['loan_request_id' => $id, 'user_id' => $_POST['user_id'], 'loan_status' => 1, 'title' => "Initial Stage"]);
+          
+           $insert_log = DB::table('assign_lead')->insert([
+            'lead_id' => $id,
+            'current_user_id' => Auth::user()->id,
+            'assign_user_id' => $_POST['user_id']
         ]);
+
 
         $this->insertCount++;
 

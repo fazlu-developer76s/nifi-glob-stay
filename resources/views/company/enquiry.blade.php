@@ -217,6 +217,15 @@
                                                 data-bs-target="#exampleModalRight" onclick="ViewrightModal({{ $lead->id }})">
                                                 <i class="fa fa-eye"></i>
                                             </a>
+                                            
+                                             <form action="{{ route('enquiry.destroy', $lead->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-link text-danger p-0" onclick="return confirm('Are you sure you want to delete this lead?');">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            
                                         </td>
                                     </tr>
                                     @endforeach

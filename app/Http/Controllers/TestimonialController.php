@@ -25,7 +25,7 @@ class TestimonialController extends Controller
                 'designation' => 'required',
                 'description' => 'required',
                 'title' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'image' => 'required|image|mimes:jpeg,png,jpg,webp',
                 'status' => 'required',
             ]);
             $check_data = $this->check_exist_data($request, null);
@@ -72,7 +72,7 @@ class TestimonialController extends Controller
             'designation' => 'required',
             'description' => 'required',
             'title' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             'status' => 'required',
         ]);
         $check_data = $this->check_exist_data($request, $request->hidden_id);

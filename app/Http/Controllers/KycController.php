@@ -202,14 +202,14 @@ class KycController  extends Controller
         $loan_request_id = $request->loan_request_id;
         $request->validate([
             'loan_request_id' => 'required',
-            'aadhar_docs' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'pan_docs' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'elec_bill' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'photo' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'business_pic' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'gurn_docs' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'side_verify' =>'nullable|mimes:jpg,png,pdf|max:2048',
-            'rc_vehicle' =>'nullable|mimes:jpg,png,pdf|max:2048'
+            'aadhar_docs' =>'nullable|mimes:jpg,png,pdf',
+            'pan_docs' =>'nullable|mimes:jpg,png,pdf',
+            'elec_bill' =>'nullable|mimes:jpg,png,pdf',
+            'photo' =>'nullable|mimes:jpg,png,pdf',
+            'business_pic' =>'nullable|mimes:jpg,png,pdf',
+            'gurn_docs' =>'nullable|mimes:jpg,png,pdf',
+            'side_verify' =>'nullable|mimes:jpg,png,pdf',
+            'rc_vehicle' =>'nullable|mimes:jpg,png,pdf'
         ]);
         $kyc = kyc::where('loan_request_id', $loan_request_id)->first();
         if(!$kyc)

@@ -45,7 +45,7 @@ class ApiPropertyController extends Controller
                 'location' => 'nullable|string',
                 'room_type' => 'nullable|string',
                 'room_size' => 'nullable|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -163,7 +163,7 @@ class ApiPropertyController extends Controller
                 'location' => 'nullable|string',
                 'room_type' => 'nullable|string',
                 'room_size' => 'nullable|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {

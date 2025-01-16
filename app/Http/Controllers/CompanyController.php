@@ -24,8 +24,8 @@ class CompanyController extends Controller
         // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048',
-            'favicon' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:1024',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg',
+            'favicon' => 'nullable|image|mimes:jpg,jpeg,png,svg',
             'address' => 'required|string|max:500',
             'email' => 'required|email',
             'mobile' => 'required|numeric',
@@ -61,6 +61,9 @@ class CompanyController extends Controller
         $company->header_script = $request->header_script;
         $company->footer_script = $request->footer_script;
         $company->map_link = $request->map_link;
+        if($request->youtube_link){
+            $company->youtube_link = $request->youtube_link;
+        }
 
         // Save the updated company
         $company->save();
@@ -124,6 +127,12 @@ class CompanyController extends Controller
         $lead = DB::table('tbl_career_enquiry')->where('id',$id)->where('status',1)->first();
         $delete_lead = DB::table('tbl_career_enquiry')->where('id',$id)->update(['status'=>3]);
         return redirect()->route('career.enquiry')->with('success', 'Lead deleted successfully.');
+    }
+    
+    public function enquiry_destroy($id){
+            $lead = DB::table('enquiries')->where('id',$id)->where('status',1)->first();
+        $delete_lead = DB::table('enquiries')->where('id',$id)->update(['status'=>3]);
+        return redirect()->route('enquiry')->with('success', 'Lead deleted successfully.'); 
     }
 
 }

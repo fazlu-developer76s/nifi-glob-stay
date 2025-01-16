@@ -35,8 +35,26 @@
                             <input type="hidden" value="{{ (isset($get_import)) ? $get_import->id : '' ; }}" name="hidden_id">
                             <div class="card-body">
                                 <div class="row">
-
-                                    <div class="col-md-6">
+                                    
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Select Member</label>
+                                            <select class="form-control custom-select-icon @error('user_id') is-invalid @enderror" name="user_id">
+                                                <option value="">Select Role</option>
+                                                @if($allmember)
+                                                    @foreach ($allmember as $member)
+                                                   
+                                                        <option value="{{ $member->id }}"  {{ old('user_id') == $member->id ? 'selected' : '' }} >{{ $member->name }} ( {{ $member->title }} )</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            @error('user_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label"> Title</label>
                                             <input class="form-control @error('title') is-invalid @enderror" type="text" name="title" placeholder="Enter Title" value="@if(empty($get_import)) {{ old('title') }} @else {{ (isset($get_import)) ? $get_import->title : '' ; }} @endif" />
@@ -46,7 +64,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">File Upload</label>
                                             <input class="form-control @error('file') is-invalid @enderror" type="file" name="file" />

@@ -10,8 +10,8 @@ class CmsController extends Controller
 
             $request->validate([
                 'name' => 'required|string|max:255',
-                'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048',
-                'favicon' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:1024',
+                'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg',
+                'favicon' => 'nullable|image|mimes:jpg,jpeg,png,svg',
                 'address' => 'required|string|max:500',
                 'email' => 'required|email',
                 'mobile' => 'required|numeric',

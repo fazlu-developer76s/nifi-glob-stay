@@ -59,8 +59,8 @@ class PropertyController extends Controller
                 'youtube_link' => 'nullable|string',
                 'rating' => 'nullable|string',
                 'price' => 'required|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif'
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -82,6 +82,8 @@ class PropertyController extends Controller
             $hotel->area_size = $request->area_size;
             $hotel->site_specification = $request->site_specification;
             $hotel->price = $request->price;
+            $hotel->price_type = $request->price_type;
+            $hotel->area_type = $request->area_type;
             $hotel->markup = $request->markup;
             $hotel->markup_value_b2c = $request->markup_value_b2c;
             $hotel->markup_value_b2b = $request->markup_value_b2b;
@@ -228,6 +230,8 @@ class PropertyController extends Controller
             $hotel->area_size = $request->area_size;
             $hotel->site_specification = $request->site_specification;
             $hotel->price = $request->price;
+            $hotel->price_type = $request->price_type;
+            $hotel->area_type = $request->area_type;
             $hotel->markup = $request->markup;
             $hotel->markup_value_b2c = $request->markup_value_b2c;
             $hotel->markup_value_b2b = $request->markup_value_b2b;
@@ -334,8 +338,8 @@ class PropertyController extends Controller
                 'booking_days' => 'nullable|string',
                 'distance' => 'nullable|string',
                 'location' => 'nullable|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif'
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {
@@ -434,7 +438,7 @@ class PropertyController extends Controller
                 'booking_days' => 'nullable|string',
                 'distance' => 'nullable|string',
                 'location' => 'nullable|string',
-                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             ]);
             // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
             // if ($checkData) {

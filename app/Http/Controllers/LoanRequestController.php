@@ -693,7 +693,7 @@ class LoanRequestController extends Controller
 
         $request->validate([
             'loan_id' =>'required',
-            'image' =>'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' =>'required|image|mimes:jpeg,png,jpg,webp',
         ]);
         $loan_id = $request->loan_id;
         $loan_disbursement = Loan_disbursement::where('loan_id',$loan_id)->first();

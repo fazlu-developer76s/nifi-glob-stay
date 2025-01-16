@@ -34,6 +34,7 @@
                                 <thead>
                                     <tr>
                                         <th width="1%"></th>
+                                        <th class="text-nowrap">Username</th>
                                         <th class="text-nowrap">Title</th>
                                         <th class="text-nowrap">Insert Record</th>
                                         <th class="text-nowrap">Duplicate Record</th>
@@ -48,6 +49,7 @@
                                     @foreach ($allimport as $import)
                                     <tr class="odd gradeX">
                                         <td width="1%" class="fw-bold text-dark">{{ $loop->iteration }}</td>
+                                        <td>{{ $import->user_name }}</td>
                                         <td>{{ $import->title }}</td>
                                         <td>{{ $import->import_count }}</td>
                                         <td>{{ $import->duplicate_count }}</td>
