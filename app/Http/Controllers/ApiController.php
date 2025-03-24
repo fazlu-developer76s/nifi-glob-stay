@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\Enquirys;
 use App\Models\Enquiry;
+use App\Models\ContactEnc;
 use App\Models\Gallary;
 use App\Models\Jobs;
 use App\Models\JobsEnq;
@@ -654,9 +655,8 @@ $get_property = $query->get();
         if ($request->mobile_no == '' || !preg_match('/^\d{10}$/', $request->mobile_no)) {
             return response()->json(['status' => 'Error', 'message' => 'Mobile number must be a 10-digit integer'], 400);
         }
-
         Mail::to($company_info->email)->send(new Enquirys($request));
-        $enc = new Enquiry();
+        $enc = new ContactEnc();
         $enc->name = $request->name;
         $enc->email = $request->email;
         $enc->mobile_no = $request->mobile_no;
@@ -674,7 +674,7 @@ $get_property = $query->get();
         $enc->plan_date = $request->plan_date;
         }
         $enc->save();
-        DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Initial Stage"]);
+        // DB::table('notes')->insert(['loan_request_id' => $enc->id, 'user_id' => 1, 'loan_status' => 1, 'title' => "Initial Stage"]);
         return response()->json(['status' => 'OK', 'message' => 'Enquiry sent successfully'], 200);
     }
 

@@ -535,6 +535,7 @@ class LeadController extends Controller
         }
     }
     public function assign_lead(Request $request) {
+        // dd($request);
         $explode_lead_id = explode(',', $request->lead_id);
         foreach ($explode_lead_id as $leads){
             $lead_id = $leads;
@@ -555,7 +556,7 @@ class LeadController extends Controller
             ]);
             $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>9]);
             $update_user_id = DB::table('enquiries')
-            ->where('user_id', $current_user_id)
+            // ->where('user_id', $current_user_id)
             ->where('id', $lead_id)
             ->update(['user_id' => $assign_user_id]);
 

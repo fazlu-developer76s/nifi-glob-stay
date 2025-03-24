@@ -149,18 +149,9 @@
 
 
                         <div class="card-body">
-                            <form id="filterForm" method="GET" action="{{ route('enquiry') }}" class="mb-4">
+                            {{-- <form id="filterForm" method="GET" action="{{ route('enquiry') }}" class="mb-4">
                                 <div class="row d-flex align-items-center">
-                                    @if(Auth::user()->role_id == 1)
-                                    <div class="col-md-2">
-                                        <select name="user_id" class="form-control" aria-label="Default select example">
-                                            <option value="">Select User</option>
-                                            @foreach ($get_filter_user as $user)
-                                                <option value="{{ $user->id }}" {{ (isset($_GET['user_id']) && $_GET['user_id'] == $user->id) ? 'selected' : '' ; }}>{{ $user->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @endif
+
 
                                     <div class="col-md-2">
                                         <label for="budget" class="form-label">Budget</label>
@@ -221,7 +212,7 @@
                                         </a>
                                     </div>
                                 </div>
-                            </form>
+                            </form> --}}
 
                             <table id="" class="table table-striped table-bordered align-middle">
                                 <!--<div class="row">-->
@@ -247,9 +238,9 @@
                                 <thead>
 
                                     <tr>
-                                        <th width="1%"><input type="checkbox" id="select-all"></th>
+                                        {{-- <th width="1%"><input type="checkbox" id="select-all"></th> --}}
                                         <th width="1%"></th>
-                                        <th class="text-nowrap">User Name</th>
+                                        {{-- <th class="text-nowrap">User Name</th> --}}
                                         <th class="text-nowrap">Full Name</th>
                                         <th class="text-nowrap">Email</th>
                                         <th class="text-nowrap">Phone</th>
@@ -259,9 +250,9 @@
                                         <th class="text-nowrap">Description</th>
                                         <th class="text-nowrap">Created At</th>
                                         <th class="text-nowrap">Type</th>
-                                        <th class="text-nowrap">Status</th>
-                                        <th class="text-nowrap">Lead Status</th>
-                                        <th class="text-nowrap">Action</th>
+                                        {{-- <th class="text-nowrap">Status</th> --}}
+                                        {{-- <th class="text-nowrap">Lead Status</th> --}}
+                                        {{-- <th class="text-nowrap">Action</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -271,7 +262,7 @@
                                         @method('DELETE')
                                     @if($alllead)
                                     @foreach ($alllead as $lead)
-                         @switch(@$lead->loan_status)
+                           @switch(@$lead->loan_status)
                                 @case(1)
                                     @php $loan_status = "Initial Stage"; @endphp
                                 @break
@@ -325,9 +316,9 @@
 
                                     <tr class="odd gradeX">
 
-                                        <td><input type="checkbox" name="selected_users[]"  class="checkbox_lead_assign select-item" value="{{ $lead->id }}"></td>
+                                        {{-- <td><input type="checkbox" name="selected_users[]"  class="checkbox_lead_assign select-item" value="{{ $lead->id }}"></td> --}}
                                         <td width="1%" class="fw-bold text-dark"> {{ ($alllead->currentPage() - 1) * $alllead->perPage() + $loop->iteration }}</td>
-                                        <td>{{ ucwords($lead->user_name) }}</td>
+                                        {{-- <td>{{ ucwords($lead->user_name) }}</td> --}}
                                         <td>{{ ucwords($lead->name) }}</td>
                                         <td>{{ ucwords($lead->email) }}</td>
                                         <td>{{ $lead->mobile_no }}</td>
@@ -347,16 +338,16 @@
                                         Contact
                                         @endif
                                         </td>
-                                        <td>
+                                        {{-- <td>
                                             <div class="mb-3">
                                                 <select class="form-control" id="lead_status{{ $lead->id }}" name="lead_status" onchange="statusUpdateLead('{{ $lead->id }}');">
                                                     <option value="1" {{ ($lead->lead_status == 1) ? 'selected' : '' ;  }} @if(Auth::user()->role_id != 1) @disabled(true) @endif>Open</option>
                                                     <option value="2" {{ ($lead->lead_status == 2) ? 'selected' : '' ;  }}>Close</option>
                                                 </select>
                                             </div>
-                                        </td>
-                                        <td>{{ $loan_status }}</td>
-                                        <td>
+                                        </td> --}}
+                                        {{-- <td>{{ $loan_status }}</td> --}}
+                                        {{-- <td>
                                             <a href="{{ route('lead.view', $lead->id) }}" class="text-success me-2">
                                                 <i class="fa fa-eye"></i>
                                             </a>
@@ -378,7 +369,7 @@
                                                 </button>
 
 
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                         @endforeach
                                     </form>
@@ -440,12 +431,12 @@
                 <input type="hidden" id="current_user_id">
                 <input type="hidden" id="lead_create_user_id">
                 <label for="selectOption" class="form-label">Select User</label>
-                <select id="selectOption" class="form-select" aria-label="Default select example">
+                {{-- <select id="selectOption" class="form-select" aria-label="Default select example">
                     <option value="">Select User</option>
                     @foreach ( $get_user as $user )
                         <option value="{{ $user->id }}">{{ $user->name }} ( {{ $user->role_name }})</option>
                     @endforeach
-                </select>
+                </select> --}}
                 </div>
                 <span class="assign_error text-danger"></span>
                 <span class="assign_success text-success"></span>

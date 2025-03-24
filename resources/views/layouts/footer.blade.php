@@ -226,8 +226,8 @@
                 return false;
             }
         }
-        
-     
+
+
 
 
         // if (!from_date || !to_date) {
@@ -457,6 +457,38 @@
             }
         });
     }
+    function rejectLead(lead_id) {
+        if(confirm('Are you sure you want to reject this lead?')){
+            var lead_id = lead_id;
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: "{{ route('enquiry.reject') }}",
+                type: 'POST',
+                data: {
+                    _token: csrfToken,
+                    lead_id: lead_id,
+
+                },
+                success: function(response) {
+                    if (response == true) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Lead Reject Successfully!",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(function() {
+
+                        window.location.reload();
+
+                    });
+                } else {
+                    Swal.fire("Error!", "Error!", "error");
+                }
+                }
+            });
+        }
+    }
 
     function Change_kyc_status(kyc_id) {
         var kyc_status = $("#routeSelect").val();
@@ -672,6 +704,26 @@
             }
         });
     }
+</script>
+<script>
+    $(document).ready(function () {
+        // Select/Deselect All Checkboxes
+        $('#select-all').on('click', function () {
+            $('.select-item').prop('checked', this.checked);
+            toggleDeleteButton();
+        });
+
+        // Uncheck "Select All" if any checkbox is unchecked
+        $('.select-item').on('click', function () {
+            $('#select-all').prop('checked', $('.select-item:checked').length === $('.select-item').length);
+            toggleDeleteButton();
+        });
+
+        // Enable or disable delete button
+        function toggleDeleteButton() {
+            $('#bulk-delete-btn').prop('disabled', $('.select-item:checked').length === 0);
+        }
+    });
 </script>
 </body>
 

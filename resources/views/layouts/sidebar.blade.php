@@ -242,20 +242,38 @@
                             <div class="menu-text">Manage Seo</div>
                         </a>
                     </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 4 || Auth::user()->role_id == 5 )
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Query Manager </div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('enquiry') }}" class="menu-link">
+                            <div class="menu-text">Enquiry List</div>
+                        </a>
+                    </div>
+                    @if(Auth::user()->role_id == 1)
                     <div class="menu-item">
                         <a href="{{ route('import') }}" class="menu-link ">
                             <div class="menu-text">Import Leads</div>
                         </a>
                     </div>
                     @endif
-                    <div class="menu-item">
-                        <a href="{{ route('enquiry') }}" class="menu-link">
-                            <div class="menu-text">Enquiry List</div>
-                        </a>
-                    </div>
+
                     <div class="menu-item">
                         <a href="{{ route('career.enquiry') }}" class="menu-link">
                             <div class="menu-text">Career Enquiry List</div>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a href="{{ route('contact.enquiry') }}" class="menu-link">
+                            <div class="menu-text">Contact Us Enquiry</div>
                         </a>
                     </div>
                 </div>

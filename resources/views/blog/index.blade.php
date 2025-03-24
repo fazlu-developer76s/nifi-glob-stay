@@ -76,6 +76,15 @@
                                             @enderror
                                         </div>
                                     </div>
+                                     <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"> Posted On</label>
+                                            <input class="form-control @error('posted_at') is-invalid @enderror" type="text" name="posted_at" placeholder="Enter Blog Link" value="@if(empty($get_blog)) {{ old('posted_at') }} @else {{ (isset($get_blog)) ? $get_blog->posted_at : '' ; }} @endif" />
+                                            @error('posted_at')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Short Description</label>

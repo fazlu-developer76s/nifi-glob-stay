@@ -20,7 +20,7 @@ class BlogController extends Controller
 
         if ($request->method() == 'POST') {
             $request->validate([
-                // 'posted_at' => 'required|string',
+                'posted_at' => 'required',
                 'title' => 'required',
                 'image' => 'required|image|mimes:jpeg,png,jpg,webp',
                 'status' => 'required',
@@ -39,7 +39,7 @@ class BlogController extends Controller
             $blog = new Blog();
             $blog->title = $request->title;
             $blog->blog_link = $request->blog_link;
-            // $blog->posted_at = $request->posted_at;
+            $blog->posted_at = $request->posted_at;
             $blog->short_content = $request->short_content;
             $blog->status = $request->status;
             $blog->long_content = $request->long_content;
@@ -64,7 +64,7 @@ class BlogController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            // 'posted_at' => 'required|string',
+            'posted_at' => 'required',
             'title' => 'required',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp',
             'status' => 'required',
@@ -82,7 +82,7 @@ class BlogController extends Controller
         }
         $blog = Blog::findOrFail($request->hidden_id);
         $blog->title = $request->title;
-        // $blog->posted_at = $request->posted_at;
+        $blog->posted_at = $request->posted_at;
         $blog->short_content = $request->short_content;
         $blog->status = $request->status;
         $blog->long_content = $request->long_content;

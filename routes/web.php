@@ -243,10 +243,12 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('pages/{id}/edit', [PagesController::class, 'edit'])->name('pages.edit');
     Route::post('pages/{id}', [PagesController::class, 'update'])->name('pages.update');
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
+    Route::get('contact-enquiry', [CompanyController::class, 'contact_enquiry'])->name('contact.enquiry');
     Route::get('career-enquiry', [CompanyController::class, 'career_enquiry'])->name('career.enquiry');
     Route::delete('career/delete/{id}', [CompanyController::class, 'destroy'])->name('career.destroy');
 
-        Route::delete('enquiry/delete/{id}', [CompanyController::class, 'enquiry_destroy'])->name('enquiry.destroy');
+        Route::delete('enquiry/delete', [CompanyController::class, 'enquiry_destroy'])->name('enquiry.destroy');
+        Route::post('enquiry/reject', [CompanyController::class, 'enquiry_reject'])->name('enquiry.reject');
 
 
 
