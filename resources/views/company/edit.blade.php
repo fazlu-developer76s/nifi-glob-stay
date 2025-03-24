@@ -73,6 +73,18 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Brochure</label>
+                                            <input type="file" name="brochure" class="form-control">
+                                            @if($company->brochure)
+                                            <a href="{{ asset('storage/'.$company->brochure) }}" target="_blank" class="my-3">View Brochure </a>
+                                            @endif
+                                            @error('brochure')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Email.</label>

@@ -95,34 +95,59 @@
                             <h4 class="mb-0">Enquiry Information</h4>
                         </div>
 
-                        @switch(@$get_lead->loan_status)
-                            @case(1)
-                                @php $loan_status = "Pending"; @endphp
-                            @break
+                       @switch(@$get_lead->loan_status)
+                        @case(1)
+                            @php $loan_status = "Initial Stage"; @endphp
+                        @break
 
-                            @case(2)
-                                @php $loan_status = "View"; @endphp
-                            @break
+                        @case(2)
+                            @php $loan_status = "Team Call"; @endphp
+                        @break
 
-                            @case(3)
-                                @php $loan_status = "Under_Discussion"; @endphp
-                            @break
+                        @case(3)
+                            @php $loan_status = "Call Disconnected"; @endphp
+                        @break
 
-                            @case(4)
-                                @php $loan_status = "Pending_Kyc"; @endphp
-                            @break
+                        @case(4)
+                            @php $loan_status = "Ringing"; @endphp
+                        @break
 
-                            @case(5)
-                                @php $loan_status = "Qualified"; @endphp
-                            @break
+                        @case(5)
+                            @php $loan_status = "Pipeline"; @endphp
+                        @break
 
-                            @case(6)
-                                @php $loan_status = "Rejected"; @endphp
-                            @break
+                        @case(6)
+                            @php $loan_status = "Visit Align"; @endphp
+                        @break
 
-                            @default
-                                @php $loan_status = "Unknown"; @endphp
-                        @endswitch
+                        @case(7)
+                            @php $loan_status = "Conversion"; @endphp
+                        @break
+
+                        @case(8)
+                            @php $loan_status = "Rejected"; @endphp
+                        @break
+
+                        @case(9)
+                            @php $loan_status = "Assign Lead"; @endphp
+                        @break
+                        @case(10)
+                            @php $loan_status = "Visit Done"; @endphp
+                        @break
+                        @case(11)
+                            @php $loan_status = "Breaking Period"; @endphp
+                        @break
+                        @case(12)
+                            @php $loan_status = "Ask To Callback"; @endphp
+                        @break
+                        @case(13)
+                            @php $loan_status = "Preferred Location"; @endphp
+                        @break
+
+                        @default
+                            @php $loan_status = "Unknown"; @endphp
+                    @endswitch
+
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -144,8 +169,20 @@
                                                 <td>{{ @$get_lead->location ?? 'N/A' }}</td>
                                             </tr>
                                             <tr>
+                                                <td><strong>Preferred Location:</strong></td>
+                                                <td>{{ @$get_lead->preferd_location ?? 'N/A' }}</td>
+                                            </tr>
+                                            <tr>
                                                 <td><strong>Plan Date:</strong></td>
                                                 <td>{{ (!empty($get_lead->plan_date)) ? date('d-m-Y',strtotime($get_lead->plan_date)) : '' ; }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Lead Status:</strong></td>
+                                                <td>{{ ($get_lead->lead_status == 1) ? 'Open' : 'Close' ; }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Status:</strong></td>
+                                                <td>{{ $loan_status }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Created At:</strong></td>
@@ -167,6 +204,22 @@
                                             <tr>
                                                 <td><strong>Message:</strong></td>
                                                 <td>{{ @$get_lead->message ?? 'N/A' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Area Type:</strong></td>
+                                                <td>{{ @$get_lead->area_type ?? 'N/A' }}  </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Date Range From:</strong></td>
+                                                <td>{{ (!empty($get_lead->from_date)) ? date('d-m-Y',strtotime($get_lead->from_date)) : '' ; }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Date Range To:</strong></td>
+                                                <td>{{ (!empty($get_lead->too_date)) ? date('d-m-Y',strtotime($get_lead->too_date)) : '' ; }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Follow Up Date:</strong></td>
+                                                <td>{{ (!empty($get_lead->followup_date)) ? date('d-m-Y',strtotime($get_lead->followup_date)) : '' ; }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Budget:</strong></td>
@@ -232,7 +285,6 @@
                                 <div class="mb-3">
                                     <label for="notes" class="form-label">Notes</label>
                                     <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter your notes here"></textarea>
-
                                     <input type="hidden" id="hidden_id">
                                 </div>
                                 <!-- Select Field -->
@@ -240,6 +292,7 @@
                                     <label for="option" class="form-label">Select Status</label>
                                     <select class="form-select" id="status" name="option">
                                         <option selected value="">Select an option</option>
+                                        <option value="1" {{ @$get_lead->loan_status == 1 ? 'selected' : '' }}>Initial Stage </option>
                                         <option value="2" {{ @$get_lead->loan_status == 2 ? 'selected' : '' }}>Team Call</option>
                                         <option value="3" {{ @$get_lead->loan_status == 3 ? 'selected' : '' }}>Call Disconnected</option>
                                         <option value="4" {{ @$get_lead->loan_status == 4 ? 'selected' : '' }}>Ringing</option>
@@ -247,7 +300,40 @@
                                         <option value="6" {{ @$get_lead->loan_status == 6 ? 'selected' : '' }}>Visit Align</option>
                                         <option value="7" {{ @$get_lead->loan_status == 7 ? 'selected' : '' }}>Conversion</option>
                                         <option value="8" {{ @$get_lead->loan_status == 8 ? 'selected' : '' }}>Rejected</option>
+                                        <option value="10" {{ @$get_lead->loan_status == 10 ? 'selected' : '' }}>Visit Done</option>
+                                        <option value="11" {{ @$get_lead->loan_status == 11 ? 'selected' : '' }}>Breaking Period</option>
+                                        <option value="12" {{ @$get_lead->loan_status == 12 ? 'selected' : '' }}>Ask To Callback</option>
+                                        <option value="13" {{ @$get_lead->loan_status == 13 ? 'selected' : '' }}>Preferred Location</option>
                                     </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="from_date" class="form-label">From Date</label>
+                                    <input type="date" class="form-control" id="from_date" name="from_date" placeholder="Select start date">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="to_date" class="form-label">To Date</label>
+                                    <input type="date" class="form-control" id="to_date" name="to_date" placeholder="Select end date">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location" name="location" placeholder="Enter location">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="area_type" class="form-label">Area Type</label>
+                                    <select class="form-control" id="area_type" name="area_type">
+                                        <option value="">Select area type</option>
+                                        <option value="Nali">Nali</option>
+                                        <option value="Square Yard">Square Yard</option>
+                                        <option value="Square Feet">Square Feet</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="followup_date" class="form-label">Follow-Up Date</label>
+                                    <input type="date" class="form-control" id="followup_date" name="followup_date" placeholder="Select follow-up date">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="budget" class="form-label">Budget</label>
+                                    <input type="number" class="form-control" id="budget" name="budget" placeholder="Enter your budget" min="0" step="0.01">
                                 </div>
                                 <!-- Submit Button -->
                                 <span type="submit" class="btn btn-primary" onclick="return SaveNotes();">Submit</button>

@@ -52,6 +52,7 @@
                 </div>
             </a>
         </div>
+        @if(Auth::user()->role_id == 1)
         <div class="col-lg-4">
             <a href="#">
                 <div class="card">
@@ -83,6 +84,7 @@
                 </div>
             </a>
         </div>
+        @endif
         <div class="col-lg-4">
             <a href="#">
                 <div class="card">

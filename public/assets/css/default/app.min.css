@@ -601,6 +601,7 @@ progress {
     padding-left: var(--bs-gutter-x, 10px);
     margin-right: auto;
     margin-left: auto;
+    position: relative;
 }
 @media (min-width: 576px) {
     .container,

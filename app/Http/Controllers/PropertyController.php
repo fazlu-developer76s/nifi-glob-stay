@@ -95,7 +95,10 @@ class PropertyController extends Controller
             $path = $request->file('thumbnail')->store('hotel_images', 'public');
             $hotel->hotel_image = $path;
             }
-
+            if ($request->hasFile('brochure')) {
+                $brochure_path = $request->file('brochure')->store('brochure', 'public');
+                $hotel->brochure = $brochure_path;
+            }
             if (Auth::user()->role_id == 1) {
                 $hotel->is_property_verified = 1;
             } else {
@@ -120,8 +123,8 @@ class PropertyController extends Controller
 
             $n = 0;
             if($request->facilities){
-                
-    
+
+
             foreach ($request->facilities as $key => $value) {
 
                 if (!empty($value)) {
@@ -139,7 +142,7 @@ class PropertyController extends Controller
                 $n++;
             }
             }
-            
+
             if ($request->amenities) {
                 foreach ($request->amenities as $amenity) {
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
@@ -243,6 +246,12 @@ class PropertyController extends Controller
                 $path = $request->file('thumbnail')->store('hotel_images', 'public');
                 $hotel->hotel_image = $path;
             }
+            if ($request->hasFile('brochure')) {
+                $brochure_path = $request->file('brochure')->store('brochure', 'public');
+                $hotel->brochure = $brochure_path;
+            }
+
+
             if ($request->hasFile('hotel_images')) {
                 $images = [];
                 foreach ($request->file('hotel_images') as $image) {

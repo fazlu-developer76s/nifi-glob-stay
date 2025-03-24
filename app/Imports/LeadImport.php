@@ -21,8 +21,8 @@ class LeadImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-     
-        $existingUser = DB::table('enquiries')->where('mobile_no', $row['number'])->first();
+
+        $existingUser = DB::table('enquiries')->where('mobile_no', $row['number'])->where('status','!=',3)->first();
 
         if ($existingUser) {
             // Increment duplicate count if mobile number already exists
@@ -36,12 +36,14 @@ class LeadImport implements ToModel, WithHeadingRow
                 'email' => $row['mail_id'],
                 'mobile_no' => $row['number'],
                 'user_id' => $_POST['user_id'],
+                'created_user_id' => $_POST['user_id'],
                 'date' => $row['date'],
                 'location' => $row['current_location'],
                 'preferd_location' => $row['preferred_location'],
+                'message' => $row['description']
             ]);
             DB::table('notes')->insert(['loan_request_id' => $id, 'user_id' => $_POST['user_id'], 'loan_status' => 1, 'title' => "Initial Stage"]);
-          
+
            $insert_log = DB::table('assign_lead')->insert([
             'lead_id' => $id,
             'current_user_id' => Auth::user()->id,

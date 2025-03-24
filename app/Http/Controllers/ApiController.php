@@ -466,7 +466,7 @@ class ApiController extends Controller
 
     public function fetch_property(Request $request)
     {
-      
+
         if(isset($request->user->id) && $request->user->id){
             $user_id = $request->user->id;
         }else{

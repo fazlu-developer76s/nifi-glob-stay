@@ -221,6 +221,26 @@
                                                     </div>
                                                 @endif
                                             </div>
+
+                                              <!-- Broucher Image Upload -->
+                                              <div class="col-md-12">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Brochure </label>
+                                                    <input class="form-control @error('brochure') is-invalid @enderror"
+                                                        type="file" name="brochure" />
+                                                    @error('brochure')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+                                                <!-- Display Existing brochure -->
+                                                @if (!empty($hotel->brochure))
+                                                    <div class="mb-4 text-center">
+                                                        <a href="{{ asset('storage/'.$hotel->brochure) }}" target="_blank" class="my-3">View Brochure </a>
+                                                    </div>
+                                                @endif
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -291,9 +311,9 @@
                                             <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label class="form-label">Area Size (in sq. ft.)</label>
-                                                <input type="number" 
-                                                    class="form-control @error('area_size') is-invalid @enderror" 
-                                                    name="area_size" placeholder="Enter Area Size" 
+                                                <input type="number"
+                                                    class="form-control @error('area_size') is-invalid @enderror"
+                                                    name="area_size" placeholder="Enter Area Size"
                                                     value="{{ old('area_size', $hotel->area_size ?? '') }}" />
                                                 @error('area_size')
                                                     <div class="invalid-feedback">{{ $message }}</div>

@@ -20,6 +20,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GallaryController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\SeoController;
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Status Active Inactive Route
     Route::post('/change-status', [RoleController::class, 'change_status'])->name('change.status');
+    Route::post('/change-lead-status', [LeadController::class, 'change_lead_status'])->name('change.lead.status');
     Route::post('/user-verified', [RoleController::class, 'user_verified'])->name('user.verified');
     Route::post('/change-status-property', [RoleController::class, 'change_status_property'])->name('change.status.property');
 
@@ -128,6 +130,13 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('/testimonial/{id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
     Route::post('/testimonial/update', [TestimonialController::class, 'update'])->name('testimonial.update');
     Route::delete('/testimonial/delete/{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
+
+    // Notification Route
+    Route::get('/notification', [NotificationController::class, 'index'])->name('notification');
+    Route::match(['get', 'post'], '/notification/create', [NotificationController::class, 'create'])->name('notification.create');
+    Route::get('/notification/{id}', [NotificationController::class, 'edit'])->name('notification.edit');
+    Route::post('/notification/update', [NotificationController::class, 'update'])->name('notification.update');
+    Route::delete('/notification/delete/{id}', [NotificationController::class, 'destroy'])->name('notification.destroy');
 
     // Job Title Route
     Route::get('/job', [JobController::class, 'index'])->name('job');
@@ -186,6 +195,7 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
 
     // Notes Route
+    Route::post('/note/update-lead-status', [NotesController::class, 'update_lead_status'])->name('update.lead_status');
     Route::post('/note/save-notes', [NotesController::class, 'create'])->name('notes.create');
     Route::post('/note/fetch-notes', [NotesController::class, 'fetch_notes'])->name('notes.fetch');
     Route::post('/note/notes-delete', [NotesController::class, 'delete_notes'])->name('notes.delete');
@@ -235,10 +245,10 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::get('enquiry', [CompanyController::class, 'enquiry'])->name('enquiry');
     Route::get('career-enquiry', [CompanyController::class, 'career_enquiry'])->name('career.enquiry');
     Route::delete('career/delete/{id}', [CompanyController::class, 'destroy'])->name('career.destroy');
-    
+
         Route::delete('enquiry/delete/{id}', [CompanyController::class, 'enquiry_destroy'])->name('enquiry.destroy');
-    
-    
+
+
 
     // enquiry assign
     Route::post('/assign-lead', [LeadController::class, 'assign_lead'])->name('assign.lead');

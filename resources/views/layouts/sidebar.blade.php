@@ -137,6 +137,19 @@
             </div>
             <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
                     <div class="menu-icon"> <i class="fas fa-list"></i> </div>
+                    <div class="menu-text">Notification</div>
+                    <div class="menu-caret"></div>
+                </a>
+                <div class="menu-submenu">
+                    <div class="menu-item">
+                        <a href="{{ route('notification') }}" class="menu-link ">
+                            <div class="menu-text"> Notification List</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item has-sub"> <a href="javascript:;" class="menu-link ">
+                    <div class="menu-icon"> <i class="fas fa-list"></i> </div>
                     <div class="menu-text">Job Title</div>
                     <div class="menu-caret"></div>
                 </a>

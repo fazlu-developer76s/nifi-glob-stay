@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LeadsExport;
+use App\Helpers\Global_helper;
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class CompanyController extends Controller
 {
@@ -49,6 +54,9 @@ class CompanyController extends Controller
         if ($request->hasFile('favicon')) {
             $company->favicon = $request->file('favicon')->store('favicons', 'public');
         }
+        if ($request->hasFile('brochure')) {
+            $company->brochure = $request->file('brochure')->store('brochure', 'public');
+        }
 
         $company->address = $request->address;
         $company->email = $request->email;
@@ -73,8 +81,10 @@ class CompanyController extends Controller
             ->with('success', 'Company information updated successfully.');
     }
 
-    public function enquiry()
+    public function enquiry(Request $request)
     {
+        // dd(Global_helper::FollowupNotification());
+
         $title = 'Enquiry List';
         $login_user_id = Auth::user()->id;
         $login_role_id = Auth::user()->role_id;
@@ -94,16 +104,65 @@ class CompanyController extends Controller
         foreach ($merged as $get_assign_id) {
             $assin_users_id[] = $get_assign_id['lead_id'];
         }
-        $query = DB::table('enquiries as a')->where('a.status', 1);
+        $query = DB::table('enquiries as a')->leftJoin('users as b','a.created_user_id','=','b.id')->select('a.*','b.name as user_name')->where('a.status', 1);
+
+        // Apply location filter if provided
+        if ($request->location) {
+            $query->where('a.location', 'LIKE', '%' . $request->location . '%');
+        }
+        if ($request->user_id) {
+            $query->where('b.id',$request->user_id);
+        }
+
+        // Apply budget filter if provided
+        if ($request->budget) {
+            $query->where('a.budget', '<=', $request->budget);
+        }
+         if ($request->status) {
+            $query->where('a.loan_status',  $request->status);
+        }
+         if ($request->followup_date) {
+            $query->where('a.followup_date',  date('Y-m-d',strtotime($request->followup_date)));
+        }
+
+        // Apply date filters
+        if ($request->from_date && $request->to_date) {
+            // Apply date range filter if both dates are available
+            $query->whereBetween('a.created_at', [$request->from_date, $request->to_date]);
+        } elseif ($request->from_date) {
+            // Apply only from_date filter
+            $query->whereDate('a.created_at', '>=', $request->from_date);
+        } elseif ($request->to_date) {
+            // Apply only to_date filter
+            $query->whereDate('a.created_at', '<=', $request->to_date);
+        }
         if (Auth::user()->role_id != 1) {
             $query->whereIn('a.id', $assin_users_id);
         }
         $alllead = $query->orderBy('a.id', 'desc')->get();
-        $get_user = User::where('status', 1)
-            ->where('role_id', 5)
+      $get_user_query = User::where('users.status', 1)
+    ->where('users.is_user_verified', 1)
+    ->join('roles', 'users.role_id', '=', 'roles.id')
+    ->select('users.*', 'roles.title as role_name');
+
+if (Auth::user()->role_id != 1) {
+    $get_user_query->where('users.role_id', 5);
+}
+
+$get_user = $get_user_query->get();
+
+
+            $get_filter_user = User::where('status', 1)
+            ->where('role_id','!=', 1)
             ->where('is_user_verified', 1)
             ->get();
-        return view('company.enquiry', compact('alllead', 'get_user'));
+            if(isset($request->download_file) && $request->download_file == "download_file"){
+                $timestamp = Carbon::now()->format('Y-m-d_H-i-s'); // Example: 2024-01-29_15-30-45
+                $fileName = "leads_export_{$timestamp}.csv";
+                return Excel::download(new LeadsExport($alllead), $fileName);
+                //  Excel::download(new LeadsExport($alllead), 'leads.csv');
+            }
+        return view('company.enquiry', compact('alllead', 'get_user','get_filter_user'));
     }
 
 
@@ -121,18 +180,19 @@ class CompanyController extends Controller
         ->get();
         return view('company.careerenquiry', compact('enquiry_career'));
     }
-    
+
      public function destroy($id)
     {
         $lead = DB::table('tbl_career_enquiry')->where('id',$id)->where('status',1)->first();
         $delete_lead = DB::table('tbl_career_enquiry')->where('id',$id)->update(['status'=>3]);
         return redirect()->route('career.enquiry')->with('success', 'Lead deleted successfully.');
     }
-    
+
     public function enquiry_destroy($id){
             $lead = DB::table('enquiries')->where('id',$id)->where('status',1)->first();
-        $delete_lead = DB::table('enquiries')->where('id',$id)->update(['status'=>3]);
-        return redirect()->route('enquiry')->with('success', 'Lead deleted successfully.'); 
+        // $delete_lead = DB::table('enquiries')->where('id',$id)->update(['status'=>3]);
+        $delete_lead  = DB::table('enquiries')->where('id',$id)->delete();
+        return redirect()->route('enquiry')->with('success', 'Lead deleted successfully.');
     }
 
 }

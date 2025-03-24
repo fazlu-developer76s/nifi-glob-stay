@@ -13,9 +13,9 @@ class ImportController extends Controller
 {
     public function index()
     {
-        
+
         $title = "Import List";
-        $allimport = DB::table('users as a')->leftJoin('tbl_import as b','b.user_id','=','a.id')->select('a.name as user_name','b.*')->where('b.status',1)->get();
+        $allimport = DB::table('users as a')->leftJoin('tbl_import as b','b.user_id','=','a.id')->select('a.name as user_name','b.*')->where('b.status',1)->orderBy('b.id','desc')->get();
         return view('import.index', compact('title', 'allimport'));
     }
 

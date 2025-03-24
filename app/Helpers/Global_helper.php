@@ -4,6 +4,8 @@ namespace App\Helpers;
 use App\Models\Company;
 use App\Models\User;
 use DB;
+use Illuminate\Support\Facades\Auth;
+
 class Global_helper
 {
     public static function GenerateOTP($userDetails,$module_type,$otp_type,$mobile = "")
@@ -269,13 +271,13 @@ class Global_helper
     {
         return Company::where('status',1)->first();
     }
-    
-    
+
+
     public static function getRolePermissions($role_id,$permission_name){
 
         $get_permission = DB::table('role_permission as a')->join('permissions as b','a.permission_id', '=' , 'b.id')->join('permission_category as c','b.per_cate_id','=','c.id')->
         select('a.*','b.title','c.category_name')->where('a.status',1)->where('b.status',1)->where('c.status',1)->where('a.role_id',$role_id)->where('b.title',$permission_name)->first();
-            
+
         if(isset($get_permission->permission_status) && $get_permission->permission_status == 1){
             return 1;
         }else{
@@ -314,19 +316,22 @@ class Global_helper
 
     return $has_permission ? 1 : 2;
 }
- 
+
     public static function Propertylist($type)
     {
         $query = DB::table('properties');
+        if(Auth::user()->role_id != 1){
+            $query->where('user_id',Auth::user()->id);
+        }
         if ($type==1 || $type == 2) {
             $query->where('is_property_verified', $type)->where('status', 1);
         }else{
               $query->where('status', 2 );
         }
-    
+
         return $query->count();
     }
-    
+
     public static function Sellers($type)
     {
         $query = DB::table('users');
@@ -335,16 +340,18 @@ class Global_helper
         }else{
               $query->where('status', 2 );
         }
-    
+
         return $query->count();
     }
 
-  
-    
+
+
     public static function Enquiry($type)
     {
         $query = DB::table('enquiries')->where('status', 1);
-    
+        if(Auth::user()->role_id != 1){
+            $query->where('created_user_id',Auth::user()->id);
+        }
         if ($type == 1) {
             $query->whereNull('property_id');
         } elseif ($type == 2) {
@@ -352,10 +359,10 @@ class Global_helper
         } else {
             return 0;
         }
-    
+
         return $query->count();
     }
-    
+
     public static function getTablesCount()
     {
         $tables = [
@@ -366,9 +373,9 @@ class Global_helper
             'Blog' => 'blogs',
             'Review' => 'property_reviews',
         ];
-    
+
         $result = [];
-    
+
         foreach ($tables as $name => $table) {
             $count = DB::table($table)->where('status', 1)->count();
             $result[] = [
@@ -376,11 +383,43 @@ class Global_helper
                 'count' => $count,
             ];
         }
-    
+
         return $result;
     }
+    public static function getUserNotification()
+    {
+        $user_id = Auth::user()->id; // Get the authenticated user ID
+        $date = date('Y-m-d'); // Current date
 
+        // Fetch notifications for the user with a single query
+        $notifications = DB::table('tbl_notification_user as nu')
+            ->join('tbl_notification as n', 'nu.notification_id', '=', 'n.id')
+            ->where('nu.user_id', $user_id)
+            ->where('nu.is_view', 2) // Unviewed notifications
+            ->where('n.status', 1) // Active notifications
+            ->select('nu.id as user_notification_id', 'nu.is_view', 'n.*') // Select relevant columns
+            ->get();
 
+        return $notifications;
+    }
+
+     public static function FollowupNotification()
+    {
+        $user_id = Auth::user()->id; 
+        $query = DB::table('enquiries as a')
+            ->leftJoin('users as b', 'a.user_id', '=', 'b.id')
+            ->leftJoin('roles as c', 'b.role_id', '=', 'c.id')
+            ->select('a.*', 'b.name as user_name', 'c.title as role_name')
+            ->where('a.status', 1)
+            ->where('a.followup_date', '!=', ' ')
+            ->where('a.is_view_followup', 2)
+            ->where('a.followup_date', '=', date('Y-m-d'));
+        if (Auth::user()->role_id != 1) {
+            $query->where('a.user_id', $user_id); 
+        }
+        $data = $query->get();
+        return $data;
+    }
 
 
 }

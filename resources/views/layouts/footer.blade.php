@@ -1,3 +1,6 @@
+@inject('helper', 'App\Helpers\Global_helper')
+
+
 <!-- resources/views/includes/footer.blade.php -->
 <footer style="position: fixed; bottom: -22px   ; left: 0; width: 100%; background-color: #f1f1f1; padding: 10px 0;">
     <div class="container-fluid">
@@ -22,10 +25,43 @@
 <script src="{{ asset('assets/js/demo/table-manage-default.demo.js') }}" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
 <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
-  <script>
+<script>
+    function closeCard(button,lead_id) {
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+        if (confirm("Are you sure you want to remove this notification?")) {
+            $.ajax({
+            url: "{{ route('change.lead.status') }}",
+            type: 'post',
+            data: {
+                _token: csrfToken,
+                lead_id: lead_id
+            },
+            success: function(response) {
+                button.closest('.card-note').style.display = 'none';
+            }
+        });
+        }
+        return false;
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        @if ($helper->getUserNotification())
+            @foreach ($helper->getUserNotification() as $data)
+                $.toast({
+                    type: 'warning',
+                    title: "{{ strip_tags($data->subject) }}",
+                    content: "{{ strip_tags($data->message) }}",
+                    delay: 50000000000000000,
+                });
+            @endforeach
+        @endif
+    });
+</script>
+<script>
     CKEDITOR.replace('editor');
     CKEDITOR.replace('editor2');
-  </script>
+</script>
 
 <script>
     var thispageurl = window.location.href;
@@ -40,26 +76,42 @@
 <script src="{{ asset('toast.js') }}"></script>
 <script>
     $(document).ready(function() {
-        // Check for success message in the session
-        @if (session('success'))
-            $.toast({
-                type: 'info', // Set type to 'success'
-                title: 'Success!',
-                content: "{{ session('success') }}", // Get success message from session
-                delay: 5000,
-            });
-        @endif
+                // Check for success message in the session
+                @if (session('success'))
+                    $.toast({
+                        type: 'info', // Set type to 'success'
+                        title: 'Success!',
+                        content: "{{ session('success') }}", // Get success message from session
+                        delay: 5000,
+                    });
+                @endif
 
-        // Check for error message in the session
-        @if (session('error'))
-            $.toast({
-                type: 'error', // Set type to 'error'
-                title: 'Error!',
-                content: "{{ session('error') }}", // Get error message from session
-                delay: 5000,
-            });
-        @endif
-    });
+                // Check for error message in the session
+                @if (session('error'))
+                    $.toast({
+                        type: 'error', // Set type to 'error'
+                        title: 'Error!',
+                        content: "{{ session('error') }}", // Get error message from session
+                        delay: 5000,
+                    });
+                    // @endif
+                    // @if (session('warning'))
+                    // <script>
+                    // $.toast({
+                    //     type: 'warning', // Set type to 'warning'
+                    //     title: 'Warning!',
+                    //     content: "asdfsadfsddf", // Get warning message from session
+                    //     delay: 5000, // Display duration in milliseconds
+                    // });
+                    //
+</script>
+// @php
+    //         session()->forget('warning'); // Clear the session after displaying
+    //
+@endphp
+// @endif
+
+});
 </script>
 <script>
     function ChangeStatus(table_name, id) {
@@ -155,20 +207,53 @@
         var lead_id = $('#lead_id').val();
         var hidden_id = $('#hidden_id').val();
         var route_id = $("#select_route_id").val();
+        var from_date = $('#from_date').val();
+        var to_date = $('#to_date').val();
+        var location = $('#location').val().trim();
+        var area_type = $('#area_type').val();
+        var followup_date = $('#followup_date').val();
+        var budget = $('#budget').val();
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
         if (notes === '') {
-            Swal.fire("Error!", "Notes Title Required!", "error"); // Correct SweetAlert2 syntax
+            Swal.fire("Error!", "Notes Title Required!", "error");
             return false;
         }
 
-
         if (status == 5) {
             if (route_id === '') {
-                Swal.fire("Error!", "Please Select Route!", "error"); // Correct SweetAlert2 syntax
+                Swal.fire("Error!", "Please Select Route!", "error");
                 return false;
             }
         }
+        
+     
+
+
+        // if (!from_date || !to_date) {
+        //     Swal.fire("Error!", "Both From Date and To Date are required!", "error");
+        //     return false;
+        // }
+
+        // if (!location) {
+        //     Swal.fire("Error!", "Location is required!", "error");
+        //     return false;
+        // }
+
+        // if (!area_type) {
+        //     Swal.fire("Error!", "Please select an Area Type!", "error");
+        //     return false;
+        // }
+
+        if (!followup_date) {
+            Swal.fire("Error!", "Follow-Up Date is required!", "error");
+            return false;
+        }
+
+        // if (!budget || parseFloat(budget) < 0) {
+        //     Swal.fire("Error!", "Please enter a valid budget!", "error");
+        //     return false;
+        // }
 
         $.ajax({
             url: "{{ route('notes.create') }}",
@@ -180,29 +265,22 @@
                 status: status,
                 lead_id: lead_id,
                 route_id: route_id,
-                hidden_id: hidden_id
+                hidden_id: hidden_id,
+                from_date: from_date,
+                to_date: to_date,
+                location: location,
+                area_type: area_type,
+                followup_date: followup_date,
+                budget: budget
             },
             success: function(response) {
                 if (response == 2) {
                     Swal.fire("Error!", "Route Does Not Exist for This Zipcode", "error");
                     return false;
                 }
-                if(status == 5){
+                if (status == 5) {
                     window.location.reload();
                 }
-
-                // if (response == 1) {
-                //     Swal.fire({
-                //         title: "Success!",
-                //         text: "Lead Qualified Successfully!",
-                //         icon: "success",
-                //         timer: 2000,
-                //         showConfirmButton: false
-                //     }).then(function() {
-                //         var routeUrl = "{{ route('lead') }}";
-                //         window.location.href = routeUrl;
-                //     });
-                // }
 
                 let loan_status;
                 switch (status) {
@@ -234,6 +312,12 @@
                 fetchNotes();
                 $("#notes").val('');
                 $("#hidden_id").val('');
+                $('#from_date').val('');
+                $('#to_date').val('');
+                $('#location').val('');
+                $('#area_type').val('');
+                $('#followup_date').val('');
+                $('#budget').val('');
             },
             error: function(xhr, status, error) {
                 console.error(xhr.responseText);
@@ -241,6 +325,40 @@
             }
         });
     }
+
+    function statusUpdateLead(lead_id) {
+        var lead_status = $('#lead_status' + lead_id).val();
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+        // Check if lead status is selected
+        if (!lead_status) {
+            Swal.fire("Error!", "Please select a valid status.", "error");
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('update.lead_status') }}", // Make sure this route exists in your Laravel routes
+            type: 'POST',
+            data: {
+                _token: csrfToken,
+                lead_id: lead_id,
+                lead_status: lead_status,
+            },
+            success: function(response) {
+                // Handle success
+                if (response) {
+                    Swal.fire("Success!", "Lead status updated successfully.", "success");
+                } else {
+                    Swal.fire("Error!", "Failed to update the lead status.", "error");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error(xhr.responseText);
+                Swal.fire("Error!", "An error occurred while updating the lead status.", "error");
+            }
+        });
+    }
+
 
     function fetchNotes() {
 
@@ -499,11 +617,16 @@
 </script>
 <script>
     function OpenAssignModal(current_user_id, lead_id, lead_create_user_id) {
+        selectedValues = [];
+        $('.checkbox_lead_assign:checked').each(function() {
+            selectedValues.push($(this).val());
+        });
+
         if (current_user_id) {
 
             $("#lead_create_user_id").val(lead_create_user_id);
             $("#current_user_id").val(current_user_id);
-            $("#current_lead_id").val(lead_id);
+            $("#current_lead_id").val(selectedValues.join(', '));
         }
     }
 

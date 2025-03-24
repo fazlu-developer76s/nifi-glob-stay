@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Loan_request;
 use App\Models\Member;
 use App\Helpers\Global_helper as GlobalHelper;
+use App\Models\Enquiry;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Ui\Presets\React;
 use App\Models\Providers;
@@ -16,6 +17,12 @@ use App\Models\User;
 class LeadController extends Controller
 {
 
+    public function change_lead_status(Request $request){
+        $lead = Enquiry::find($request->lead_id);
+        $lead->is_view_followup = '1';
+        $lead->save();
+        return response()->json(['message' => 'Lead status updated successfully.']);
+    }
     public function index()
     {
 
@@ -122,6 +129,10 @@ class LeadController extends Controller
         // }
         $title = "View Lead";
         $get_lead = DB::table('enquiries')->join('users', 'enquiries.user_id', '=', 'users.id')->select('enquiries.*', 'users.name as username')->where('enquiries.status', '!=', '3')->where('enquiries.id',$id)->orderBy('enquiries.id', 'desc')->first();
+        if($get_lead->lead_status == 2){
+            return redirect()->route('enquiry')->with('error', 'This Lead Status Are Closed');
+
+        }
         $get_providers = DB::table('providers')->where('status',1)->get();
         $get_assign_id = DB::table('assign_lead')->where('lead_id',$id)->orderBy('id', 'desc')->limit(1)->first();
         $get_user = User::where('status', 1)
@@ -383,6 +394,26 @@ class LeadController extends Controller
                         $class = "info";
                         $added_by = "Assign By";
                         break;
+                        case 10:
+                            $loan_status = "Visit Done";
+                            $class = "info";
+                            $added_by = "Visit Done By";
+                            break;
+                        case 11:
+                            $loan_status = "Breaking Period";
+                            $class = "info";
+                            $added_by = "Breaking Period By";
+                            break;
+                        case 12:
+                            $loan_status = "Ask To Callback";
+                            $class = "info";
+                            $added_by = "Ask To Callback By";
+                            break;
+                        case 13:
+                            $loan_status = "Preferred Location";
+                            $class = "info";
+                            $added_by = "Preferred Location By";
+                            break;
                     default:
                         $loan_status = "Unknown";
                         $class = "light";
@@ -504,33 +535,36 @@ class LeadController extends Controller
         }
     }
     public function assign_lead(Request $request) {
+        $explode_lead_id = explode(',', $request->lead_id);
+        foreach ($explode_lead_id as $leads){
+            $lead_id = $leads;
+            $current_user_id = $request->current_user_id;
+            $assign_user_id = $request->assign_user_id;
+            $insert_log = DB::table('assign_lead')->insert([
+                'lead_id' => $lead_id,
+                'current_user_id' => $current_user_id,
+                'assign_user_id' => $assign_user_id
+            ]);
+            $get_assing_user = DB::table('users')->where('id',$assign_user_id)->where('status',1)->first();
+            $insert_notes = DB::table('notes')->insert([
+                'loan_request_id' => $lead_id,
+                'user_id' => $current_user_id,
+                'loan_status' => 9,
+                'title' => 'Lead Assign To ' .$get_assing_user->name.''
 
-        $lead_id = $request->lead_id;
-        $current_user_id = $request->current_user_id;
-        $assign_user_id = $request->assign_user_id;
-        $insert_log = DB::table('assign_lead')->insert([
-            'lead_id' => $lead_id,
-            'current_user_id' => $current_user_id,
-            'assign_user_id' => $assign_user_id
-        ]);
-        $get_assing_user = DB::table('users')->where('id',$assign_user_id)->where('status',1)->first();
-        $insert_notes = DB::table('notes')->insert([
-            'loan_request_id' => $lead_id,
-            'user_id' => $current_user_id,
-            'loan_status' => 9,
-            'title' => 'Lead Assign To ' .$get_assing_user->name.''
+            ]);
+            $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>9]);
+            $update_user_id = DB::table('enquiries')
+            ->where('user_id', $current_user_id)
+            ->where('id', $lead_id)
+            ->update(['user_id' => $assign_user_id]);
 
-        ]);
-        $update_lead_status  = DB::table('enquiries')->where('id',$lead_id)->update(['loan_status'=>9]);
-        $update_user_id = DB::table('enquiries')
-        ->where('user_id', $current_user_id)
-        ->where('id', $lead_id)
-        ->update(['user_id' => $assign_user_id]);
-
-        if ($insert_log) {
-            return response()->json(['success' => true, 'message' => 'Lead assigned successfully']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Failed to assign lead']);
+            // if ($insert_log) {
+            //     return response()->json(['success' => true, 'message' => 'Lead assigned successfully']);
+            // } else {
+            //     return response()->json(['success' => false, 'message' => 'Failed to assign lead']);
+            // }
         }
+        return response()->json(['success' => true, 'message' => 'Lead assigned successfully']);
     }
 }
