@@ -88,7 +88,7 @@
                                             @endif
 
                                             @if($update == 1 || Auth::user()->role_id == 1)
-                                            <a @if($property->category_id == 1)  href="{{ route('book.property.edit', $property->id) }}" @else href="{{ route('property.edit', $property->id) }}" @endif class="text-primary me-2">
+                                            <a @if($property->category_id == 1)  href="{{ route('property.edit', $property->id) }}" @else href="{{ route('property.edit', $property->id) }}" @endif class="text-primary me-2">
                                                 <i class="fa fa-edit"></i>
                                             </a>
                                             @endif

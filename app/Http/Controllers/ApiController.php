@@ -149,84 +149,41 @@ class ApiController extends Controller
     {
         $user = $request->user;
         $user_id = $user->id;
-        $user_update = Kycprocess::where('user_id', $user_id)->first();
+        $user_update = User::where('id', $user_id)->first();
         if (!$user_update) {
-            $user_update = new Kycprocess();
-            $user_update->kyc_status = 1;
-            $user_update->user_id = $user_id;
+            return response()->json(['status' => 'Error', 'message' => 'User not found']);
         }
-        if ($request->aadhar_no) {
-            $user_update->aadhar_no = $request->aadhar_no;
+        $user_already_exist = User::where(function($query) use ($request) {
+            $query->where('email', $request->email)
+                  ->orWhere('mobile_no', $request->mobile_no);
+        })->where('id', '!=', $user_id)->first();
+
+        if ($user_already_exist) {
+            return response()->json([
+                'status' => 'Error',
+                'message' => 'Email or Mobile No already exists'
+            ]);
         }
-        if ($request->aadhar_name) {
-            $user_update->aadhar_name = $request->aadhar_name;
+
+        if ($request->name) {
+            $user_update->name = $request->name;
         }
-        if ($request->aadhar_father_name) {
-            $user_update->aadhar_father_name = $request->aadhar_father_name;
+        if ($request->email) {
+            $user_update->email = $request->email;
         }
-        if ($request->aadhar_dob) {
-            $user_update->aadhar_dob = $request->aadhar_dob;
+        if ($request->mobile_no) {
+            $user_update->mobile_no = $request->mobile_no;
         }
-        if ($request->aadhar_zipcode) {
-            $user_update->aadhar_zipcode = $request->aadhar_zipcode;
+        if ($request->address) {
+            $user_update->address = $request->address;
         }
-        if ($request->aadhar_country) {
-            $user_update->aadhar_country = $request->aadhar_country;
-        }
-        if ($request->aadhar_state) {
-            $user_update->aadhar_state = $request->aadhar_state;
-        }
-        if ($request->aadhar_city) {
-            $user_update->aadhar_city = $request->aadhar_city;
-        }
-        if ($request->aadhar_address) {
-            $user_update->aadhar_address = $request->aadhar_address;
-        }
-        if ($request->aadhar_profile_photo) {
-            $user_update->aadhar_profile_photo = $request->aadhar_profile_photo;
-        }
-        if ($request->aadhar_mobile_no) {
-            $user_update->aadhar_mobile_no = $request->aadhar_mobile_no;
-        }
-        if ($request->is_aadhar_verified) {
-            $user_update->is_aadhar_verified = $request->is_aadhar_verified;
-        }
-        if ($request->pan_no) {
-            $user_update->pan_no = $request->pan_no;
-        }
-        if ($request->pan_name) {
-            $user_update->pan_name = $request->pan_name;
-        }
-        if ($request->is_pan_verified) {
-            $user_update->is_pan_verified = $request->is_pan_verified;
-        }
-        if ($request->ifsc_code) {
-            $user_update->ifsc_code = $request->ifsc_code;
-        }
-        if ($request->account_no) {
-            $user_update->account_no = $request->account_no;
-        }
-        if ($request->bank_name) {
-            $user_update->bank_name = $request->bank_name;
-        }
-        if ($request->account_holder_name) {
-            $user_update->account_holder_name = $request->account_holder_name;
-        }
-        if ($request->is_bank_verified) {
-            $user_update->is_bank_verified = $request->is_bank_verified;
-        }
-        if ($request->hasFile('live_photo')) {
-            $file = $request->file('live_photo');
-            $filePath = $file->store('kyc', 'public');
-            $user_update->live_photo = $filePath;
-        }
-        if ($request->hasFile('live_video')) {
-            $file = $request->file('live_video');
-            $filePath = $file->store('kyc', 'public');
-            $user_update->live_video = $filePath;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filePath = $file->store('profile_pictures', 'public');
+            $user_update->image = $filePath;
         }
         $user_update->save();
-        return response()->json(['status' => 'OK', 'message' => "KYC updated successfully"]);
+        return response()->json(['status' => 'OK', 'message' => "Profile updated successfully"]);
     }
 
     public function get_services()
@@ -362,24 +319,31 @@ class ApiController extends Controller
     public function create_booking(Request $request)
     {
         $rules = array(
-            'pet_id'       => 'required',
-            'booking_date'       => 'required',
-            'booking_time'       => 'required',
+            'property_id'       => 'required',
+            'check_in'       => 'required',
+            'check_out'       => 'required',
+            'guest_num'       => 'required',
+            'booking_days'       => 'required',
+            'booking_price'       => 'required'
         );
         $validate = \Myhelper::FormValidator($rules, $request);
         if ($validate != "no") {
             return $validate;
         }
-        $pet_id = $request->pet_id;
-        $booking_date = $request->booking_date;
-        $booking_time = $request->booking_time;
-        $description  = $request->description;
-        $insert_booking = DB::table('tbl_pet_bookings')->insert([
-            'pet_id' => $pet_id,
-            'booking_date' => $booking_date,
-            'booking_time' => $booking_time,
-            'description' => $description,
-            'customer_id' => $request->user->id
+        $property_id = $request->property_id;
+        $check_in = $request->check_in;
+        $check_out = $request->check_out;
+        $guest_num  = $request->guest_num;
+        $booking_days  = $request->booking_days;
+        $booking_price  = $request->booking_price;
+        $insert_booking = DB::table('tbl_bookings')->insert([
+            'user_id' => $request->user->id,
+            'property_id' => $property_id,
+            'check_in' => $check_in,
+            'check_out' => $check_out,
+            'guest_num' => $guest_num,
+            'booking_days' => $booking_days,
+            'booking_price' => $booking_price
         ]);
         if ($insert_booking) {
             return response()->json(['status' => 'OK', 'message' => 'Booking created successfully']);
@@ -725,13 +689,51 @@ $get_property = $query->get();
         return response()->json(['status' => 'OK','message' => 'Review posted successfully'], 200);
     }
 
-    public function fetch_review(){
-        $reviews = DB::table('property_reviews as a')->join('users as b','a.user_id','=','b.id')->select('a.*','b.name as user_name','b.image as user_image')->where('a.status',1)->where('b.status',1)->get();
+    public function fetch_review(Request $request , $id){
+
+        $reviews = DB::table('property_reviews as a')->join('users as b','a.user_id','=','b.id')->select('a.*','b.name as user_name','b.image as user_image')->where('a.property_id',$id)->where('a.status',1)->where('b.status',1)->get();
         if($reviews){
             return response()->json(['status' => 'OK', 'data' => $reviews], 200);
         }else{
             return response()->json(['status' => 'Error','message' => 'No reviews found'], 404);
         }
+    }
+
+    public function fetch_facilities(Request $request){
+        $facilities = DB::table('facilities')->where('status',1)->get();
+        if($facilities){
+            return response()->json(['status' => 'OK', 'data' => $facilities], 200);
+        }else{
+            return response()->json(['status' => 'Error','message' => 'No facilities found'], 404);
+        }
+
+    }
+    public function fetch_amenities(Request $request){
+        $facilities = DB::table('amenities')->where('status',1)->get();
+        if($facilities){
+            return response()->json(['status' => 'OK', 'data' => $facilities], 200);
+        }else{
+            return response()->json(['status' => 'Error','message' => 'No amenities found'], 404);
+        }
+
+    }
+
+    public function  fetch_location_suggestion(Request $request , $id){
+        $query = DB::table('properties')->select('location')->where('status',1)->where('location','LIKE','%'.$request->location.'%');
+        if($id){
+            $query->where('category_id',$id);
+        }
+        $fetch_location = $query->get();
+        if($fetch_location){
+            return response()->json(['status' => 'OK', 'data' => $fetch_location], 200);
+        }else{
+            return response()->json(['status' => 'Error','message' => 'No location found'], 404);
+        }
+
+    }
+
+    public function post_booking(Request $request){
+
     }
 
 
@@ -847,4 +849,57 @@ $get_property = $query->get();
     }
    }
 
-}
+
+   public function fetch_booking_property(Request $request){
+
+        $query = DB::table('properties as p')
+        ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
+        ->select('p.*', 'd.title as property_category_name')
+        ->where('p.status', 1)
+        ->where('p.category_id',1)
+        ->where('p.is_property_verified', 1)
+        ->where('d.status', 1);
+        $get_property = $query->get();
+        $get_fac = array();
+        foreach($get_property as $property){
+            $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+            $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+            $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+            $property->facilities = $get_faciflties;
+            $property->amenities = $get_amentities;
+            $property->sub_img =  $get_sub_img;
+            $get_fac[] = $property;
+        }
+        return response()->json(['status' => 'Success', 'data' => $get_fac], 200);
+        }
+
+        public function fetch_single_booking_property(Request $request,$id){
+
+            $query = DB::table('properties as p')
+            ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
+            ->select('p.*', 'd.title as property_category_name')
+            ->where('p.status', 1)
+            ->where('p.category_id',1)
+            ->where('p.is_property_verified', 1)
+            ->where('p.id',$id)
+            ->where('d.status', 1);
+            $get_property = $query->get();
+            $get_fac = array();
+            foreach($get_property as $property){
+                $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+                $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
+                $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+                $property->facilities = $get_faciflties;
+                $property->amenities = $get_amentities;
+                $property->sub_img =  $get_sub_img;
+                $get_fac[] = $property;
+            }
+            return response()->json(['status' => 'Success', 'data' => $get_fac], 200);
+            }
+    }
+
+
+
+
+
+

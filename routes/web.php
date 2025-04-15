@@ -49,6 +49,10 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
 
     // Role Routes
     Route::get('/roles', [RoleController::class, 'index'])->name('roles');
+    Route::get('/test', [RoleController::class, 'test'])->name('test');
+    Route::get('/test/googleAuth', [RoleController::class, 'googleAuth'])->name('googleAuth');
+    // Route::get('/test', [RoleController::class, 'googleAuth'])->name('googleAuth');
+
     Route::post('/store-roles', [RoleController::class, 'store_roles'])->name('store.roles');
     Route::get('/edit-roles/{id}', [RoleController::class, 'edit_roles'])->name('edit.roles');
     Route::delete('/destroy-roles/{id}', [RoleController::class, 'destroy_roles'])->name('destroy.roles');

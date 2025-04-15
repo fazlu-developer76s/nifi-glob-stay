@@ -70,15 +70,17 @@ class AuthController extends Controller
             'email' => [
                 'required',
                 'email',
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-            ],
+            ]
         ]);
-        $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('b.id',2)->where('a.email', $request->email)->first();
-        if ($user && Hash::check($request->password, $user->password)) {
+        $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('b.id',6)->where('a.status',1)->where('a.email', $request->email)->first();
+
+        if(isset($user) && $user->status == 2){
+            return response()->json([
+                'status' => "Error",
+                'message' => "Your Account is Deactivated by Admin",
+            ], 401);
+        }
+        if ($user) {
             $token = $this->createJwtToken($user, $user->role_type);
             if ($token) {
                 $this->ExpireToken($user->id);
@@ -125,6 +127,18 @@ class AuthController extends Controller
             }
         }
         if (!$user) {
+            return response()->json(['error' => 'Invalid credentials'], 401);
+        }
+    }
+
+    public function get_user(Request $request){
+        $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('a.id', $request->user->id)->first();
+        if ($user) {
+            return response()->json([
+                'status' => "OK",
+                'user' => $user,
+            ], 200);
+        } else {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
     }

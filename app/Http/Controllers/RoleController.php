@@ -10,6 +10,10 @@ use Faker\Provider\ar_EG\Company;
 use Illuminate\Http\Request;
 use PDO;
 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Google\Client;
+
 class RoleController extends Controller
 {
 
@@ -19,6 +23,80 @@ class RoleController extends Controller
         $get_role = Roles::where('status', '!=', 3)->where('id', '!=', 1)->orderBy('id', 'desc')->get();
         return view('roles.index', compact('title', 'get_role'));
     }
+    public function test()
+    {
+        $title = 'Roles';
+        $get_role = Roles::where('status', '!=', 3)->where('id', '!=', 1)->orderBy('id', 'desc')->get();
+        return view('roles.test', compact('title', 'get_role'));
+    }
+
+
+    public function googleAuth(Request $request)
+{
+    try {
+        $code = $request->query('code');
+
+        if (!$code) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Authorization code is missing.',
+                'success' => false,
+            ], 400);
+        }
+
+        $client = new Client();
+        $client->setClientId(env('GOOGLE_CLIENT_ID'));
+        $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
+        $client->setRedirectUri(env('GOOGLE_REDIRECT_URI'));
+        $client->setAccessType('offline');
+        $client->setScopes(['email', 'profile']);
+
+        $token = $client->fetchAccessTokenWithAuthCode($code);
+
+        if (isset($token['error'])) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Error fetching access token',
+                'error' => $token['error'],
+                'success' => false,
+            ], 400);
+        }
+
+        $client->setAccessToken($token['access_token']);
+
+        $response = Http::get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', [
+            'access_token' => $token['access_token']
+        ]);
+
+        if (!$response->ok()) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Failed to fetch user info from Google',
+                'success' => false,
+            ], 500);
+        }
+
+        $userData = $response->json();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfully authenticated',
+            'user' => $userData, // <- Fix this key for frontend to work
+            'token' => $token['access_token'],
+            'success' => true,
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error("Google Auth Error: " . $e->getMessage());
+
+        return response()->json([
+            'status' => 500,
+            'message' => 'Server Error',
+            'error' => $e->getMessage(),
+            'success' => false,
+        ]);
+    }
+}
 
     public function store_roles(Request $request)
     {
@@ -179,9 +257,9 @@ public function update_permission(Request $request)
             return response()->json(['status' => false]);
         }
     }
-    
+
     public function user_verified(Request $request){
-        
+
         $table_name = $request->table_name;
         $id = $request->id;
         $status = $request->status;

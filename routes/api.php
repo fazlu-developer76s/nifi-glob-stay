@@ -36,10 +36,12 @@ Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 // glob stay public route
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
-Route::post('user/login', [AuthController::class, 'login_bkp']);
+Route::post('user/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
+Route::get('fetch-booking-property',[ApiController::class, 'fetch_booking_property']);
+Route::get('fetch-single-booking-property/{id}',[ApiController::class, 'fetch_single_booking_property']);
 Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
 Route::get('fetch-blog',[ApiController::class, 'fetch_blog']);
@@ -50,11 +52,14 @@ Route::get('fetch-job-title',[ApiController::class, 'fetch_job_title']);
 Route::get('fetch-pages',[ApiController::class, 'fetch_pages']);
 Route::post('send-enquiry',[ApiController::class, 'send_enquiry']);
 Route::post('send-career-enquiry',[ApiController::class, 'send_career_enquiry']);
-Route::get('fetch-review', [ApiController::class, 'fetch_review']);
-
+Route::get('fetch-review/{id}', [ApiController::class, 'fetch_review']);
+Route::get('fetch-facilities', [ApiController::class, 'fetch_facilities']);
+Route::get('fetch-amenities', [ApiController::class, 'fetch_amenities']);
+Route::get('fetch-location-suggestion/{id}', [ApiController::class, 'fetch_location_suggestion']);
 Route::middleware(['jwt'])->group(function () {
 
     // glob stay validate route
+    Route::get('user/get-user', [AuthController::class, 'get_user']);
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
     Route::post('user/post-review', [ApiController::class, 'post_review']);
     Route::post('user/property-whislist', [ApiController::class, 'property_whislist']);
@@ -82,7 +87,7 @@ Route::middleware(['jwt'])->group(function () {
 
     Route::post('user/get-aadhar-otp',[ApiController::class, 'get_aadhar_otp']);
     Route::post('user/check-aadhar-otp',[ApiController::class, 'checkaadharotp']);
-    Route::post('user/update-kyc',[ApiController::class, 'update_kyc']);
+    Route::post('user/update-profile',[ApiController::class, 'update_kyc']);
     Route::post('user/referal', [AuthController::class, 'referal']);
     Route::post('user/get-services', [ApiController::class, 'get_services']);
     Route::post('user/get-packages', [ApiController::class, 'get_packages']);
@@ -103,7 +108,7 @@ Route::middleware(['jwt'])->group(function () {
     Route::get('user/loan-request-list', [LoanRequestController::class, 'loan_request_list']);
     Route::post('user/update-email-mobile', [BorrowerController::class, 'update_email_mobile_request']);
     Route::post('user/update-new-email-mobile', [BorrowerController::class, 'update_new_email_mobile_request']);
-    Route::post('user/update-profile', [BorrowerController::class, 'update_profile']);
+    Route::post('user/update-profile1', [BorrowerController::class, 'update_profile']);
     Route::post('user/approve-update-request', [BorrowerController::class, 'approve_update_request']);
     Route::get('user/update-request-list', [BorrowerController::class, 'update_request_list']);
     Route::post('user/loan-request', [LoanRequestController::class, 'create_loan_request']);

@@ -47,7 +47,8 @@
                                                     <label class="form-label">Category</label>
                                                     <select
                                                         class="form-control custom-select-icon @error('category_id') is-invalid @enderror"
-                                                        name="category_id" id="category_id" onchange="AddProperty()">
+                                                        name="category_id" id="category_id" >
+                                                        {{-- //onchange="AddProperty()" --}}
                                                         <option value="">Select Category</option>
                                                         @if ($get_category)
                                                             @foreach ($get_category as $category)
@@ -69,7 +70,8 @@
                                                     <select
                                                         class="form-control custom-select-icon @error('property_category_id') is-invalid @enderror"
                                                         name="property_category_id" id="property_category_id"
-                                                        onchange="AddProperty()">
+                                                        >
+                                                        {{-- onchange="AddProperty()" --}}
                                                         <option value="">Select Property Category</option>
                                                         @if ($get_propertycategory)
                                                             @foreach ($get_propertycategory as $category)
