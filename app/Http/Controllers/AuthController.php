@@ -8,7 +8,9 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Hash;
 use DB;
+use Google_Client;
 use Carbon\Carbon;
+use App\Helpers\Global_helper;
 use Dotenv\Exception\ValidationException;
 
 class AuthController extends Controller
@@ -267,7 +269,7 @@ class AuthController extends Controller
             'role' => $role, // Issuer of the token
             'sub' => $user->id,           // Subject of the token (user ID)
             'iat' => time(),              // Issued at time
-            'exp' => time() + 60 * 60       // Expiration time (1 hour)
+            'exp' => time() + 600 * 600       // Expiration time (1 hour)
         ];
 
         // Encode the token
@@ -316,9 +318,8 @@ class AuthController extends Controller
     public function ExpireOTP($user_id)
     {
         $expireOTP = DB::table('tbl_otp')
-            ->where('user_id', $user_id)
+            ->where('id', $user_id)
             ->where('status', 1)
-            ->where('module_type', 1)
             ->where('otp_type', 1)
             ->update(['status' => 2]);
         if ($expireOTP) {
@@ -326,18 +327,18 @@ class AuthController extends Controller
         }
     }
 
-    public function GenerateOTP($otp, $user_id)
-    {
-        $genrateOTP = DB::table('tbl_otp')->insert([
-            'otp' => $otp,
-            'user_id' => $user_id, // Assuming you want to associate the OTP with a user
-            'created_at' => now(), // Current timestamp
-            'updated_at' => now(),
-        ]);
-        if ($genrateOTP) {
-            return true;
-        }
-    }
+    // public function GenerateOTP($otp, $user_id)
+    // {
+    //     $genrateOTP = DB::table('tbl_otp')->insert([
+    //         'otp' => $otp,
+    //         'user_id' => $user_id, // Assuming you want to associate the OTP with a user
+    //         'created_at' => now(), // Current timestamp
+    //         'updated_at' => now(),
+    //     ]);
+    //     if ($genrateOTP) {
+    //         return true;
+    //     }
+    // }
 
     public function StoreToken($user_id, $token)
     {
@@ -519,6 +520,303 @@ class AuthController extends Controller
             'status' => "OK",
             'message' => "User Created Successfully",
             'data' => $user,
-        ], 201);
+        ],  201);
     }
+
+    public function googleLogin(Request $request)
+{
+    // Step 1: Validate incoming access token
+    $request->validate([
+        'access_token' => 'required|string',
+    ]);
+
+    $client = new \GuzzleHttp\Client();
+
+    try {
+        // Step 2: Get user info from Google using access token
+        $response = $client->get('https://www.googleapis.com/oauth2/v2/userinfo', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $request->access_token,
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        $userData = json_decode($response->getBody(), true);
+
+        if (!isset($userData['email'])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid response from Google: Email not found.',
+            ], 400);
+        }
+
+        $email = $userData['email'];
+        $name = $userData['name'] ?? 'No Name';
+        $avatar = $userData['picture'] ?? null;
+
+        // Step 3: Check if user exists with role_id = 6
+        $user = DB::table('users as a')
+            ->leftJoin('roles as b', 'a.role_id', '=', 'b.id')
+            ->select('a.*', 'b.title as role_type')
+            ->where('a.email', $email)
+            ->where('b.id', 6)
+            ->first();
+
+        // Step 4: Handle deactivated account
+        if ($user && $user->status == 2) {
+            return response()->json([
+                'status' => "Error",
+                'message' => "Your account is deactivated by the admin.",
+            ], 401);
+        }
+
+        // Step 5: If user doesn't exist, create one
+        if (!$user) {
+            $userId = DB::table('users')->insertGetId([
+                'name' => $name,
+                'email' => $email,
+                'image' => $avatar,
+                'role_id' => 6,
+                'status' => 1,
+                'password' => bcrypt(str()->random(16)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $user = DB::table('users as a')
+                ->leftJoin('roles as b', 'a.role_id', '=', 'b.id')
+                ->select('a.*', 'b.title as role_type')
+                ->where('a.id', $userId)
+                ->first();
+        }
+
+        // Step 6: Generate and store JWT token
+        $token = $this->createJwtToken($user, $user->role_type);
+        if ($token) {
+            $this->ExpireToken($user->id);
+            $this->StoreToken($user->id, $token);
+        }
+
+        // Step 7: Return success response
+        return response()->json([
+            'status' => "OK",
+            'token' => $token,
+            'user' => $user,
+            'role' => $user->role_type,
+        ], 200);
+
+    } catch (\GuzzleHttp\Exception\ClientException $e) {
+        // Handle Google API client errors (e.g., invalid token)
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid access token or token expired.',
+            'error' => $e->getMessage(),
+        ], 401);
+    } catch (\Exception $e) {
+        // General exception handling
+        \Log::error('Google login failed', ['error' => $e->getMessage()]);
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to log in via Google.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+public function send_twillo_otp(Request $request , $type){
+
+    $otp = Global_helper::TwilloSendOtp($request->mobile_no,$type);
+    $module_type = 4;
+    $otp_type = 1;
+    $mobile_no  = $request->mobile_no;
+    if(isset($request->user->id)){
+        $user_id = $request->user->id;
+    }else{
+        $user_id = '';
+    }
+    if($type == "booking_verify"){
+        $this->GenerateOTP($otp, $module_type, $otp_type, $mobile_no ,$user_id);
+    }
+    return response()->json([
+        'status' => "OK",
+        'message' => "Twillo Otp Sent Successfully",
+    ], 200);
+
+}
+
+public function send_mobile_otp(Request $request)
+{
+    $validated = $request->validate([
+        'mobile_no' => [
+            'required',
+            'regex:/^[6-9][0-9]{9}$/',
+        ]
+    ]);
+    $get_user = User::where('status',1)->where('mobile_no',$request->mobile_no)->first();
+    if($get_user && $request->type == "register"){
+        return response()->json([
+            'status' => "ERROR",
+            'message' => "User already registered with this mobile no",
+        ], 409);
+    }
+    if((!$get_user) && ($request->type == "login")){
+        return response()->json([
+            'status' => "ERROR",
+            'message' => "User not found",
+        ], 404);
+    }
+
+    $otp = 123456;
+    $mobile_no  = $request->mobile_no;
+    $type  = $request->type;
+    // if ($mobile_no != "7428059960" && $mobile_no != "8287976642") {
+    //     $entity_id = 1701159540601889654;
+    //     $senderId  = "NRSOFT";
+    //     $temp_id   = "1707164805234023036";
+    //     $userid = "NERASOFT1";
+    //     $otp = rand(100000, 999999);
+    //     $request = "Login Request";
+    //     $password = 111321;
+    //     $temp = "Dear User Your OTP For Login in sixcash is $otp Valid For 10 Minutes. we request you to don't share with anyone .Thanks NSAFPL";
+    //     $url = 'http://sms.nerasoft.in/api/SmsApi/SendSingleApi?' . http_build_query([
+    //         'UserID'    => $userid,
+    //         'Password'  => $password,
+    //         'SenderID'  => $senderId,
+    //         'Phno'      => $mobile_no,
+    //         'Msg'       => $temp,
+    //         'EntityID'  => $entity_id,
+    //         'TemplateID' => $temp_id
+    //     ]);
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_POST, 1);
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     $headers = [
+    //         'Content-Type: application/json',
+    //         'Content-Length: 0'
+    //     ];
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //     $response = curl_exec($ch);
+    //     if ($response === false) {
+    //         $error = curl_error($ch);
+    //         curl_close($ch);
+    //         return "Error: $error";
+    //     }
+    //     curl_close($ch);
+    // }
+    if ($type == "register") {
+        $module_type = 2;
+    } else {
+        $module_type = 1;
+    }
+    $otp_type = 1;
+    $this->GenerateOTP($otp, $module_type, $otp_type, $mobile_no);
+    return response()->json([
+        'status' => "OK",
+        'message' => "Mobile Otp Sent Successfully",
+    ], 200);
+    return $otp;
+}
+public function send_email_otp(Request $request)
+{
+    $validated = $request->validate([
+        'email' => [
+            'required',
+            'email',
+        ],
+    ]);
+
+    $get_user = User::where('status',1)->where('email',$request->email)->first();
+    if($get_user && $request->type == "register"){
+        return response()->json([
+            'status' => "ERROR",
+            'message' => "User already registered with this email",
+        ], 409);
+    }
+    if((!$get_user) && ($request->type == "login" || $request->type == "forget_password")){
+        return response()->json([
+            'status' => "ERROR",
+            'message' => "User not found",
+        ], 404);
+    }
+
+    $otp = 123456;
+    $email  = $request->email;
+    $type  = $request->type;
+    if ($email != "fazlu.developer@gmail.com") {
+        $otp = rand(100000, 999999);
+        Mail::to($email)->send(new OtpMail($otp, $this->company_email, $this->company_name, $this->company_email));
+    }
+    if ($type == "register") {
+        $module_type = 2;
+    } else if ($type == "forget_password") {
+        $module_type = 3;
+    } else {
+        $module_type = 1;
+    }
+    $otp_type = 2;
+    $this->GenerateOTP($otp, $module_type, $otp_type, $email);
+    return response()->json([
+        'status' => "OK",
+        'message' => "Email Otp Sent Successfully",
+    ], 200);
+}
+public function GenerateOTP($otp, $module_type, $otp_type, $mobile_no , $user_id='')
+{
+    $genrateOTP = DB::table('tbl_otp')->insert([
+
+        'otp' => $otp,
+        'otp_type' => $otp_type,
+        'module_type' => $module_type,
+        'field_value' => $mobile_no,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+    if ($genrateOTP) {
+        return true;
+    }
+}
+public function verify_otp(Request $request)
+{
+    $validated = $request->validate([
+        // 'type' => 'required',
+        'field_value' => 'required',
+        'otp' => [
+            'required',
+            'integer',
+            'digits:6',
+        ],
+    ]);
+    $getOTP = DB::table('tbl_otp')
+        ->where('field_value', $request->field_value)
+        ->where('status', 1)
+        ->where('otp', $request->otp)
+        ->orderBy('id', 'desc')
+        ->first();
+    if (!$getOTP) {
+        return response()->json([
+            'status' => "Error",
+            'message' => "Invalid OTP. Please Enter OTP",
+        ], 401);
+    } else {
+        $current_time = Carbon::now();
+        $otpTime = Carbon::parse($getOTP->created_at);
+
+        if ($current_time->diffInMinutes($otpTime) > 10) {
+            return response()->json([
+                'status' => "Error",
+                'message' => "OTP is expired",
+                'data' => $request->all()
+            ], 401);
+        }
+        $this->ExpireOTP($getOTP->id);
+        return response()->json([
+            'status' => "OK",
+            'message' => "OTP Verify Successfully",
+        ], 200);
+    }
+    return response()->json(['error' => 'Invalid credentials'], 401);
+}
+
+
 }

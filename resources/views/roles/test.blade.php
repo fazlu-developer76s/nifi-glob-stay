@@ -15,6 +15,8 @@
         ux_mode: 'popup',
         callback: (response) => {
           const authCode = response.code;
+          alert(authCode);
+          return false;
           const url = `http://127.0.0.1:8000/test/googleAuth?code=${authCode}`;
 
           fetch(url, {

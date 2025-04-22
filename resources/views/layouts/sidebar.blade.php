@@ -105,6 +105,11 @@
                             <div class="menu-text">Manage Facilities </div>
                         </a>
                     </div>
+                    <div class="menu-item">
+                        <a href="{{ route('floor') }}" class="menu-link ">
+                            <div class="menu-text">Manage Floor </div>
+                        </a>
+                    </div>
                     @endif
                     @if($property == 1 || Auth::user()->role_id==1)
                     <div class="menu-item">

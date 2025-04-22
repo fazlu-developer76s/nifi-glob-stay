@@ -1,6 +1,6 @@
 <?php
 namespace App\Helpers;
-
+use Twilio\Rest\Client;
 use App\Models\Company;
 use App\Models\User;
 use DB;
@@ -405,7 +405,7 @@ class Global_helper
 
      public static function FollowupNotification()
     {
-        $user_id = Auth::user()->id; 
+        $user_id = Auth::user()->id;
         $query = DB::table('enquiries as a')
             ->leftJoin('users as b', 'a.user_id', '=', 'b.id')
             ->leftJoin('roles as c', 'b.role_id', '=', 'c.id')
@@ -415,10 +415,45 @@ class Global_helper
             ->where('a.is_view_followup', 2)
             ->where('a.followup_date', '=', date('Y-m-d'));
         if (Auth::user()->role_id != 1) {
-            $query->where('a.user_id', $user_id); 
+            $query->where('a.user_id', $user_id);
         }
         $data = $query->get();
         return $data;
+    }
+
+    public static function TwilloSendOtp($mobile_no,$type){
+
+        $sid = env('TWILIO_SID');
+        $token = env('TWILIO_AUTH_TOKEN');
+        $from = env('TWILIO_PHONE_NUMBER');
+        $otp = rand(100000, 999999);
+        // if ($type == "booking_register") {
+        //     $msg = "Your booking has been registered successfully!";
+        // } elseif($type=="booking_verify"){
+        //     $msg = "Your OTP for booking verification is: " . $otp;
+        // }
+        // elseif ($type == "check_in") {
+        //     $msg = "You have checked in successfully!";
+        // } elseif ($type == "check_out") {
+        //     $msg = "You have checked out successfully!";
+        // } elseif ($type == "cancel") {
+        //     $msg = "Your booking has been cancelled.";
+        // } elseif ($type == "booking_complete") {
+        //     $msg = "Your booking has been completed. Thank you!";
+        // } else {
+        //     $msg = "Unknown action.";
+        // }
+        try {
+        //     $client = new Client($sid, $token);
+        //     $client->messages->create('+91'.$mobile_no, [
+        //         'from' => $from,
+        //         'body' => $msg
+        //     ]);
+            return $otp ;
+            // return response()->json(['message' => 'SMS sent successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
 

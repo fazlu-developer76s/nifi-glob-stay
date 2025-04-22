@@ -27,6 +27,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\PermissionCategory;
 use App\Http\Controllers\PermissionsubCategory;
+use App\Http\Controllers\FloorController;
 use App\Http\Controllers\PropertyCategoryController;
 
 Route::get('/', function () {
@@ -212,6 +213,14 @@ Route::middleware(['auth', 'checkRole'])->group(function () {
     Route::post('/facilities/update', [FacilitiesController::class, 'update'])->name('facilities.update');
     Route::delete('/facilities/delete/{id}', [FacilitiesController::class, 'destroy'])->name('facilities.destroy');
     Route::put('/addfacilities-package', [FacilitiesController::class, 'addfacilities_package'])->name('addfacilities.package');
+
+    // Floors
+    Route::get('/floor', [FloorController::class, 'index'])->name('floor');
+    Route::match(['get', 'post'], '/floor/create', [FloorController::class, 'create'])->name('floor.create');
+    Route::get('/floor/{id}', [FloorController::class, 'edit'])->name('floor.edit');
+    Route::post('/floor/update', [FloorController::class, 'update'])->name('floor.update');
+    Route::delete('/floor/delete/{id}', [FloorController::class, 'destroy'])->name('floor.destroy');
+    Route::put('/addfloor-package', [FloorController::class, 'addfloor_package'])->name('addfloor.package');
 
     // Amenties
     Route::get('/amenities', [AmenitiesController::class, 'index'])->name('amenities');

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\Global_helper as Helper;
 use App\Models\Amenities;
+use App\Models\Floor;
 use App\Models\Bedtype;
 use App\Models\PropertyCategoriesModal;
 
@@ -51,6 +52,8 @@ class PropertyController extends Controller
     public function create(Request $request)
     {
         if ($request->method() == 'POST') {
+
+
             $validatedData = $request->validate([
                 'category_id' => 'required',
                 'hotel_name' => 'required|string|max:255',
@@ -117,6 +120,7 @@ class PropertyController extends Controller
             $hotel->save();
             $hotel->hotel_url = str_replace(' ', '-', strtolower($hotel->hotel_name)) . $hotel->id;
             $hotel->save();
+
             foreach ($images as $image) {
                 DB::table('properties_images')->insert(['property_id' => $hotel->id,  'image' => $image]);
             }
@@ -148,6 +152,35 @@ class PropertyController extends Controller
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
                 }
             }
+
+            $n1 = 0;
+
+            if ($request->floor) {
+                foreach ($request->floor as $key => $floorId) {
+                    if (!empty($floorId)) {
+                        $floorNumber = $request->floor_number[$key] ?? 0;
+
+                        for ($j = 1; $j <= $floorNumber; $j++) {
+                            // Generate room number like 101, 102...201, 202...
+                            $roomNumber = ($key + 1) . str_pad($j, 2, '0', STR_PAD_LEFT);
+
+                            DB::table('add_floor_property')->insert([
+                                'property_id' => $hotel->id,
+                                'floor_id' => $floorId,
+                                'value' => $request->floor_number[$key],
+                                'room_no' => $roomNumber
+                            ]);
+                        }
+
+                        $n1++;
+                    }
+                }
+            }
+
+
+
+
+
             return redirect()->route('property')->with('success', 'Property Added Successfully');
         }
 
@@ -155,8 +188,9 @@ class PropertyController extends Controller
         $get_category = CategoriesModal::where('status', 1)->get();
         $get_propertycategory = PropertyCategoriesModal::where('status', 1)->get();
         $get_facilities = Facilities::where('status', 1)->get();
+        $get_floor = Floor::where('status', 1)->get();
         $get_amenities = Amenities::where('status', 1)->get();
-        return view('property.create', compact('title', 'get_category', 'get_facilities', 'get_amenities','get_propertycategory'));
+        return view('property.create', compact('title', 'get_category', 'get_facilities', 'get_amenities','get_propertycategory','get_floor'));
     }
     public function edit($id)
     {
@@ -187,6 +221,21 @@ class PropertyController extends Controller
             }
             $get_facilities[] = $facility;
         }
+        $get_floor = array();
+        $floortable = Floor::where('status', 1)->get();
+        foreach ($floortable as $floor) {
+
+            $get_fac_data = DB::table('add_floor_property')->where('property_id', $id)->where('floor_id', $floor->id)->first();
+            if ($get_fac_data) {
+                $floor->selected = 1;
+                $floor->value = $get_fac_data->value;
+            } else {
+                $floor->selected = 0;
+                $floor->value = 0;
+            }
+
+            $get_floor[] = $floor;
+        }
         $get_amenities = array();
         $amenttable = Amenities::where('status', 1)->get();
         foreach ($amenttable as $ament) {
@@ -199,7 +248,7 @@ class PropertyController extends Controller
             $get_amenities[] = $ament;
         }
         $get_propertycategory = PropertyCategoriesModal::where('status', 1)->get();
-        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities', 'get_amenities','get_propertycategory'));
+        return view('property.create', compact('title', 'hotel', 'get_category', 'get_facilities', 'get_amenities','get_propertycategory','get_floor'));
     }
     public function update(Request $request)
     {
@@ -294,6 +343,31 @@ class PropertyController extends Controller
                     DB::table('add_amenties')->insert(['property_id' => $hotel->id,  'amenities_id' => $amenity]);
                 }
             }
+            $delete_all_floor = DB::table('add_floor_property')->where('property_id', $hotel->id)->delete();
+            $n1 = 0;
+
+            if ($request->floor) {
+                foreach ($request->floor as $key => $floorId) {
+                    if (!empty($floorId)) {
+                        $floorNumber = $request->floor_number[$key] ?? 0;
+
+                        for ($j = 1; $j <= $floorNumber; $j++) {
+                            // Generate room number like 101, 102...201, 202...
+                            $roomNumber = ($key + 1) . str_pad($j, 2, '0', STR_PAD_LEFT);
+
+                            DB::table('add_floor_property')->insert([
+                                'property_id' => $hotel->id,
+                                'floor_id' => $floorId,
+                                'value' => $request->floor_number[$key],
+                                'room_no' => $roomNumber
+                            ]);
+                        }
+
+                        $n1++;
+                    }
+                }
+            }
+
             return redirect()->route('property')->with('success', 'Property Update Successfully');
         }
     }

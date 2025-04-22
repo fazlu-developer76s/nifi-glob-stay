@@ -627,6 +627,37 @@
                                             </div>
                                         </div>
                                         <div class="col-md-12">
+                                            <h2>Add Floor</h2>
+                                            <div class="row">
+                                                @foreach ($get_floor as $floor)
+                                                    <div class="col-md-3">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <input class="@error('floor') is-invalid @enderror"
+                                                                    type="checkbox" name="floor[]"
+                                                                    value="{{ $floor->id }}"
+                                                                    id="floor_checkfac{{ $floor->id }}"
+                                                                    onchange="floorremoveClasscheck('{{ $floor->id }}')"
+                                                                    {{ $floor->selected == 1 ? 'checked' : '' }} />
+                                                                <label class="form-label"
+                                                                    for="floor_checkfac{{ $floor->id }}">{{ $loop->iteration }}.</label>
+                                                                <label class="form-label"
+                                                                    for="floor_checkfac{{ $floor->id }}">{{ $floor->title }}</label>
+                                                                @error('floor')
+                                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                                @enderror
+
+                                                                <input
+                                                                    class="form-control @error('floor_number') is-invalid @enderror floor_checkclass{{ $floor->id }} {{ $floor->selected != 1 ? 'd-none' : '' }}"
+                                                                    type="number" name="floor_number[]"
+                                                                    value="{{ $floor->selected == 1 ? $floor->value : '' }}" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
                                             <h2>Add Amenities</h2>
                                             <div class="row">
                                                 @foreach ($get_amenities as $ament)
@@ -677,6 +708,15 @@
     function removeClasscheck(id) {
         let create_class = "checkclass" + id;
         let create_id = "checkfac" + id;
+        if ($("#" + create_id).prop('checked')) { // Check if the checkbox is checked
+            $("." + create_class).removeClass("d-none");
+        } else {
+            $("." + create_class).addClass("d-none");
+        }
+    }
+    function floorremoveClasscheck(id) {
+        let create_class = "floor_checkclass" + id;
+        let create_id = "floor_checkfac" + id;
         if ($("#" + create_id).prop('checked')) { // Check if the checkbox is checked
             $("." + create_class).removeClass("d-none");
         } else {

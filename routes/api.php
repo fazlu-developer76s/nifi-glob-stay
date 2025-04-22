@@ -34,6 +34,10 @@ Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 // Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
 
 // glob stay public route
+Route::post('user/send-mobile-otp',[AuthController::class, 'send_mobile_otp']);
+Route::post('user/send-twilo-otp/{type}',[AuthController::class, 'send_twillo_otp']);
+Route::post('user/send-email-otp',[AuthController::class, 'send_email_otp']);
+Route::post('user/verify-otp', [AuthController::class, 'verify_otp']);
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
 Route::post('user/login', [AuthController::class, 'login']);
@@ -55,9 +59,12 @@ Route::post('send-career-enquiry',[ApiController::class, 'send_career_enquiry'])
 Route::get('fetch-review/{id}', [ApiController::class, 'fetch_review']);
 Route::get('fetch-facilities', [ApiController::class, 'fetch_facilities']);
 Route::get('fetch-amenities', [ApiController::class, 'fetch_amenities']);
+Route::get('fetch-floor', [ApiController::class, 'fetch_floor']);
 Route::get('fetch-location-suggestion/{id}', [ApiController::class, 'fetch_location_suggestion']);
+Route::post('user/google-login', [AuthController::class, 'googleLogin']);
 Route::middleware(['jwt'])->group(function () {
-
+    Route::post('user/create-razorpay-order', [ApiController::class, 'createOrder']);
+    Route::post('user/create-razorpay-payment', [ApiController::class, 'payment']);
     // glob stay validate route
     Route::get('user/get-user', [AuthController::class, 'get_user']);
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
@@ -95,9 +102,13 @@ Route::middleware(['jwt'])->group(function () {
     Route::match(['get', 'post'], 'user/update-pet/{id}', [ApiController::class, 'update_pet']);
     Route::delete('user/delete-pet', [ApiController::class, 'delete_pet']);
     Route::post('user/list-pet', [ApiController::class, 'list_pet']);
+
+    Route::get('user/fetch-my-booking', [ApiController::class, 'fetch_my_booking']);
     Route::post('user/create-booking', [ApiController::class, 'create_booking']);
+    Route::post('user/create-booking-user-info', [ApiController::class, 'create_booking_user_info']);
     Route::post('user/accept-booking', [ApiController::class, 'accept_booking']);
     Route::post('user/fetch-grommer-booking', [ApiController::class, 'fetch_booking']);
+    Route::get('user/fetch-room/{id}', [ApiController::class, 'fetch_room']);
     Route::post('user/messages', [MessageController::class, 'getMessages']);
     Route::post('user/send-message', [MessageController::class, 'sendMessage']);
     Route::post('user/mark-as-read', [MessageController::class, 'markAsRead']);

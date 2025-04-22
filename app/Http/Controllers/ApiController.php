@@ -27,7 +27,10 @@ use App\Models\Property;
 use App\Models\PropertyReview;
 use App\Models\Seo;
 use Illuminate\Support\Facades\Mail;
-
+use Razorpay\Api\Api;
+use Illuminate\Support\Str;
+use App\Models\PaymentTransaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 class ApiController extends Controller
 {
     public function get_aadhar_otp(Request $post)
@@ -319,36 +322,169 @@ class ApiController extends Controller
     public function create_booking(Request $request)
     {
         $rules = array(
-            'property_id'       => 'required',
+            'property_id'    => 'required',
+            'room_id'        => 'required',
+            'room_no'        => 'required',
             'check_in'       => 'required',
-            'check_out'       => 'required',
-            'guest_num'       => 'required',
-            'booking_days'       => 'required',
-            'booking_price'       => 'required'
+            'check_out'      => 'required',
+            'guest_num'      => 'required',
+            'booking_days'   => 'required',
+            'booking_price'  => 'required',
+            'tax'            => 'required',
+            'name'           => 'required',
+            'email'          => 'required',
+            'mobile'         => 'required'
+        );
+
+        $validate = \Myhelper::FormValidator($rules, $request);
+        if ($validate != "no") {
+            return $validate;
+        }
+
+        // Calculate tax amount and total
+        $booking_price = $request->booking_price;
+        $tax_percentage = $request->tax;
+        $tax_amount = ($booking_price * $tax_percentage) / 100;
+        $total_amount = $booking_price + $tax_amount;
+
+        // Insert booking
+        $inserted = DB::table('tbl_bookings')->insert([
+            'user_id'        => $request->user->id,
+            'property_id'    => $request->property_id,
+            'room_id'        => $request->room_id,
+            'room_no'        => $request->room_no,
+            'check_in'       => $request->check_in,
+            'check_out'      => $request->check_out,
+            'guest_num'      => $request->guest_num,
+            'booking_days'   => $request->booking_days,
+            'booking_price'  => $booking_price,
+            'tax'            => $tax_percentage,
+            'final_amount'   => $total_amount,
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'booking_status' => 2,
+            'mobile'         => $request->mobile,
+            'payment_mode'         => 1
+        ]);
+        DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
+
+        // genrate invoice
+        $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id;
+        $taxAmount   = ($request->booking_price * $request->tax) / 100;
+        $totalAmount = $request->booking_price + $taxAmount;
+        // Generate PDF content
+        $pdf = Pdf::loadView('invoices.booking_invoice', [
+            'invoice_number' => $invoiceNumber,
+            'booking_id'     => $request->property_id,
+            'customer_name'  => $request->name,
+            'check_in'       => $request->check_in,
+            'check_out'      => $request->check_out,
+            'total_amount'   => $totalAmount,
+            'booking_price'  => $request->booking_price,
+            'tax'            => $request->tax,
+            'tax_amount'     => $taxAmount,
+            'created_at'     => now()
+        ]);
+
+        // Save PDF to storage
+        $fileName = 'invoice_' . $request->property_id . '.pdf';
+        $filePath = 'invoices/' . $fileName;
+        Storage::disk('public')->put($filePath, $pdf->output());
+
+        $invoiceUrl = asset('storage/' . $filePath);
+
+        // Save invoice info
+        DB::table('tbl_invoices')->insert([
+            'booking_id'      => $request->property_id,
+            'invoice_number'  => $invoiceNumber,
+            'amount'          => $totalAmount,
+            'tax_percent'     => $request->tax,
+            'tax_amount'      => $taxAmount,
+            'invoice_url'     => $invoiceUrl,
+            'created_at'      => now(),
+            'updated_at'      => now()
+        ]);
+        // genrate inovice code end
+        if ($inserted) {
+            return response()->json([
+                'status'  => 'OK',
+                'message' => 'Booking created successfully',
+                'data'    => [
+                    'booking_price' => $booking_price,
+                    'tax'           => $tax_percentage,
+                    'tax_amount'    => $tax_amount,
+                    'total_amount'  => $total_amount
+                ]
+            ]);
+        } else {
+            return response()->json(['status' => 'Error', 'message' => 'Failed to create booking']);
+        }
+    }
+    public function fetch_my_booking(Request $request)
+    {
+        $userId = $request->user->id ?? null;
+
+        if (!$userId) {
+            return response()->json([
+                'status'  => 'Error',
+                'message' => 'Unauthorized access'
+            ], 401);
+        }
+
+        $get_booking = DB::table('tbl_bookings as a')
+            ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
+            ->leftJoin('add_floor_property as d', 'a.room_no', '=', 'd.room_no')
+            ->leftJoin('tbl_floor as e', 'd.floor_id', '=', 'e.id')
+            ->select(
+                'a.*',
+                'b.hotel_name',
+                'e.title as floor',
+                'd.room_no as floor_room_no'
+            )
+            ->where('a.user_id', $userId)
+            ->where('a.status', 1)
+            ->orderBy('a.id', 'desc')
+            ->get();
+
+        if ($get_booking->isNotEmpty()) {
+            return response()->json([
+                'status'  => 'OK',
+                'message' => 'Booking fetched successfully',
+                'data'    => $get_booking
+            ]);
+        } else {
+            return response()->json([
+                'status'  => 'Error',
+                'message' => 'No booking found'
+            ]);
+        }
+    }
+
+
+    public function create_booking_user_info(Request $request){
+        $rules = array(
+            'insert_id'       => 'required',
+            'name'       => 'required',
+            'email'       => 'required',
+            'mobile'       => 'required'
         );
         $validate = \Myhelper::FormValidator($rules, $request);
         if ($validate != "no") {
             return $validate;
         }
-        $property_id = $request->property_id;
-        $check_in = $request->check_in;
-        $check_out = $request->check_out;
-        $guest_num  = $request->guest_num;
-        $booking_days  = $request->booking_days;
-        $booking_price  = $request->booking_price;
-        $insert_booking = DB::table('tbl_bookings')->insert([
-            'user_id' => $request->user->id,
-            'property_id' => $property_id,
-            'check_in' => $check_in,
-            'check_out' => $check_out,
-            'guest_num' => $guest_num,
-            'booking_days' => $booking_days,
-            'booking_price' => $booking_price
+        $insert_id = $request->insert_id;
+        $name = $request->name;
+        $email = $request->email;
+        $mobile = $request->mobile;
+        $update_booking = DB::table('tbl_bookings')->where('id',$insert_id)->update([
+            'name' => $name,
+            'email' => $email,
+            'mobile' => $mobile
         ]);
-        if ($insert_booking) {
-            return response()->json(['status' => 'OK', 'message' => 'Booking created successfully']);
+        if ($update_booking) {
+            return response()->json(['status' => 'OK', 'message' => 'Booking user info update successfully','data' => $update_booking]);
         } else {
-            return response()->json(['status' => 'Error', 'message' => 'Failed to create booking']);
+            return response()->json(['status' => 'Error', 'message' => 'Failed to update booking']);
         }
     }
 
@@ -443,7 +579,8 @@ class ApiController extends Controller
         $type = $request->type;
         $get_category = CategoriesModal::where('status',1)
             ->when($type != "all", function ($query) use ($type) {
-                $query->where('id', $type);
+                // $query->where('id', $type);
+                $query->where('id', 2);
             });
         $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
@@ -718,6 +855,16 @@ $get_property = $query->get();
 
     }
 
+    public function fetch_floor(Request $request){
+        $facilities = DB::table('tbl_floor')->where('status',1)->get();
+        if($facilities){
+            return response()->json(['status' => 'OK', 'data' => $facilities], 200);
+        }else{
+            return response()->json(['status' => 'Error','message' => 'No floor found'], 404);
+        }
+
+    }
+
     public function  fetch_location_suggestion(Request $request , $id){
         $query = DB::table('properties')->select('location')->where('status',1)->where('location','LIKE','%'.$request->location.'%');
         if($id){
@@ -889,15 +1036,107 @@ $get_property = $query->get();
                 $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
                 $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
                 $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+                $get_room = DB::table('add_floor_property as a')
+                ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
+                ->leftJoin('tbl_floor as c', 'a.floor_id', '=', 'c.id')
+                ->select('a.*', 'b.hotel_name as property_name','c.title as floor_name')
+                ->where('a.status', 1)
+                ->where('b.status', 1)
+                ->where('c.status', 1)
+                ->where('b.id', $id)
+                ->get();
                 $property->facilities = $get_faciflties;
                 $property->amenities = $get_amentities;
                 $property->sub_img =  $get_sub_img;
+                $property->flor_rooms =  $get_room;
                 $get_fac[] = $property;
             }
             return response()->json(['status' => 'Success', 'data' => $get_fac], 200);
             }
-    }
 
+            public function fetch_room(Request $request , $id ){
+                // echo $id; die;
+                $query = DB::table('add_floor_property as a')
+                ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
+                ->leftJoin('tbl_floor as c', 'a.floor_id', '=', 'c.id')
+                ->select('a.*', 'b.hotel_name as property_name','c.title as floor_name')
+                ->where('a.status', 1)
+                ->where('b.status', 1)
+                ->where('c.status', 1)
+                ->where('b.id', $id)
+                ->get();
+                if($query){
+                    return response()->json(['status' => 'Success', 'data' => $query], 200);
+                }else{
+                    return response()->json(['status' => 'Error','message' => 'No room found'], 404);
+                }
+            }
+public function createOrder(Request $request)
+    {
+        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+        $amount = $request->amount; // Amount in INR
+        $receiptId = 'BOOKING_' . Str::random(8); // Custom receipt ID
+
+        try {
+            $orderData = [
+                'receipt'         => $receiptId,
+                'amount'          => $amount * 100, // Amount in paisa
+                'currency'        => 'INR',
+                'payment_capture' => 1 // Auto capture after payment
+            ];
+
+            $order = $api->order->create($orderData); // Creates Razorpay Order
+
+            return response()->json([
+                'success' => true,
+                'order_id' => $order['id'],
+                'amount' => $order['amount'],
+                'currency' => $order['currency'],
+                'receipt' => $order['receipt']
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+        }
+
+        public function payment(Request $request)
+        {
+
+            $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+            try {
+                // Fetch the payment details
+                $payment = $api->payment->fetch($request->razorpay_payment_id);
+
+                // Check if the payment is authorized
+                if ($payment->status === 'authorized') {
+                    // Capture the payment
+                    $payment->capture(['amount' => $payment->amount]); // Amount is in paisa
+
+                    // Store the payment details
+                    DB::table('payment_transactions')->insert([
+                        'user_id'     => $request->user->id,
+                        'booking_id'  => $request->booking_id ?? null,
+                        'payment_id'  => $payment->id,
+                        'order_id'    => $payment->order_id ?? null,
+                        'method'      => $payment->method,
+                        'amount'      => $payment->amount / 100, // convert from paisa to INR
+                        'currency'    => $payment->currency,
+                        'status'      => $payment->status,
+                        'response'    => json_encode($payment),
+                        'created_at'  => now(), // manually add if timestamps aren't auto-handled
+                        'updated_at'  => now()
+                    ]);
+
+                    return response()->json(['success' => true, 'message' => 'Payment captured and saved.']);
+                } else {
+                    return response()->json(['success' => false, 'message' => 'Payment not authorized.']);
+                }
+            } catch (Exception $e) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            }
+    }
+}
 
 
 
