@@ -577,11 +577,11 @@ class ApiController extends Controller
             return response()->json(['status' => 'Error', 'message' => 'Type is required'], 400);
         }
         $type = $request->type;
-        $get_category = CategoriesModal::where('status',1)
-            ->when($type != "all", function ($query) use ($type) {
-                // $query->where('id', $type);
-                $query->where('id', 2);
-            });
+        $get_category = CategoriesModal::where('status',1)->where('id',2);
+            // ->when($type != "all", function ($query) use ($type) {
+            //     // $query->where('id', $type);
+            //     $query->where('id', 2);
+            // });
         $get_cate = $get_category->orderBy('id','asc')->get();
         $new_property_get = array();
         foreach($get_cate as $row){
