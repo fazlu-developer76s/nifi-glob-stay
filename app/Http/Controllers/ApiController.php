@@ -449,11 +449,14 @@ class ApiController extends Controller
             ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
             ->leftJoin('add_floor_property as d', 'a.room_no', '=', 'd.room_no')
             ->leftJoin('tbl_floor as e', 'd.floor_id', '=', 'e.id')
+            ->leftJoin('tbl_invoices as f', 'a.id', '=', 'f.booking_id')
             ->select(
                 'a.*',
                 'b.hotel_name',
                 'e.title as floor',
-                'd.room_no as floor_room_no'
+                'd.room_no as floor_room_no',
+                'f.invoice_number',
+                'f.invoice_url'
             )
             ->where('a.user_id', $userId)
             ->where('a.status', 1)
