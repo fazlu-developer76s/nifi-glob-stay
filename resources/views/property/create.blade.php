@@ -400,7 +400,19 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                        <div class="mb-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Discount (In Percentage)</label>
+                                                    <input class="form-control @error('discount') is-invalid @enderror"
+                                                        type="number" name="discount" placeholder="Enter Price"
+                                                        value="{{ old('discount', $hotel->discount ?? '') }}" />
+                                                    @error('discount')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                        <div class="col-md-6">
+                                          <div class="mb-3">
                                             <label class="form-label">Price Type</label>
                                             <select
                                                 class="form-control @error('price_type') is-invalid @enderror"
@@ -437,7 +449,9 @@
                                             @error('price_type')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
+
                                         </div>
+
                                     </div>
 
 

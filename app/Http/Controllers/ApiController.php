@@ -330,7 +330,7 @@ class ApiController extends Controller
             'guest_num'      => 'required',
             'booking_days'   => 'required',
             'booking_price'  => 'required',
-            'tax'            => 'required',
+            // 'tax'            => 'required',
             'name'           => 'required',
             'email'          => 'required',
             'mobile'         => 'required'
@@ -340,15 +340,24 @@ class ApiController extends Controller
         if ($validate != "no") {
             return $validate;
         }
-
+        $tax = $this->fetch_company_info()->getData()->data->booking_tax;
+        if($tax == null){
+            $tax = 0;
+        }
         // Calculate tax amount and total
-        $booking_price = $request->booking_price;
-        $tax_percentage = $request->tax;
+        $booking_price = $request->booking_price * $request->booking_days;
+        $tax_percentage = $tax;
         $tax_amount = ($booking_price * $tax_percentage) / 100;
         $total_amount = $booking_price + $tax_amount;
+        // check invoice number already exist
+        $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id.$request->user->id.$request->room_no;
+        $check_invoice = DB::table('tbl_invoices')->where('invoice_number', $invoiceNumber)->first();
+        if ($check_invoice) {
+            return response()->json(['status' => 'Error', 'message' => 'Invoice number already exists']);
+        }
 
         // Insert booking
-        $inserted = DB::table('tbl_bookings')->insert([
+        $inserted = DB::table('tbl_bookings')->insertGetId([
             'user_id'        => $request->user->id,
             'property_id'    => $request->property_id,
             'room_id'        => $request->room_id,
@@ -369,25 +378,29 @@ class ApiController extends Controller
         DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
 
         // genrate invoice
-        $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id;
-        $taxAmount   = ($request->booking_price * $request->tax) / 100;
-        $totalAmount = $request->booking_price + $taxAmount;
+        // $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id.$request->user->id.$request->room_no;
+        // $taxAmount   = ($request->booking_price * $tax) / 100;
+        // $totalAmount = $request->booking_price + $taxAmount;
         // Generate PDF content
         $pdf = Pdf::loadView('invoices.booking_invoice', [
+            'user_id'        => $request->user->id,
             'invoice_number' => $invoiceNumber,
             'booking_id'     => $request->property_id,
             'customer_name'  => $request->name,
             'check_in'       => $request->check_in,
             'check_out'      => $request->check_out,
-            'total_amount'   => $totalAmount,
+            'total_amount'   => $total_amount,
             'booking_price'  => $request->booking_price,
-            'tax'            => $request->tax,
-            'tax_amount'     => $taxAmount,
+            'room_no'        => $request->room_no,
+            'guest_num'      => $request->guest_num,
+            'booking_days'   => $request->booking_days,
+            'tax'            => $tax,
+            'tax_amount'     => $tax_amount,
             'created_at'     => now()
         ]);
 
         // Save PDF to storage
-        $fileName = 'invoice_' . $request->property_id . '.pdf';
+        $fileName = 'invoice_' . $invoiceNumber . '.pdf';
         $filePath = 'invoices/' . $fileName;
         Storage::disk('public')->put($filePath, $pdf->output());
 
@@ -395,11 +408,12 @@ class ApiController extends Controller
 
         // Save invoice info
         DB::table('tbl_invoices')->insert([
-            'booking_id'      => $request->property_id,
+            'user_id'        => $request->user->id,
+            'booking_id'      => $inserted,
             'invoice_number'  => $invoiceNumber,
-            'amount'          => $totalAmount,
-            'tax_percent'     => $request->tax,
-            'tax_amount'      => $taxAmount,
+            'amount'          => $total_amount,
+            'tax_percent'     => $tax,
+            'tax_amount'      => $tax_amount,
             'invoice_url'     => $invoiceUrl,
             'created_at'      => now(),
             'updated_at'      => now()

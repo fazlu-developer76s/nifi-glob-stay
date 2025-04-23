@@ -139,6 +139,15 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Booking Tax (In Percentage)</label>
+                                            <input type="number" name="booking_tax" class="form-control" value="{{ old('booking_tax', $company->booking_tax) }}">
+                                            @error('booking_tax')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label class="form-label">Youtube Link</label>

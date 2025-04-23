@@ -38,6 +38,7 @@ class CompanyController extends Controller
             'facebook' => 'nullable|url',
             'twitter' => 'nullable|url',
             'instagram' => 'nullable|url',
+            'booking_tax' => 'required|numeric',
             'linkedin' => 'nullable|url',
             'map_link' => 'nullable|string',
         ]);
@@ -69,6 +70,7 @@ class CompanyController extends Controller
         $company->map_link = $request->map_link;
         $company->header_script = $request->header_script;
         $company->footer_script = $request->footer_script;
+        $company->booking_tax = $request->booking_tax;
         $company->map_link = $request->map_link;
         if ($request->youtube_link) {
             $company->youtube_link = $request->youtube_link;

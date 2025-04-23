@@ -94,6 +94,9 @@ class PropertyController extends Controller
             $hotel->extra_info_area_size_type = $request->extra_info_area_size_type;
             $hotel->num_of_open_sides = $request->num_of_open_sides;
             $hotel->location = $request->location;
+            $get_discount_amount = $request->price * $request->discount / 100;
+            $hotel->discount = $request->discount;
+            $hotel->discount_amount = $request->price - $get_discount_amount;
             if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('hotel_images', 'public');
             $hotel->hotel_image = $path;
@@ -291,6 +294,9 @@ class PropertyController extends Controller
             $hotel->extra_info_area_size_type = $request->extra_info_area_size_type;
             $hotel->num_of_open_sides = $request->num_of_open_sides;
             $hotel->location = $request->location;
+            $get_discount_amount = $request->price * $request->discount / 100;
+            $hotel->discount = $request->discount;
+            $hotel->discount_amount = $request->price - $get_discount_amount;
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('hotel_images', 'public');
                 $hotel->hotel_image = $path;
