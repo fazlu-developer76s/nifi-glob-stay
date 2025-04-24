@@ -426,7 +426,8 @@ class Global_helper
         $sid = env('TWILIO_SID');
         $token = env('TWILIO_AUTH_TOKEN');
         $from = env('TWILIO_PHONE_NUMBER');
-        $otp = rand(100000, 999999);
+        // $otp = rand(100000, 999999);
+        $otp = 123456;
         // if ($type == "booking_register") {
         //     $msg = "Your booking has been registered successfully!";
         // } elseif($type=="booking_verify"){
