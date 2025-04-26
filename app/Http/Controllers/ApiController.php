@@ -1246,12 +1246,12 @@ public function createOrder(Request $request)
         if($request->booking_status == 3){
             DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 3]);
-            $this->send_twillo_otp($get_user->mobile_no,'check_in');
+            $this->send_twillo_otp($get_bookings->mobile_no,'check_in');
         }
         if($request->booking_status == 4){
             DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 5]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 1]);
-            $this->send_twillo_otp($get_user->mobile_no,'check_out');
+            $this->send_twillo_otp($get_bookings->mobile_no,'check_out');
 
         }
 
