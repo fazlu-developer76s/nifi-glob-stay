@@ -428,28 +428,28 @@ class Global_helper
         $from = env('TWILIO_PHONE_NUMBER');
         // $otp = rand(100000, 999999);
         $otp = 123456;
-        // if ($type == "booking_register") {
-        //     $msg = "Your booking has been registered successfully!";
-        // } elseif($type=="booking_verify"){
-        //     $msg = "Your OTP for booking verification is: " . $otp;
-        // }
-        // elseif ($type == "check_in") {
-        //     $msg = "You have checked in successfully!";
-        // } elseif ($type == "check_out") {
-        //     $msg = "You have checked out successfully!";
-        // } elseif ($type == "cancel") {
-        //     $msg = "Your booking has been cancelled.";
-        // } elseif ($type == "booking_complete") {
-        //     $msg = "Your booking has been completed. Thank you!";
-        // } else {
-        //     $msg = "Unknown action.";
-        // }
+        if ($type == "booking_register") {
+            $msg = "Your booking has been registered successfully!";
+        } elseif($type=="booking_verify"){
+            $msg = "Your OTP for booking verification is: " . $otp;
+        }
+        elseif ($type == "check_in") {
+            $msg = "You have checked in successfully!";
+        } elseif ($type == "check_out") {
+            $msg = "You have checked out successfully!";
+        } elseif ($type == "cancel") {
+            $msg = "Your booking has been cancelled.";
+        } elseif ($type == "booking_complete") {
+            $msg = "Your booking has been completed. Thank you!";
+        } else {
+            $msg = "Unknown action.";
+        }
         try {
-        //     $client = new Client($sid, $token);
-        //     $client->messages->create('+91'.$mobile_no, [
-        //         'from' => $from,
-        //         'body' => $msg
-        //     ]);
+            $client = new Client($sid, $token);
+            $client->messages->create('+91'.$mobile_no, [
+                'from' => $from,
+                'body' => $msg
+            ]);
             return $otp ;
             // return response()->json(['message' => 'SMS sent successfully']);
         } catch (\Exception $e) {

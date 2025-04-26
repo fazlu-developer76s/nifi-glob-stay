@@ -378,6 +378,30 @@
                                                     @enderror
                                                 </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Login Id</label>
+                                                    <input type="text"
+                                                        class="form-control @error('login_id') is-invalid @enderror"
+                                                        name="login_id" placeholder="Enter Login Id"
+                                                        value="{{ old('login_id', $hotel->login_id ?? '') }}" />
+                                                    @error('login_id')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Password</label>
+                                                    <input type="text"
+                                                        class="form-control @error('password') is-invalid @enderror"
+                                                        name="password" placeholder="Enter Property Password"
+                                                        value="{{ old('password', $hotel->password ?? '') }}" />
+                                                    @error('password')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

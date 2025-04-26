@@ -40,7 +40,7 @@ Route::post('user/send-email-otp',[AuthController::class, 'send_email_otp']);
 Route::post('user/verify-otp', [AuthController::class, 'verify_otp']);
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
-Route::post('user/login', [AuthController::class, 'login']);
+Route::post('property/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
@@ -62,6 +62,9 @@ Route::get('fetch-amenities', [ApiController::class, 'fetch_amenities']);
 Route::get('fetch-floor', [ApiController::class, 'fetch_floor']);
 Route::get('fetch-location-suggestion/{id}', [ApiController::class, 'fetch_location_suggestion']);
 Route::post('user/google-login', [AuthController::class, 'googleLogin']);
+Route::get('property/get-property', [ApiController::class, 'get_property'])->middleware('property');
+Route::get('property/get-hotel-info', [ApiController::class, 'get_hotel_info'])->middleware('property');
+Route::get('property/get-hotel-bookings', [ApiController::class, 'get_hotel_bookings'])->middleware('property');
 Route::middleware(['jwt'])->group(function () {
     Route::post('user/create-razorpay-order', [ApiController::class, 'createOrder']);
     Route::post('user/create-razorpay-payment', [ApiController::class, 'payment']);

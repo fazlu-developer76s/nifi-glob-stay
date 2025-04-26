@@ -65,10 +65,11 @@ class PropertyController extends Controller
                 'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
                 'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif'
             ]);
-            // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
-            // if ($checkData) {
-            //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
-            // }
+
+            $checkData = Property::where('login_id', $request->login_id)->first();
+            if ($checkData) {
+                return redirect()->route('property.create')->with('error', 'This Property Login ID Already Exists .');
+            }
             $hotel = new Property();
             $hotel->user_id = Auth::user()->id;
             $hotel->category_id = $request->category_id;
@@ -94,6 +95,8 @@ class PropertyController extends Controller
             $hotel->extra_info_area_size_type = $request->extra_info_area_size_type;
             $hotel->num_of_open_sides = $request->num_of_open_sides;
             $hotel->location = $request->location;
+            $hotel->login_id = $request->login_id;
+            $hotel->password = $request->password;
             $get_discount_amount = $request->price * $request->discount / 100;
             $hotel->discount = $request->discount;
             $hotel->discount_amount = $request->price - $get_discount_amount;
@@ -263,12 +266,14 @@ class PropertyController extends Controller
                 'hotel_description' => 'nullable|string',
                 'youtube_link' => 'nullable|string',
                 'rating' => 'nullable|string',
-                'price' => 'required|string'
+                'price' => 'required|string',
+                'login_id' => 'required|string|min:8',
+                'password' => 'required|string|min:8',
             ]);
-            // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
-            // if ($checkData) {
-            //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
-            // }
+            $checkData = Property::where('login_id', $request->login_id)->where('id','!=',$request->hidden_id)->first();
+            if ($checkData) {
+                return redirect()->route('property.create')->with('error', 'This Property Login ID Already Exists .');
+            }
             $hotel =  Property::findOrFail($request->hidden_id);
             $hotel->user_id = Auth::user()->id;
             $hotel->category_id = $request->category_id;
@@ -297,6 +302,8 @@ class PropertyController extends Controller
             $get_discount_amount = $request->price * $request->discount / 100;
             $hotel->discount = $request->discount;
             $hotel->discount_amount = $request->price - $get_discount_amount;
+            $hotel->login_id = $request->login_id;
+            $hotel->password = $request->password;
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('hotel_images', 'public');
                 $hotel->hotel_image = $path;
@@ -427,13 +434,11 @@ class PropertyController extends Controller
                 'booking_days' => 'nullable|string',
                 'distance' => 'nullable|string',
                 'location' => 'nullable|string',
+                'login_id' => 'required|string|min:8',
+                'password' => 'required|string|min:8',
                 'hotel_images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
                 'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif'
             ]);
-            // $checkData = Property::where('hotel_name', $request->hotel_name)->first();
-            // if ($checkData) {
-            //     return redirect()->route('property.create')->with('error', 'Property with this name already exists.');
-            // }
             $hotel = new Property();
             $hotel->user_id = Auth::user()->id;
             $hotel->category_id = $request->category_id;
@@ -448,6 +453,7 @@ class PropertyController extends Controller
             $hotel->booking_days = $request->booking_days;
             $hotel->distance = $request->distance;
             $hotel->location = $request->location;
+
             if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('hotel_images', 'public');
             $hotel->hotel_image = $path;

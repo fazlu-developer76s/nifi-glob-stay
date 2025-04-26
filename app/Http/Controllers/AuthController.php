@@ -69,30 +69,20 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validated = $request->validate([
-            'email' => [
-                'required',
-                'email',
-            ]
+            'login_id' => 'required|string|min:8',
+            'password' => 'required|string|min:8'
         ]);
-        $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('b.id',6)->where('a.status',1)->where('a.email', $request->email)->first();
-
-        if(isset($user) && $user->status == 2){
-            return response()->json([
-                'status' => "Error",
-                'message' => "Your Account is Deactivated by Admin",
-            ], 401);
-        }
-        if ($user) {
-            $token = $this->createJwtToken($user, $user->role_type);
+        $get_property = DB::table('properties')->where('login_id', $request->login_id)->select('id' ,'hotel_name','hotel_url')->where('password',$request->password)->where('status','!=',3)->first();
+        if ($get_property) {
+            $token = $this->createJwtToken($get_property, $get_property->id);
             if ($token) {
-                $this->ExpireToken($user->id);
-                $this->StoreToken($user->id, $token);
+                $this->ExpireToken($get_property->id);
+                $this->StoreToken($get_property->id, $token);
             }
             return response()->json([
                 'status' => "OK",
                 'token' => $token,
-                'user' => $user,
-                'role' => $user->role_type
+                'property' => $get_property
             ], 200);
         } else {
             return response()->json(['error' => 'Invalid credentials'], 401);

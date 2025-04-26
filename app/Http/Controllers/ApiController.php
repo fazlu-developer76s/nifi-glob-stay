@@ -31,6 +31,7 @@ use Razorpay\Api\Api;
 use Illuminate\Support\Str;
 use App\Models\PaymentTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Helpers\Global_helper;
 class ApiController extends Controller
 {
     public function get_aadhar_otp(Request $post)
@@ -330,7 +331,7 @@ class ApiController extends Controller
             'guest_num'      => 'required',
             'booking_days'   => 'required',
             'booking_price'  => 'required',
-            // 'tax'            => 'required',
+            'payment_id'            => 'required',
             'name'           => 'required',
             'email'          => 'required',
             'mobile'         => 'required'
@@ -339,6 +340,11 @@ class ApiController extends Controller
         $validate = \Myhelper::FormValidator($rules, $request);
         if ($validate != "no") {
             return $validate;
+        }
+        // Check if the room is already booked
+        $get_room_status = DB::table('add_floor_property')->where('room_no', $request->room_no)->where('property_id', $request->property_id)->first();
+        if($get_room_status->room_status != 1){
+            return response()->json(['status' => 'Error', 'message' => 'Room is already booked']);
         }
         $tax = $this->fetch_company_info()->getData()->data->booking_tax;
         if($tax == null){
@@ -360,6 +366,7 @@ class ApiController extends Controller
         $inserted = DB::table('tbl_bookings')->insertGetId([
             'user_id'        => $request->user->id,
             'property_id'    => $request->property_id,
+            'payment_id'    => $request->payment_id,
             'room_id'        => $request->room_id,
             'room_no'        => $request->room_no,
             'check_in'       => $request->check_in,
@@ -453,6 +460,8 @@ class ApiController extends Controller
             ->select(
                 'a.*',
                 'b.hotel_name',
+                'b.hotel_address',
+                'b.hotel_image',
                 'e.title as floor',
                 'd.room_no as floor_room_no',
                 'f.invoice_number',
@@ -1153,8 +1162,123 @@ public function createOrder(Request $request)
                 return response()->json(['success' => false, 'message' => $e->getMessage()]);
             }
     }
-}
 
+    public function get_property(Request $request){
+        $property_id = $request->user->id;
+        $get_property = DB::table('properties')->where('id',$property_id)->first();
+        if ($get_property) {
+            return response()->json([
+                'status'  => 'OK',
+                'message' => 'Property fetched successfully',
+                'data'    => $get_property
+            ]);
+        } else {
+            return response()->json([
+                'status'  => 'Error',
+                'message' => 'No property found'
+            ]);
+        }
+    }
+
+    public function get_hotel_info(Request $request){
+
+        $property_id = $request->user->id;
+        $get_property = DB::table('properties')->where('id',$property_id)->first();
+        $get_property->get_bookings = DB::table('tbl_bookings as a')->leftJoin('tbl_invoices as b','b.booking_id','=','a.id')->leftJoin('payment_transactions as c','a.payment_id','=','c.id')->select('a.*','b.invoice_number','b.invoice_url','c.payment_id as payment_id_raz','c.order_id as order_id_raz','c.method as method_raz','c.amount as amount_raz','c.currency as currency_raz','c.status as status_raz','c.response as response_raz','c.created_at as created_at_raz')->where('a.property_id',$property_id)->where('a.status',1)->orderBy('a.id','desc')->get();
+        $get_property->get_available_room  = DB::table('add_floor_property as a')
+        ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
+        ->leftJoin('tbl_floor as c', 'a.floor_id', '=', 'c.id')
+        ->select('a.*', 'b.hotel_name as property_name','c.title as floor_name')
+        ->where('a.status', 1)
+        ->where('b.status', 1)
+        ->where('c.status', 1)
+        ->where('b.id', $property_id)
+        ->get();
+        $history = [];
+        foreach($get_property->get_available_room as $row){
+            $row->get_room_history = DB::table('tbl_bookings as a')->where('room_no',$row->room_no)->orderBy('id','desc')->get();
+            $history[] = $row;
+        }
+        $get_property->room_history = $history;
+        if ($get_property) {
+            return response()->json([
+                'status'  => 'OK',
+                'message' => 'Property fetched successfully',
+                'data'    => $get_property
+            ]);
+        } else {
+            return response()->json([
+                'status'  => 'Error',
+                'message' => 'No property found'
+            ]);
+        }
+
+    }
+
+    public function get_hotel_bookings(Request $request){
+        $property_id = $request->user->id;
+        $get_property = DB::table('tbl_bookings as a')->leftJoin('properties as b','b.id','=','a.property_id')->select('a.*','b.hotel_name','b.hotel_image','hotel_address')->where('a.property_id',$property_id)->where('a.status',1)->orderBy('a.id','desc')->get();
+        if ($get_property) {
+            return response()->json([
+                'status'  => 'OK',
+                'message' => 'Property fetched successfully',
+                'data'    => $get_property
+            ]);
+        } else {
+            return response()->json([
+                'status'  => 'Error',
+                'message' => 'No property found'
+            ]);
+        }
+    }
+
+    public function update_booking_status(Request $request){
+
+        $rules = array(
+            'property_id'    => 'required',
+            'room_no'        => 'required',
+            'booking_id'       => 'required',
+            'booking_status'       => 'required'
+        );
+        $user_id = $request->user->id;
+        $get_bookings = DB::table('tbl_bookings')->where('id',$request->booking_id)->first();
+        $get_user = DB::table('users')->where('id',$get_bookings->user_id)->first();
+        if($request->booking_status == 3){
+            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3]);
+            DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 3]);
+            $this->send_twillo_otp($get_user->mobile_no,'check_in');
+        }
+        if($request->booking_status == 4){
+            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 5]);
+            DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 1]);
+            $this->send_twillo_otp($get_user->mobile_no,'check_out');
+
+        }
+
+    }
+
+    public function send_twillo_otp($mobile_no , $type){
+
+        $otp = Global_helper::TwilloSendOtp($mobile_no,$type);
+        $module_type = 4;
+        $otp_type = 1;
+        $mobile_no  = $mobile_no;
+        if(isset($request->user->id)){
+            $user_id = $request->user->id;
+        }else{
+            $user_id = '';
+        }
+        if($type == "booking_verify"){
+            $this->GenerateOTP($otp, $module_type, $otp_type, $mobile_no ,$user_id);
+        }
+        return response()->json([
+            'status' => "OK",
+            'message' => "Twillo Otp Sent Successfully",
+        ], 200);
+
+    }
+
+}
 
 
 
