@@ -37,7 +37,7 @@ Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 Route::post('user/send-mobile-otp',[AuthController::class, 'send_mobile_otp']);
 Route::post('user/send-twilo-otp/{type}',[AuthController::class, 'send_twillo_otp']);
 Route::post('user/send-email-otp',[AuthController::class, 'send_email_otp']);
-Route::post('user/verify-otp', [AuthController::class, 'verify_otp']);
+Route::post('user/verify-otp1', [AuthController::class, 'verify_otp1']);
 Route::post('user/signup', [AuthController::class, 'signup']);
 Route::post('user/user-login-otp', [AuthController::class, 'user_otp']);
 Route::post('property/login', [AuthController::class, 'login']);

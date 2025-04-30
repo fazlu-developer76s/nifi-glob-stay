@@ -383,7 +383,7 @@ class ApiController extends Controller
             'payment_mode'         => 1
         ]);
         DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
-
+        $this->send_twillo_otp($request->mobile,'booking_register');
         // genrate invoice
         // $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id.$request->user->id.$request->room_no;
         // $taxAmount   = ($request->booking_price * $tax) / 100;
@@ -1135,12 +1135,13 @@ public function createOrder(Request $request)
                 $payment = $api->payment->fetch($request->razorpay_payment_id);
 
                 // Check if the payment is authorized
-                if ($payment->status === 'authorized') {
+                if ($payment->status === 'authorized' || $payment->status === 'captured') {
                     // Capture the payment
+                      if ($payment->status === 'authorized') {
                     $payment->capture(['amount' => $payment->amount]); // Amount is in paisa
-
+                      }
                     // Store the payment details
-                    DB::table('payment_transactions')->insert([
+                   $insert =  DB::table('payment_transactions')->insertGetId([
                         'user_id'     => $request->user->id,
                         'booking_id'  => $request->booking_id ?? null,
                         'payment_id'  => $payment->id,
@@ -1154,7 +1155,7 @@ public function createOrder(Request $request)
                         'updated_at'  => now()
                     ]);
 
-                    return response()->json(['success' => true, 'message' => 'Payment captured and saved.']);
+                    return response()->json(['success' => true, 'message' => 'Payment captured and saved.','data'=>$insert]);
                 } else {
                     return response()->json(['success' => false, 'message' => 'Payment not authorized.']);
                 }
@@ -1246,12 +1247,12 @@ public function createOrder(Request $request)
         if($request->booking_status == 3){
             DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 3]);
-            $this->send_twillo_otp($get_bookings->mobile_no,'check_in');
+            $this->send_twillo_otp($get_bookings->mobile,'check_in');
         }
         if($request->booking_status == 4){
             DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 5]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 1]);
-            $this->send_twillo_otp($get_bookings->mobile_no,'check_out');
+            $this->send_twillo_otp($get_bookings->mobile,'check_out');
 
         }
 

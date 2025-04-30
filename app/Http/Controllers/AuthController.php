@@ -766,7 +766,7 @@ public function GenerateOTP($otp, $module_type, $otp_type, $mobile_no , $user_id
         return true;
     }
 }
-public function verify_otp(Request $request)
+public function verify_otp1(Request $request)
 {
     $validated = $request->validate([
         // 'type' => 'required',
