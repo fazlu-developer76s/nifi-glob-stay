@@ -635,4 +635,18 @@ class PropertyController extends Controller
         ->get();
         return view('property.add_room', compact('allflor', 'get_facilities', 'get_bed', 'get_amenities', 'id'));
     }
+
+    public function bookings(Request $request)
+    {
+        $title = "Bookings List";
+        $allproperty = DB::table('tbl_bookings as a')
+        ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
+        ->leftJoin('users as c', 'a.user_id', '=', 'c.id')
+        ->leftJoin('payment_transactions as d','d.id','=','a.payment_id')
+        ->leftJoin('tbl_floor as e', 'b.category_id', '=', 'e.id')
+        ->select('a.*', 'b.hotel_name as property_name', 'c.name as user_name','d.payment_id as raz_payment_id','d.order_id as raz_order_id','d.method as raz_method','d.amount	 as raz_amount','d.currency	 as raz_currency','d.status	 as raz_status','d.response	 as raz_response','d.created_at	 as raz_created_at','e.title as category_name')
+        ->where('a.status', 1)->orderBy('a.id', 'desc')->get();
+        
+        return view('property.bookings', compact('title', 'allproperty'));
+}
 }

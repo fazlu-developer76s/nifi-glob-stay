@@ -322,7 +322,7 @@ class ApiController extends Controller
 
     public function create_booking(Request $request)
     {
-     
+
         $rules = array(
             'property_id'    => 'required',
             // 'room_id'        => 'required',
@@ -343,10 +343,10 @@ class ApiController extends Controller
         if ($validate != "no") {
             return $validate;
         }
-              
+
         // Check if the room is already booked
         $get_room_status = DB::table('add_floor_property')->where('room_no', $request->room_no)->where('property_id', $request->property_id)->first();
-        
+
         if(isset($get_room_status->room_status)  && $get_room_status->room_status!= 1){
             return response()->json(['status' => 'Error', 'message' => 'Room is already booked']);
         }
@@ -354,7 +354,7 @@ class ApiController extends Controller
         if($tax == null){
             $tax = 0;
         }
-        
+
         // Calculate tax amount and total
         $booking_price = $request->booking_price * $request->booking_days;
         $tax_percentage = $tax;
@@ -1039,6 +1039,9 @@ $get_property = $query->get();
         ->where('p.category_id',1)
         ->where('p.is_property_verified', 1)
         ->where('d.status', 1);
+        if($request->min_price && $request->max_price){
+            $query->whereBetween('p.discount_amount', [$request->min_price, $request->max_price]);
+        }
         $get_property = $query->get();
         $get_fac = array();
         foreach($get_property as $property){
@@ -1252,7 +1255,7 @@ public function createOrder(Request $request)
     }
 
     public function update_booking_status(Request $request){
-       
+
         $rules = array(
             'property_id'    => 'required',
             'room_no'        => 'required',
@@ -1261,7 +1264,7 @@ public function createOrder(Request $request)
             'booking_status'       => 'required'
         );
         $user_id = $request->user->id;
-       
+
         $get_bookings = DB::table('tbl_bookings')->where('id',$request->booking_id)->first();
         $get_user = DB::table('users')->where('id',$get_bookings->user_id)->first();
 
