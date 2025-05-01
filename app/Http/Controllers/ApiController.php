@@ -463,6 +463,7 @@ class ApiController extends Controller
             ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
             ->leftJoin('add_floor_property as d', 'a.room_no', '=', 'd.room_no')
             ->leftJoin('tbl_floor as e', 'd.floor_id', '=', 'e.id')
+            ->leftJoin('tbl_floor as g', 'g.id', '=', 'a.hotel_category_id')
             ->leftJoin('tbl_invoices as f', 'a.id', '=', 'f.booking_id')
             ->select(
                 'a.*',
@@ -472,7 +473,8 @@ class ApiController extends Controller
                 'e.title as floor',
                 'd.room_no as floor_room_no',
                 'f.invoice_number',
-                'f.invoice_url'
+                'f.invoice_url',
+                'g.title as hotel_category_name'
             )
             ->where('a.user_id', $userId)
             ->where('a.status', 1)
