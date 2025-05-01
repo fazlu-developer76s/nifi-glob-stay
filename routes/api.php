@@ -65,10 +65,11 @@ Route::post('user/google-login', [AuthController::class, 'googleLogin']);
 Route::get('property/get-property', [ApiController::class, 'get_property'])->middleware('property');
 Route::get('property/get-hotel-info', [ApiController::class, 'get_hotel_info'])->middleware('property');
 Route::get('property/get-hotel-bookings', [ApiController::class, 'get_hotel_bookings'])->middleware('property');
+    Route::post('property/update-booking-status', [ApiController::class, 'update_booking_status'])->middleware('property');
 Route::middleware(['jwt'])->group(function () {
     Route::post('user/create-razorpay-order', [ApiController::class, 'createOrder']);
     Route::post('user/create-razorpay-payment', [ApiController::class, 'payment']);
-    Route::post('user/update-booking-status', [ApiController::class, 'update_booking_status']);
+
     // glob stay validate route
     Route::get('user/get-user', [AuthController::class, 'get_user']);
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);

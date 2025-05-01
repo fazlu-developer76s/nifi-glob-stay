@@ -322,6 +322,7 @@ class ApiController extends Controller
 
     public function create_booking(Request $request)
     {
+     
         $rules = array(
             'property_id'    => 'required',
             // 'room_id'        => 'required',
@@ -342,22 +343,25 @@ class ApiController extends Controller
         if ($validate != "no") {
             return $validate;
         }
+              
         // Check if the room is already booked
         $get_room_status = DB::table('add_floor_property')->where('room_no', $request->room_no)->where('property_id', $request->property_id)->first();
-        if($get_room_status->room_status != 1){
+        
+        if(isset($get_room_status->room_status)  && $get_room_status->room_status!= 1){
             return response()->json(['status' => 'Error', 'message' => 'Room is already booked']);
         }
         $tax = $this->fetch_company_info()->getData()->data->booking_tax;
         if($tax == null){
             $tax = 0;
         }
+        
         // Calculate tax amount and total
         $booking_price = $request->booking_price * $request->booking_days;
         $tax_percentage = $tax;
         $tax_amount = ($booking_price * $tax_percentage) / 100;
         $total_amount = $booking_price + $tax_amount;
         // check invoice number already exist
-        $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id.$request->user->id.$request->room_no;
+        $invoiceNumber = 'INV-' . now()->format('Y-m-d-H:i:s') . '-' . $request->property_id.$request->user->id.$request->room_no;
         $check_invoice = DB::table('tbl_invoices')->where('invoice_number', $invoiceNumber)->first();
         if ($check_invoice) {
             return response()->json(['status' => 'Error', 'message' => 'Invoice number already exists']);
@@ -1111,33 +1115,34 @@ $get_property = $query->get();
             }
 
 public function createOrder(Request $request)
-    {
-        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+{
+    $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
 
-        $amount = $request->amount; // Amount in INR
-        $receiptId = 'BOOKING_' . Str::random(8); // Custom receipt ID
+    $amount = $request->amount; // Amount in INR
+    $receiptId = 'BOOKING_' . Str::random(8); // Custom receipt ID
 
-        try {
-            $orderData = [
-                'receipt'         => $receiptId,
-                'amount'          => $amount * 100, // Amount in paisa
-                'currency'        => 'INR',
-                'payment_capture' => 1 // Auto capture after payment
-            ];
+    try {
+        $orderData = [
+            'receipt'         => $receiptId,
+            'amount'          => $amount * 100, // Amount in paisa
+            'currency'        => 'INR',
+            'payment_capture' => 1 // Auto capture after payment
+        ];
 
-            $order = $api->order->create($orderData); // Creates Razorpay Order
+        $order = $api->order->create($orderData); // Creates Razorpay Order
 
-            return response()->json([
-                'success' => true,
-                'order_id' => $order['id'],
-                'amount' => $order['amount'],
-                'currency' => $order['currency'],
-                'receipt' => $order['receipt']
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
-        }
-        }
+        return response()->json([
+            'success' => true,
+            'order_id' => $order['id'],
+            'amount' => $order['amount'],
+            'currency' => $order['currency'],
+            'receipt' => $order['receipt']
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
 
         public function payment(Request $request)
         {
@@ -1247,7 +1252,7 @@ public function createOrder(Request $request)
     }
 
     public function update_booking_status(Request $request){
-
+       
         $rules = array(
             'property_id'    => 'required',
             'room_no'        => 'required',
@@ -1256,6 +1261,7 @@ public function createOrder(Request $request)
             'booking_status'       => 'required'
         );
         $user_id = $request->user->id;
+       
         $get_bookings = DB::table('tbl_bookings')->where('id',$request->booking_id)->first();
         $get_user = DB::table('users')->where('id',$get_bookings->user_id)->first();
 
@@ -1265,16 +1271,20 @@ public function createOrder(Request $request)
         //     $this->send_twillo_otp($get_user->mobile,'booking_register');
         // }
         if($request->booking_status == 3){
-            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3 , 'room_id' => $request->room_id ,  'room_no' => $request->room_no]);
+            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['booking_status' => 3 , 'room_id' => $request->room_id ,  'room_no' => $request->room_no]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 3]);
             $this->send_twillo_otp($get_bookings->mobile,'check_in');
         }
         if($request->booking_status == 4){
-            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 5]);
+            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['booking_status' => 5]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 1]);
             $this->send_twillo_otp($get_bookings->mobile,'check_out');
 
         }
+           return response()->json([
+            'status' => "OK",
+            'message' => "Booking Status Update Successfully",
+        ], 200);
 
     }
 
