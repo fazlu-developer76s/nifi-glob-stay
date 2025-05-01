@@ -70,7 +70,7 @@
                 <td><strong>Check-out:</strong> {{ $check_out }}</td>
             </tr>
             <tr>
-                <td><strong>Room No:</strong> {{ $room_no }}</td>
+                <td><strong>Hotel Type:</strong> {{ $hotel_category }}</td>
                 <td><strong>Guests:</strong> {{ $guest_num }}</td>
             </tr>
             <tr>

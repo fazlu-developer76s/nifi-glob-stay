@@ -90,6 +90,7 @@ class AuthController extends Controller
     }
     public function login_bkp(Request $request)
     {
+
         $validated = $request->validate([
             'mobile_no' => [
                 'required',
@@ -100,6 +101,7 @@ class AuthController extends Controller
             'mobile_no' => 'required',
         ]);
         $user = DB::table('users as a')->leftJoin('roles as b', 'a.role_id', 'b.id')->select('a.*', 'b.title as role_type')->where('a.mobile_no', $request->mobile_no)->first();
+
         if ($user) {
             if($user->is_user_verified == 2){
                    return response()->json([
@@ -108,7 +110,11 @@ class AuthController extends Controller
                 ], 200);
             }
             if ($otp = $this->userOTP($request->mobile_no)) {
-                $this->GenerateOTP($otp, $user->id);
+                $module_type = 1;
+                $otp_type = 1;
+                $mobile_no  = $request->mobile_no;
+                $this->GenerateOTP($otp,$module_type, $otp_type, $mobile_no , $user->id);
+
                 return response()->json([
                     'status' => "OK",
                     'message' => "login credentials is valid, OTP Send to your registered mobile no. Please Enter Otp to verify user",
@@ -151,8 +157,9 @@ class AuthController extends Controller
         $user = User::where('mobile_no', $request->mobile_no)->first();
         if ($user) {
             $getOTP = DB::table('tbl_otp')
-                ->where('user_id', $user->id)
+                // ->where('user_id', $user->id)
                 ->where('status', 1)
+                ->where('field_value', $request->mobile_no)
                 ->where('otp', $request->otp)
                 ->orderBy('id', 'desc')
                 ->first();
@@ -182,7 +189,7 @@ class AuthController extends Controller
                     $this->ExpireToken($user->id);
                     $this->StoreToken($user->id, $token);
                 }
-                if(isset($user->is_user_verified) && $user->is_user_verified == 1){
+                if(isset($user)){
                      DB::table('users')->where('id',$user->id)->update(['is_mobile_verified'=>1]);
                      return response()->json([
                     'status' => "OK",

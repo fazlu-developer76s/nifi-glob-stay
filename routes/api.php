@@ -28,7 +28,7 @@ use App\Http\Controllers\MessageController;
 
 
 // Route::post('user/signup', [AuthController::class, 'signup']);
-// Route::post('user/login', [AuthController::class, 'login_bkp']);
+Route::post('user/login', [AuthController::class, 'login_bkp']);
 // Route::post('user/user-resend-otp', [AuthController::class, 'resend_otp']);
 Route::post('user/token-status', [AuthController::class, 'getTokenStatus']);
 // Route::get('user/referal-signup', [AuthController::class, 'register_referral_user'])->name('referaluser');
@@ -68,6 +68,7 @@ Route::get('property/get-hotel-bookings', [ApiController::class, 'get_hotel_book
 Route::middleware(['jwt'])->group(function () {
     Route::post('user/create-razorpay-order', [ApiController::class, 'createOrder']);
     Route::post('user/create-razorpay-payment', [ApiController::class, 'payment']);
+    Route::post('user/update-booking-status', [ApiController::class, 'update_booking_status']);
     // glob stay validate route
     Route::get('user/get-user', [AuthController::class, 'get_user']);
     Route::post('user/user-logout', [AuthController::class, 'user_logout']);
@@ -112,6 +113,7 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/accept-booking', [ApiController::class, 'accept_booking']);
     Route::post('user/fetch-grommer-booking', [ApiController::class, 'fetch_booking']);
     Route::get('user/fetch-room/{id}', [ApiController::class, 'fetch_room']);
+    Route::get('user/get-hotel-category', [ApiController::class, 'get_hotel_category']);
     Route::post('user/messages', [MessageController::class, 'getMessages']);
     Route::post('user/send-message', [MessageController::class, 'sendMessage']);
     Route::post('user/mark-as-read', [MessageController::class, 'markAsRead']);

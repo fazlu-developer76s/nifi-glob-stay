@@ -11,10 +11,10 @@
                 <div>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:;">Floor</a></li>
-                        <li class="breadcrumb-item active"><i class="fa fa-arrow-back"></i> Create Floor</li>
+                        <li class="breadcrumb-item"><a href="javascript:;">Hotel Categories</a></li>
+                        <li class="breadcrumb-item active"><i class="fa fa-arrow-back"></i> Create Hotel Categories</li>
                     </ol>
-                    <h1 class="page-header mb-0">Floor</h1>
+                    <h1 class="page-header mb-0">Hotel Categories</h1>
                 </div>
             </div>
             <!-- Row for equal division -->
@@ -24,7 +24,7 @@
                         <div class="card-header h6 mb-0 bg-none p-3 d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-user-shield fa-lg fa-fw text-dark text-opacity-50 me-1"></i>
-                                Add Floor
+                                Add Hotel Categories
                             </div>
                         </div>
                         <form action="{{ route($form_action) }}" method="POST" enctype="multipart/form-data">
@@ -81,7 +81,7 @@
                     <div class="card border-0 mb-4">
                         <div class="card-header h6 mb-0 bg-none p-3 d-flex align-items-center" style="border-bottom: 1px solid #2196f3;">
                             <i class="fab fa-buromobelexperte fa-lg fa-fw text-dark text-opacity-50 me-1"></i>
-                            Floor List
+                            Hotel Categories List
                         </div>
                         <div class="card-body">
                             <table id="data-table-default" class="table table-striped table-bordered align-middle">

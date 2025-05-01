@@ -107,7 +107,7 @@
                     </div>
                     <div class="menu-item">
                         <a href="{{ route('floor') }}" class="menu-link ">
-                            <div class="menu-text">Manage Floor </div>
+                            <div class="menu-text">Manage Hotel Category </div>
                         </a>
                     </div>
                     @endif

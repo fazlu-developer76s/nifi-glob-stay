@@ -324,8 +324,8 @@ class ApiController extends Controller
     {
         $rules = array(
             'property_id'    => 'required',
-            'room_id'        => 'required',
-            'room_no'        => 'required',
+            // 'room_id'        => 'required',
+            // 'room_no'        => 'required',
             'check_in'       => 'required',
             'check_out'      => 'required',
             'guest_num'      => 'required',
@@ -334,7 +334,8 @@ class ApiController extends Controller
             'payment_id'            => 'required',
             'name'           => 'required',
             'email'          => 'required',
-            'mobile'         => 'required'
+            'mobile'         => 'required',
+            'hotel_category_id' => 'required'
         );
 
         $validate = \Myhelper::FormValidator($rules, $request);
@@ -367,8 +368,8 @@ class ApiController extends Controller
             'user_id'        => $request->user->id,
             'property_id'    => $request->property_id,
             'payment_id'    => $request->payment_id,
-            'room_id'        => $request->room_id,
-            'room_no'        => $request->room_no,
+            // 'room_id'        => $request->room_id,
+            // 'room_no'        => $request->room_no,
             'check_in'       => $request->check_in,
             'check_out'      => $request->check_out,
             'guest_num'      => $request->guest_num,
@@ -380,15 +381,17 @@ class ApiController extends Controller
             'email'          => $request->email,
             'booking_status' => 2,
             'mobile'         => $request->mobile,
-            'payment_mode'         => 1
+            'payment_mode'         => 1,
+            'hotel_category_id' => $request->hotel_category_id
         ]);
-        DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
+        // DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
         $this->send_twillo_otp($request->mobile,'booking_register');
         // genrate invoice
         // $invoiceNumber = 'INV-' . now()->format('Ymd') . '-' . $request->property_id.$request->user->id.$request->room_no;
         // $taxAmount   = ($request->booking_price * $tax) / 100;
         // $totalAmount = $request->booking_price + $taxAmount;
         // Generate PDF content
+        $get_category = DB::table('tbl_floor')->where('id', $request->hotel_category_id)->first();
         $pdf = Pdf::loadView('invoices.booking_invoice', [
             'user_id'        => $request->user->id,
             'invoice_number' => $invoiceNumber,
@@ -398,7 +401,7 @@ class ApiController extends Controller
             'check_out'      => $request->check_out,
             'total_amount'   => $total_amount,
             'booking_price'  => $request->booking_price,
-            'room_no'        => $request->room_no,
+            'hotel_category'        => $get_category->title,
             'guest_num'      => $request->guest_num,
             'booking_days'   => $request->booking_days,
             'tax'            => $tax,
@@ -1097,6 +1100,16 @@ $get_property = $query->get();
                     return response()->json(['status' => 'Error','message' => 'No room found'], 404);
                 }
             }
+
+            public function get_hotel_category(Request $request){
+                $get_category = DB::table('tbl_floor')->where('status',1)->get();
+                if($get_category){
+                    return response()->json(['status' => 'Success', 'data' => $get_category], 200);
+                }else{
+                    return response()->json(['status' => 'Error','message' => 'No category found'], 404);
+                }
+            }
+
 public function createOrder(Request $request)
     {
         $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
@@ -1238,14 +1251,21 @@ public function createOrder(Request $request)
         $rules = array(
             'property_id'    => 'required',
             'room_no'        => 'required',
+            'room_id'        => 'required',
             'booking_id'       => 'required',
             'booking_status'       => 'required'
         );
         $user_id = $request->user->id;
         $get_bookings = DB::table('tbl_bookings')->where('id',$request->booking_id)->first();
         $get_user = DB::table('users')->where('id',$get_bookings->user_id)->first();
+
+        // if($request->booking_status == 2){
+        //     DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 2]);
+        //     DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 2]);
+        //     $this->send_twillo_otp($get_user->mobile,'booking_register');
+        // }
         if($request->booking_status == 3){
-            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3]);
+            DB::table('tbl_bookings')->where('id',$request->booking_id)->update(['status' => 3 , 'room_id' => $request->room_id ,  'room_no' => $request->room_no]);
             DB::table('add_floor_property')->where('room_no',$request->room_no)->where('property_id',$request->property_id)->update(['room_status' => 3]);
             $this->send_twillo_otp($get_bookings->mobile,'check_in');
         }
