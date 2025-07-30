@@ -461,7 +461,7 @@ class ApiController extends Controller
 
    $get_booking = DB::table('tbl_bookings as a')
             ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
-         
+
             ->leftJoin('tbl_floor as g', 'g.id', '=', 'a.hotel_category_id')
             ->leftJoin('tbl_invoices as f', 'a.id', '=', 'f.booking_id')
             ->select(
@@ -1156,18 +1156,18 @@ $get_property = $query->get();
             }
 
             public function get_hotel_category(Request $request , $id){
-            
-                
+
+
             $categories = [];
-               
+
             $row = DB::table('add_floor_property')
                 ->where('property_id', $id)
                 ->where('status', 1)
                 ->get();
-            
+
             $floor_ids = $row->pluck('floor_id')->toArray(); // Extract floor_id values as an array
             $unique_ids = array_unique($floor_ids); // Get unique values
-        
+
                 $get_category = DB::table('tbl_floor')->where('status',1)->whereIn('id',$unique_ids)->get();
                 if($get_category){
                     return response()->json(['status' => 'Success', 'data' => $get_category], 200);
