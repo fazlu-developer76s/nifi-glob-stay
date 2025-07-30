@@ -459,10 +459,9 @@ class ApiController extends Controller
             ], 401);
         }
 
-        $get_booking = DB::table('tbl_bookings as a')
+   $get_booking = DB::table('tbl_bookings as a')
             ->leftJoin('properties as b', 'a.property_id', '=', 'b.id')
-            ->leftJoin('add_floor_property as d', 'a.room_no', '=', 'd.room_no')
-            ->leftJoin('tbl_floor as e', 'd.floor_id', '=', 'e.id')
+         
             ->leftJoin('tbl_floor as g', 'g.id', '=', 'a.hotel_category_id')
             ->leftJoin('tbl_invoices as f', 'a.id', '=', 'f.booking_id')
             ->select(
@@ -470,8 +469,6 @@ class ApiController extends Controller
                 'b.hotel_name',
                 'b.hotel_address',
                 'b.hotel_image',
-                'e.title as floor',
-                'd.room_no as floor_room_no',
                 'f.invoice_number',
                 'f.invoice_url',
                 'g.title as hotel_category_name'
@@ -1032,31 +1029,79 @@ $get_property = $query->get();
    }
 
 
-   public function fetch_booking_property(Request $request){
+   public function fetch_booking_property(Request $request)
+    {
+        $facilities = [];
+        $amenities = [];
 
-        $query = DB::table('properties as p')
-        ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
-        ->select('p.*', 'd.title as property_category_name')
-        ->where('p.status', 1)
-        ->where('p.category_id',1)
-        ->where('p.is_property_verified', 1)
-        ->where('d.status', 1);
-        if($request->min_price && $request->max_price){
-            $query->whereBetween('p.discount_amount', [$request->min_price, $request->max_price]);
+        // Get facility property IDs
+        if (!empty($request->facilities)) {
+            foreach ($request->facilities as $facilityId) {
+                $row = DB::table('add_facilities_propery')
+                    ->where('facilities_id', $facilityId)
+                    ->where('status', 1)
+                    ->first();
+
+                if ($row && !empty($row->property_id)) {
+                    $facilities[] = $row->property_id;
+                }
+            }
         }
+        // Get amenities property IDs
+        if (!empty($request->amenities)) {
+            foreach ($request->amenities as $amenityId) {
+                $row = DB::table('add_amenties')
+                    ->where('amenities_id', $amenityId)
+                    ->where('status', 1)
+                    ->first();
+
+                if ($row && !empty($row->property_id)) {
+                    $amenities[] = $row->property_id;
+                }
+            }
+        }
+
+        // Merge and deduplicate property IDs
+        $merge_ids = array_merge($facilities, $amenities);
+        $unique_ids = array_unique($merge_ids);
+
+        // Query properties
+        $query = DB::table('properties as p')
+            ->leftJoin('property_categories as d', 'p.property_category_id', '=', 'd.id')
+            ->select('p.*', 'd.title as property_category_name')
+            ->where('p.status', 1)
+            ->where('p.category_id', 1)
+            ->where('p.is_property_verified', 1)
+            ->where('d.status', 1);
+
+        // Filter by facilities/amenities
+        if (!empty($unique_ids)) {
+            $query->whereIn('p.id', $unique_ids);
+        }
+
+        // Filter by price range
+        if ($request->filled(['min_price', 'max_price'])) {
+            $query->whereBetween('p.discount_amount', [
+                $request->min_price,
+                $request->max_price,
+            ]);
+        }
+
+        // Get results
         $get_property = $query->get();
+
         $get_fac = array();
-        foreach($get_property as $property){
-            $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b','a.facilities_id','=','b.id')->select('a.facilities_id','b.title as facility_name','a.value as facility_value','b.image as facility_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
-            $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b','a.amenities_id','=','b.id')->select('a.amenities_id','b.title as amenities_name','b.image as amenities_image')->where('a.status',1)->where('b.status',1)->where('a.property_id',$property->id)->get();
-            $get_sub_img = DB::table('properties_images')->where('property_id',$property->id)->where('status',1)->get();
+        foreach ($get_property as $property) {
+            $get_faciflties = DB::table('add_facilities_propery as a')->leftJoin('facilities as b', 'a.facilities_id', '=', 'b.id')->select('a.facilities_id', 'b.title as facility_name', 'a.value as facility_value', 'b.image as facility_image')->where('a.status', 1)->where('b.status', 1)->where('a.property_id', $property->id)->get();
+            $get_amentities = DB::table('add_amenties as a')->leftJoin('amenities as b', 'a.amenities_id', '=', 'b.id')->select('a.amenities_id', 'b.title as amenities_name', 'b.image as amenities_image')->where('a.status', 1)->where('b.status', 1)->where('a.property_id', $property->id)->get();
+            $get_sub_img = DB::table('properties_images')->where('property_id', $property->id)->where('status', 1)->get();
             $property->facilities = $get_faciflties;
             $property->amenities = $get_amentities;
             $property->sub_img =  $get_sub_img;
             $get_fac[] = $property;
         }
         return response()->json(['status' => 'Success', 'data' => $get_fac], 200);
-        }
+    }
 
         public function fetch_single_booking_property(Request $request,$id){
 
@@ -1110,8 +1155,20 @@ $get_property = $query->get();
                 }
             }
 
-            public function get_hotel_category(Request $request){
-                $get_category = DB::table('tbl_floor')->where('status',1)->get();
+            public function get_hotel_category(Request $request , $id){
+            
+                
+            $categories = [];
+               
+            $row = DB::table('add_floor_property')
+                ->where('property_id', $id)
+                ->where('status', 1)
+                ->get();
+            
+            $floor_ids = $row->pluck('floor_id')->toArray(); // Extract floor_id values as an array
+            $unique_ids = array_unique($floor_ids); // Get unique values
+        
+                $get_category = DB::table('tbl_floor')->where('status',1)->whereIn('id',$unique_ids)->get();
                 if($get_category){
                     return response()->json(['status' => 'Success', 'data' => $get_category], 200);
                 }else{
@@ -1220,7 +1277,7 @@ public function createOrder(Request $request)
         ->get();
         $history = [];
         foreach($get_property->get_available_room as $row){
-            $row->get_room_history = DB::table('tbl_bookings as a')->where('room_no',$row->room_no)->orderBy('id','desc')->get();
+            $row->get_room_history = DB::table('tbl_bookings as a')->where('room_no',$row->room_no)->where('property_id',$property_id)->orderBy('id','desc')->get();
             $history[] = $row;
         }
         $get_property->room_history = $history;
@@ -1241,7 +1298,7 @@ public function createOrder(Request $request)
 
     public function get_hotel_bookings(Request $request){
         $property_id = $request->user->id;
-        $get_property = DB::table('tbl_bookings as a')->leftJoin('properties as b','b.id','=','a.property_id')->select('a.*','b.hotel_name','b.hotel_image','hotel_address')->where('a.property_id',$property_id)->where('a.status',1)->orderBy('a.id','desc')->get();
+        $get_property = DB::table('tbl_bookings as a')->leftJoin('properties as b','b.id','=','a.property_id')->leftJoin('tbl_floor as c','c.id','=','a.hotel_category_id')->select('a.*','b.hotel_name','b.hotel_image','hotel_address','c.title as hotel_category_name')->where('a.property_id',$property_id)->where('a.status',1)->orderBy('a.id','desc')->get();
         if ($get_property) {
             return response()->json([
                 'status'  => 'OK',

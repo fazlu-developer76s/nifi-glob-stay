@@ -44,7 +44,7 @@ Route::post('property/login', [AuthController::class, 'login']);
 Route::get('fetch-company-info',[ApiController::class, 'fetch_company_info']);
 Route::get('fetch-category',[ApiController::class, 'fetch_category']);
 Route::get('fetch-property',[ApiController::class, 'fetch_property']);
-Route::get('fetch-booking-property',[ApiController::class, 'fetch_booking_property']);
+Route::post('fetch-booking-property',[ApiController::class, 'fetch_booking_property']);
 Route::get('fetch-single-booking-property/{id}',[ApiController::class, 'fetch_single_booking_property']);
 Route::get('fetch-single-property/{id}',[ApiController::class, 'fetch_single_property']);
 Route::get('fetch-testimonial',[ApiController::class, 'fetch_testimonial']);
@@ -114,7 +114,7 @@ Route::middleware(['jwt'])->group(function () {
     Route::post('user/accept-booking', [ApiController::class, 'accept_booking']);
     Route::post('user/fetch-grommer-booking', [ApiController::class, 'fetch_booking']);
     Route::get('user/fetch-room/{id}', [ApiController::class, 'fetch_room']);
-    Route::get('user/get-hotel-category', [ApiController::class, 'get_hotel_category']);
+    Route::get('user/get-hotel-category/{id}', [ApiController::class, 'get_hotel_category']);
     Route::post('user/messages', [MessageController::class, 'getMessages']);
     Route::post('user/send-message', [MessageController::class, 'sendMessage']);
     Route::post('user/mark-as-read', [MessageController::class, 'markAsRead']);
